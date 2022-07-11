@@ -1,0 +1,188 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.forms {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px 0px 0px 20px;
+}
+
+#regFormBody {
+    width: 80%;
+    height: auto;
+    margin: 0px auto;
+    margin-top: 50px;
+    border-radius: 20px 20px 20px 20px;
+    background-color: whitesmoke;
+    display: flex;
+}
+
+.forms {
+    width: 40%;
+    height: 100%;
+    background-color: lawngreen;
+}
+
+.formContainer {
+    width: 80%;
+    padding-bottom: 25px;
+    text-align: center;
+}
+
+/* //change visiblity of selected forms */
+#regForm.remove{
+    display: none;
+}
+#loginForm{
+    display: none;
+}
+#loginForm.show{
+    display:contents;
+}
+input {
+    border: none;
+    margin-top: 15px;
+    width: 80%;
+    height: 50px;
+    padding-left: 15px;
+    background-color: rgb(0, 0, 0, .0);
+    border-bottom: 2px solid black;
+    outline: none;
+}
+#toggleCheckBox{
+    border: none;
+
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.pfpLabel {
+    border: .5px solid blue;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-right: 20px;    
+}
+.pfpLabel.remove{
+    display: none;
+}
+
+.age {
+    width: 45px;
+    text-align: center;
+}
+.submitBtn{
+    background-color: blue;
+    border-radius: 50px;
+    width: 100px;
+    color: white;
+    padding: 0;
+    margin-top:35px ;
+    cursor: pointer;
+}
+.regFormAside {
+    width: 60%;
+    height: 100%;
+    background-color: whitesmoke;
+    border-radius: 0px 20px 20px 0px;
+    text-align: center;
+}
+
+.slantedDiv {
+    clip-path: polygon(0 0, 100% 0, 100% 24%, 50% 50%, 0 24%);
+}
+
+.slantedImg {
+    border-top-right-radius: 20px;
+    width: 100%;
+}
+.titles{
+    position: relative;
+    top: -150px;
+}
+.titlesP{
+    margin-top: 15px;
+}
+/*  */
+#showPfp {
+    visibility: hidden;
+}
+
+#showPfp.show {
+    visibility: visible;
+    margin-bottom: -15px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50px;
+}
+
+/* button toggle*/
+.btn1div{
+    height: 10%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+input[type="checkbox"]{
+    cursor: pointer;
+    position: relative;
+    width: 180px ;
+    height: 40px;
+    /* this is changing the size of the checkbox */
+    appearance: none;
+    -webkit-appearance: none;
+    /* need to set appearance:  to none to be able to change background color ; */
+    background-color: white;
+    outline: none;
+    border-radius: 20px;
+    transition: .0s;
+    /* if u change transtiotion from .0s to a number it will make a form that changes hoe the input is added */
+}
+input:checked[type="checkbox"]{
+    background-color:white;
+}
+input[type="checkbox"]:before{
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 40px;
+    border-radius: 50px;
+    top: 0;
+    left: 0;
+    background-color: blue;
+    transform: scale(1.1);
+    transition: .5s;
+
+}
+input:checked[type="checkbox"]:before{
+    left: 100px;
+}
+.toggleP{
+    position: relative;
+    top:-35px;
+    text-align: center;
+    color: gray;
+    pointer-events: none;
+    display: flex;
+    width: 90%;
+    padding: 0px 10px;
+    justify-content: space-between;
+}
+.loginSpan.show{
+    color: white;
+    
+}
+.regSpan.remove{
+    color: gray;
+}
+.regSpan{
+    color: white;
+}
