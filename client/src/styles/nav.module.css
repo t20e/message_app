@@ -1,0 +1,52 @@
+.userNav{
+    flex: 1;
+    background-color: deepskyblue;
+    display: flex;
+    align-items: center;
+}
+.userPfp{
+    background-color: red;
+    border-radius: 100em;
+    height: 2.3em;
+    width: 2.3em;
+    margin-left: 1.2em;
+}
+.navIcons{
+    margin-left: 4em;
+    display: flex;
+    align-items: center;
+}
+.navIcons img{
+    height: 1.2em;
+    width: 1.2em;
+    cursor: pointer;
+}
+.navIcons img:not(:first-child){
+    margin-left: 1.5em;
+}
+.usersInChat__cont{
+    flex: 2;
+}
+.usersInChat{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+}
+.userRepeat{
+    background-color: aliceblue;
+    display: flex;
+    align-items: center;
+}
+.userRepeat  img{
+    height: 1.5em;
+    width: 1.5em;
+    border-radius: 50em;
+    background-color: beige;
+}
+.empty__space{
+    flex: 1;
+    background-color: yellow;
+}

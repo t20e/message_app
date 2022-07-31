@@ -52,6 +52,19 @@ class UserController {
             .catch(err=>{ res.json({msg: err})
             })
     }
+    searchAllUsers = (req, res) => {
+        User.find()
+            .then(allUsers =>{
+                res.json(allUsers)
+            })
+            .catch(err =>{
+                res.json({msg:err})
+            })
+    }
+    searchUsers = (req, res) =>{
+        console.log(req.body);
+        res.json({msg:'hi'})
+    }
 }
 
 

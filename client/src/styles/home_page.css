@@ -1,0 +1,40 @@
+#mainPageDiv{
+    margin: 0px auto;
+    width: 90vw;
+    height: 100vh;
+    max-height: 100rem;
+    width: 100vw;
+    background-image: url(../imgsOnlyForDev/back-01.png);
+}
+.navDiv{
+    height: 10%;
+    width: 100%;
+    background-color: rebeccapurple;
+    max-height: 4em;
+}
+.navDiv div{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+.underNavCont{
+    max-height: 36rem;
+    height: 90%;
+    width: 100%;
+    display: flex;
+}
+.colOne{
+    flex: 1;
+    padding: .7em;
+    /* background-color:darkslategrey; */
+}
+.colTwo{
+    flex: 2;
+    /* background-color:darkslategrey; */
+    padding: .7em;
+}
+.colThree{
+    flex: 1;
+    /* background-color: darkslategray; */
+    padding: .7em;
+}

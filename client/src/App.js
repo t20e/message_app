@@ -4,13 +4,15 @@ import {
   Link,
   Routes
 } from "react-router-dom";
-import RegLoginComp from "./componets/RegLoginComp";
+import HomePage from "./componets/HomePage";
+import RegLogin from "./componets/RegLogin";
 function App() {
   return (
     <BrowserRouter>
       <div id="application">
         <Routes>
-          <Route exact path="/regLogin" element={<RegLoginComp />}></Route>
+          <Route path="/regLogin" element={<RegLogin />}></Route>
+          <Route path="/" element={<HomePage />}></Route>
         </Routes>
       </div>
     </BrowserRouter>

@@ -1,0 +1,37 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* for firefox */
+/* for some reason when i add this it cancels out the margin: 0px auto  */
+html {
+    /* overflow-y: scroll;
+    scrollbar-color: silver #f1f1f1; */
+    /* scrollbar-width: thin; */
+    scrollbar-width: none;
+}
+/* width */
+::-webkit-scrollbar {
+    width: .2em;
+    position: relative;
+    left: 2em;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 20em;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: silver;
+    border-radius: 20em;
+}
+
+/* Handle on hover */ 
+::-webkit-scrollbar-thumb:hover {
+    width: .4em;
+    background: blue;
+} 

@@ -7,10 +7,10 @@ require('dotenv').config();
 app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
 app.use(cookieParser());
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));
+app.use(cors({credentials: true, origin: 'http://127.0.0.1:3000'}));
 
-require('./server/routes/user.routes')(app)
 require('./server/config/mongoose.config')
+require('./server/routes/user.routes')(app)
 
 app.listen(port, () => {
     console.log("Listening at Port 8000")

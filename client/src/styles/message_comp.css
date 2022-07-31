@@ -1,0 +1,214 @@
+/* IMPORTANT!!! */
+/* anything with _n refers to the message notifitcation panel */
+/* any tag with _c ending refers to the chat_panel */
+/* any tag with _r ending refers to the right panel */
+/* start of message notification panel */
+
+.mainCont_n {
+    background-color:darkslategrey;
+    /* max-height: 34.7em; */
+    width: 100%;
+    height: 90%;
+    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
+    backdrop-filter: blur(2em);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    border-radius: .8em;
+    /* padding: .7em; */
+    padding: .8em .09em 0em .2em;
+}
+
+.subMain{
+    /* background-color: red; */
+    height: 95%;
+    /* margin-top: 2em; */
+    /* max-width: 18em; */
+    overflow-y: auto;
+    /* box-shadow: 0em 8em 32 em 0em rgba(0, 0, 0, 0.37) */
+}
+
+.messageNotification_repeat {
+    display: flex;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.left_n {
+    margin-top: .6em;
+    width: 30%;
+    display: flex;
+    align-items: center;
+}
+
+.usersPfp_n {
+    height: 2.5em;
+    width: 2.5em;
+    border-radius: 20em;
+    display: inline-block;
+    margin-left: .3em;
+}
+
+.newNotification_n {
+    opacity: 0;
+    height: .4em;
+    width: .4em;
+    display: block;
+    border-radius: 20em;
+    display: inline-block;
+    background-color: blue;
+}
+
+.newNotification_n.show {
+    opacity: 1;
+}
+
+.right_n {
+    width: 65%;
+    margin-top: -.3em;
+}
+
+.right_n h4 {
+    text-align: start;
+    margin-left: -1.2em;
+    color: white;
+}
+
+.right_n p {
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* message panel css here */
+/* any tag with _c ending refers to the chat_panel */
+/* all items under are chat panel css  */
+.mainCont_c_r {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
+    backdrop-filter: blur(2em);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    border-radius: .8em;
+    padding: .8em .09em 0em 0em;
+}
+
+.messages_div {
+    overflow-y: auto;
+    height: 90%;
+}
+/* to show who user and other msg sender is user is right and other is left */
+.single_messageDiv--left,
+.single_messageDiv--right {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    width: auto;
+    max-width: 50em;
+    margin: -.1em 0em 0em .7em;
+}
+
+.single_messageDiv--left {
+    align-items: start;
+}
+
+.single_messageDiv--right {
+    align-items: end;
+    margin-right: .4em;
+    color: white;
+}
+
+.message {
+    height: auto;
+    width: auto;
+    max-width: 14.5em;
+    background-color: white;
+    /* change the background color as the info 
+    from db is being rendered
+     at style tag to the html 
+    background-color: deepsky blue or white for the right messages
+     */
+    border-radius: 1.2em;
+    padding: .5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: content-box;
+}
+
+.message>p {
+    font-size: .8em;
+}
+
+.dateOf_message {
+    font-size: .5em;
+    color: silver;
+    margin: .2em 2.5em 0em 2.5em;
+}
+
+
+.composeMessage_div {
+    margin: -.1em 0em 0em .7em;
+    height: auto;
+    position: relative;
+    top: 1.4em;
+    max-width: 30em;
+    min-width: 25em;
+    margin: 0px auto;
+}
+
+#sendMessage_form {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formCont_one,
+.formCont_three {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formCont_one>p {
+    cursor: pointer;
+}
+
+.formCont_two {
+    flex: 6;
+}
+
+.textarea {
+    border-radius: 1.2em;
+    padding: .4em;
+    resize: none;
+    border: none;
+    font-size: .9em;
+    overflow: hidden;
+    height: auto;
+    width: auto;
+    position: absolute;
+    left: 8em;
+    bottom: -.1em;
+    outline: none;
+}
+
+::placeholder {
+    font-size: .9em;
+    color: red;
+}
+
+#btn {
+    cursor: pointer;
+    height: 1.2em;
+    width: 1.2em;
+    border: none;
+    background-image: url('../imgsOnlyForDev/sent.svg');
+    background-repeat: no-repeat;
+    padding: 0;
+    margin: 0;
+}
+
+/* any tag with -R ending refers to the right panel */
