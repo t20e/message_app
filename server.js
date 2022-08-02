@@ -1,3 +1,5 @@
+const { Server } = require("socket.io");
+// const io = new Server(3000,{})
 const express = require('express');
 const cors = require('cors') 
 const app = express();
@@ -11,9 +13,13 @@ app.use(cors({credentials: true, origin: 'http://127.0.0.1:3000'}));
 
 require('./server/config/mongoose.config')
 require('./server/routes/user.routes')(app)
+require('./server/routes/chat.routes')(app)
+// require('./server/routes/socket_io')(io)
 
 app.listen(port, () => {
     console.log("Listening at Port 8000")
 })
 
-
+// io.on("connection", (socket) =>{
+//     console.log(socket, 'hi');
+// })

@@ -182,7 +182,7 @@
 
 .textarea {
     border-radius: 1.2em;
-    padding: .4em;
+    padding: .3em .5em;
     resize: none;
     border: none;
     font-size: .9em;

@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/message_comp.css'
 
-const Right_panel = () => {
+const RightPanel = () => {
     return (
         <div className='mainCont_c_r'>
 
@@ -10,4 +10,4 @@ const Right_panel = () => {
 };
 
 
-export default Right_panel;
+export default RightPanel;

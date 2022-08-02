@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from '../../styles/regLogin_page.module.css'
 
 
-const Login = () => {
+const Login = ({formSubmission}) => {
     let [loginFormEmail, setLoginFormEmail] = useState("");
     let [loginPassword, setLoginPassword] = useState("");
     let [formErrors, setFormErrors] = useState({})
@@ -10,7 +10,7 @@ const Login = () => {
     const login = (e) => {
         e.preventDefault()
         let formInfo = { loginFormEmail, loginPassword };
-        // formSubmission(formInfo, "/api/user/login")
+        formSubmission(formInfo, "/api/user/login")
     }
 
     return (

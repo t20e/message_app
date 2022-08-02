@@ -1,21 +1,30 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useState } from 'react';
 import '../styles/message_comp.css'
+import axios from 'axios';
+import { io } from "socket.io-client"
 
+const ChatPanel = ({ usersInChatProp }) => {
+    const [usersInChat, setUsersInChat] = useState(usersInChatProp)
+    console.log(usersInChat);
 
-const Chat_panel = () => {
-
-    // $(document).ready(function () {
-    //     $('.textarea').keyup(function () {
-    //         this.style.height = "auto";
-    //         this.style.height = this.scrollHeight + "px";
-    //     })
-    // })
-
+    useEffect(() => {
+        // check if theres chat already exiting with the ids from main user and others
+        // if there isnt then create a new one 
+        // if there already exists pull it 
+        axios.get('')
+        return () => {
+            // cleanup
+        }
+    }, []);
+    const growTextarea = (e) => {
+        e.style.height = 'inherit';
+        e.style.height = `${e.scrollHeight}px`
+    }
     return (
         <div className='mainCont_c_r'>
             <div className='messages_div'>
                 {/* repeat single message div  */}
+                {/* delete all when recieving real messages */}
                 <div className='single_messageDiv--left'>
                     <div className='message'>
                         <p>hi there! are u well can u function name(params)hi there! are u well can u function name(params) hi there! are u well can u function name(params) </p>
@@ -209,17 +218,13 @@ const Chat_panel = () => {
                     </p>
                 </div>
             </div>
-
-
-        
             <div className='composeMessage_div'>
                 <form id='sendMessage_form'>
                     <div className="formCont_one">
                         <p>&#128512;</p>
                     </div>
                     <div className="formCont_two">
-                        <textarea  maxLength={350} className="textarea" placeholder='message...' cols="35" rows="1"></textarea>
-
+                        <textarea onKeyUp={(e) => growTextarea(e.target)} maxLength={350} className="textarea" placeholder='message...' cols="35" rows="1"></textarea>
                     </div>
                     <div className="formCont_three">
                         {/* add voice input  */}
@@ -232,6 +237,6 @@ const Chat_panel = () => {
     );
 };
 
-Chat_panel.propTypes = {};
+ChatPanel.propTypes = {};
 
-export default Chat_panel;
+export default ChatPanel;

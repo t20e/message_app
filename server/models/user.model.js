@@ -1,9 +1,8 @@
-const mongoose = require('mongoose')
+const Mongoose = require('mongoose')
 const bcrypt = require('bcrypt');
 
 
-
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Mongoose.Schema({
     firstName: {
         type: String,
         required: [true, 'first name is required'],
@@ -86,5 +85,5 @@ UserSchema.pre('save', function (next) {
         });
 });
 
-const User = mongoose.model('User', UserSchema);
+const User = Mongoose.model('User', UserSchema);
 module.exports = User;

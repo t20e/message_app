@@ -39,33 +39,66 @@ class UserController {
                             if (checkPassword) {
                                 res
                                     .cookie("userToken", jwt.sign({ _id: user._id }, process.env.SECRET_KEY), { httpOnly: true })
-                            }else{
-                                res.json({msg: "invalid login credentials"})
+                            } else {
+                                res.json({ msg: "invalid login credentials" })
                             }
                         })
-                        .catch(err=>{
-                            res.json({msg: "invalid login credentials"})
+                        .catch(err => {
+                            res.json({ msg: "invalid login credentials" })
                             console.log(err);
                         })
                 }
             })
-            .catch(err=>{ res.json({msg: err})
+            .catch(err => {
+                res.json({ msg: err })
             })
     }
     searchAllUsers = (req, res) => {
         User.find()
-            .then(allUsers =>{
+            .then(allUsers => {
                 res.json(allUsers)
             })
-            .catch(err =>{
-                res.json({msg:err})
+            .catch(err => {
+                res.json({ msg: err })
             })
     }
-    searchUsers = (req, res) =>{
-        console.log(req.body);
-        res.json({msg:'hi'})
+    searchUsers = async (req, res) => {
+        console.log(req.body.searchVal);
+            // let results = await User.aggregate([
+            //     {
+            //         $search: {
+            //             index: "autocomplete",
+            //             autocomplete: {
+            //                 query: req.body.searchVal,
+            //                 path: "firstName",
+            //                 fuzzy: {
+            //                     maxEdits: 1,
+            //                 },
+            //                 tokenOrder: "sequential",
+            //             },
+            //         },
+            //     },
+            //     {
+            //         $project: {
+            //             firstName: 1,
+            //         },
+            //     },
+            //     {
+            //         $limit: 20,
+            //     },
+            // ]);
+            // if (results) {
+            //     return res.json({ 'msg': 'hi' })
+            // } else {
+            //     res.json([]);
+            // }
+            // res.json({ 'err': error })
+            res.json({'msg':`${req.body.searchVal}`})
     }
-}
 
+
+
+
+}
 
 module.exports = new UserController();

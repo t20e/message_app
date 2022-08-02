@@ -1,77 +1,94 @@
-import React, { useState, useEffect } from 'react';
-import styles from'../styles/searchBar_comp.module.css'
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import styles from '../styles/searchBar_comp.module.css'
 import searchIcon from '../imgsOnlyForDev/search_icon.svg'
-// import { pullData } from '../services/apiConnect'
+import { pullData } from '../services/apiConnect'
 import deletethisImg from '../imgsOnlyForDev/black-screen.jpeg'
 import axios from 'axios'
 
-const SearchBar = () => {
-    let [searchedUsers, setSearchedUsers] = useState("");
-    let [defaultSearchUsers, setDefaultSearchUsers] = useState({});
+const SearchBar = ({ useCheckClickOutside, openChat }) => {
+    const [searchedUsers, setSearchedUsers] = useState([]);
+    const [defaultSearchUsers, setDefaultSearchUsers] = useState([]);
+    const [searchVal, setSearchVal] = useState('')
+    const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/searchAllUsers')
-        .then(res => {
-            console.log("response from server: ", res);
-            setDefaultSearchUsers(res.data)
-        })
-        .catch(err => {
-            console.log("err getting  users ", err);
-        })
+            .then(res => {
+                console.log("response from server: ", res.data);
+                setDefaultSearchUsers(res.data)
+            })
+            .catch(err => {
+                console.log("err getting  users ", err);
+            })
     }, []);
+
+    const renderData = () => { }
+
+    const showDefaultSearchUsers = () => {
+        if (isOpen === false) {
+            setIsOpen(true)
+        }
+    }
     const searchPeople = (e) => {
         e.preventDefault()
-        // validate the input to stop any special characters
-        let searchItem = e.toLowerCase();
-        if (/\s/g.test(e)) {
-            console.log(';spaces');
-            let firstName = e.split(" ")[0].toLowerCase()
-            let lastName = e.split(" ")[1].toLowerCase()
-            searchItem = [firstName, lastName]
-            console.log(firstName, lastName);
+        if(searchVal !== ''){
+            axios.get('http://localhost:8000/api/searchUsers', searchVal)
+            .then(res =>{
+                console.log(res.data);
+            })
+            .catch(err=>{
+                console.log(err);
+            })
         }
-        console.log(searchItem);
-        // pullData("/api/searchUsers", searchItem).then(results => {
-        //     setSearchedUsers(results)
-        // }).catch(err => console.log(err))
+
+
+
+        // console.log(e.target.value);
+        // // validate the input to stop any special characters
+        // let searchItem = e.toLowerCase();
+        // if (/\s/g.test(e)) {
+        //     console.log(';spaces');
+        //     let firstName = e.split(" ")[0].toLowerCase()
+        //     let lastName = e.split(" ")[1].toLowerCase()
+        //     searchItem = [firstName, lastName]
+        //     console.log(firstName, lastName);
+        // }
+
+        
     }
-    // const getDefaultUsersBeforeSearch = () => {
-    //     $( '.'+styles.usersSearchDiv).addClass('show');
-    //     renderDataOnUi()
-    // }
-    // console.log($(styles.usersSearchDiv));
-    // const renderDataOnUi = () => {
-    //     //populate the usersdefaulSearchDiv with this data
-    //     $('.'+styles.usersSearchDiv).empty()
-    //     for (let i = 0; i < 5; i++) {
-    //         $('.'+styles.usersSearchDiv).append(
-    //             `<div>
-    //                 <img src=${deletethisImg} alt="user pfp" />
-    //                 <h6>${defaultSearchUsers[i].firstName} ${defaultSearchUsers[i].lastName}</h6>
-    //             </div>`
-    //         ).find('div').addClass('.'+ styles.repeatedDiv)
-    //     }
-    // }
-    // $(document).click(function (e) {
-    //     if (!$('.searchBarCont').is(e.target) && !$('.searchBarCont').has(e.target).length) {
-    //         $('.styles.usersSearchDiv').removeClass('show');
-    //     }
-    // })
-    //if users clicks outside of the usersSearchDiv or the search bar then close that div
+    // close when clicked outside
+    let domNode = useCheckClickOutside(() => {
+        setIsOpen(false)
+    })
     return (
-        <div className={styles.searchBarCont}>
-            <form id={styles.searchForm}>
-                {/* <input type="text" className={styles.searchInput} onClick={getDefaultUsersBeforeSearch} onChange={(e) => (searchPeople(e.target.value))} placeholder='search people' /> */}
+        <div ref={domNode} className={styles.searchBarCont}>
+            <form id={styles.searchForm} onSubmit={searchPeople}>
+                <input type="text" className={'inputClass'} onClick={showDefaultSearchUsers} onChange={(e) => (searchPeople(e), setSearchVal(e.target.value))} placeholder='search people' />
                 <button onClick={searchPeople}>
                     <img src={searchIcon} alt="search icon" />
                 </button>
             </form>
-            <div className={styles.usersSearchDiv}>
-                {/* // display the people it found */}
+            <div className={`${styles.usersSearchDiv} ${isOpen ? styles.show : ''} `}>
+                <div className={styles.scrollDiv}>
+                    {
+                        defaultSearchUsers.map((user, i) => {
+                            return (
+                                <div key={i} className={styles.repeatedDiv} onClick={(e) =>{openChat([user._id])}}>
+                                    <div className={styles.col1}>
+                                        <img src={deletethisImg} alt="search users pfps" />
+                                    </div>
+                                    <div className={styles.col2}>
+                                        <p>{user.firstName} {user.lastName}</p>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                </div>
             </div>
         </div>
     );
 };
 
-SearchBar.propTypes = {};
+
 export default SearchBar;

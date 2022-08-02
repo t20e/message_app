@@ -9,7 +9,7 @@ import Register from './RegLogin/Register';
 const RegLogin = () => {
     const redirect = useNavigate();
     // change form
-    let [whichForm, setWhichForm] = useState('signUp')
+    const [whichForm, setWhichForm] = useState('signUp')
 
     const formSubmission = (formInfo, url) => {
         console.log(formInfo);
@@ -57,7 +57,7 @@ const RegLogin = () => {
                 <div className={styles.formContainer}>
                     {
                         whichForm == 'signUp' ?
-                            <Register /> : <Login />
+                            <Register formSubmission={formSubmission}/> : <Login formSubmission={formSubmission} />
                     }
                 </div>
             </section>
