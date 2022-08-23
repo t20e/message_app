@@ -1,39 +1,40 @@
-#mainPageDiv{
+@import "global.css";
+
+#mainPageDiv {
     margin: 0px auto;
     width: 90vw;
     height: 100vh;
     max-height: 100rem;
     width: 100vw;
-    background-image: url(../imgsOnlyForDev/back-01.png);
+    background-color: #13070C;
 }
-.navDiv{
-    height: 10%;
+
+.navBar{
+    height: 5%;
     width: 100%;
-    background-color: rebeccapurple;
     max-height: 4em;
 }
-.navDiv div{
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-}
-.underNavCont{
+
+.underNavCont {
     max-height: 36rem;
-    height: 90%;
+    height: 95%;
     width: 100%;
     display: flex;
 }
-.colOne{
+
+.colOne {
     flex: 1;
     padding: .7em;
     /* background-color:darkslategrey; */
 }
-.colTwo{
+
+.colTwo {
     flex: 2;
     /* background-color:darkslategrey; */
     padding: .7em;
 }
-.colThree{
+
+.colThree {
     flex: 1;
     /* background-color: darkslategray; */
     padding: .7em;

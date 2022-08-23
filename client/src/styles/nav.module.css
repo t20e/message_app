@@ -1,52 +1,132 @@
-.userNav{
-    flex: 1;
-    background-color: deepskyblue;
-    display: flex;
-    align-items: center;
-}
-.userPfp{
-    background-color: red;
-    border-radius: 100em;
-    height: 2.3em;
-    width: 2.3em;
-    margin-left: 1.2em;
-}
-.navIcons{
-    margin-left: 4em;
-    display: flex;
-    align-items: center;
-}
-.navIcons img{
-    height: 1.2em;
-    width: 1.2em;
-    cursor: pointer;
-}
-.navIcons img:not(:first-child){
-    margin-left: 1.5em;
-}
-.usersInChat__cont{
-    flex: 2;
-}
-.usersInChat{
+@import "global.css";
+
+.navCont {
     height: 100%;
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: red;
+    flex-direction: row;
 }
-.userRepeat{
-    background-color: aliceblue;
+
+.profileActions {
+    flex: 1;
+    height: 100%;
     display: flex;
     align-items: center;
 }
-.userRepeat  img{
+
+#userImg {
+    margin-left: 2em;
+    height: 2.5em;
+    width: 2.5em;
+    border-radius: 50em;
+}
+
+.otherIcons {
+    width: 70%;
+    display: flex;
+    padding-left: 1.5em;
+    cursor: pointer;
+}
+
+.otherIcons>img {
+    height: 1.5em;
+    width: 1.5em;
+    margin-left: 2em;
+}
+
+.otherIcons>img:last-of-type {
+    margin-left: 1em;
+}
+
+.chatInfoCont {
+    flex: 2;
+    display: flex;
+    align-items: center;
+}
+
+.chatInfoCont>img {
+    cursor: pointer;
+}
+
+.chatIcon {
+    margin-left: 2em;
+    height: 1.7em;
+    width: 1.7em;
+}
+
+.showUserInChatDiv {
+    background-color: yellow;
+}
+
+.showUserInChatDiv.show {
+    border: .1em black solid;
+    background-color: white;
+    width: 10rem;
+    height: auto;
+}
+
+.showUsersInchatArr {
+    margin-left: .5em;
+    height: 1.2em;
+    width: 1.2em;
+}
+
+@keyframes rotateArr {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(90deg);
+    }
+
+}
+
+.rotateArr {
+    animation: rotateArr .5s alternate;
+    animation-fill-mode: forwards;
+    /* filter: invert(100%) sepia(100%) saturate(0%) brightness(1000%); */
+}
+
+.usersInChat {
+    display: none;
+}
+.usersInChat.show{
+    border-radius: 0 0 .8em .8em;
+    background-color: white;
+    position: relative;
+    width: 10rem;
+    top: 2.3em;
+    left: -12em;
+    z-index: 1000;
+    height: auto;
+    flex-direction: column;
+    display: block;
+    margin-left: 2em;
+}
+
+.repeatUser {
+    display: flex;
+    align-items: center;
+    margin-top: .2em;
+}
+
+.repeatUser>img {
     height: 1.5em;
     width: 1.5em;
     border-radius: 50em;
-    background-color: beige;
+    margin: 0 .5em 0 1em;
 }
-.empty__space{
+
+.notActive {
+    color: transparent !important;
+}
+
+.usersInChat>pre {
+    color: var(--primaryColor);
+}
+
+.emptySpace {
     flex: 1;
-    background-color: yellow;
+    height: 100%;
 }

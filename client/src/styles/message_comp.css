@@ -4,6 +4,10 @@
 /* any tag with _r ending refers to the right panel */
 /* start of message notification panel */
 
+::placeholder {
+    font-size: .9em;
+    color: red;
+}
 .mainCont_n {
     background-color:darkslategrey;
     /* max-height: 34.7em; */
@@ -26,7 +30,7 @@
     /* box-shadow: 0em 8em 32 em 0em rgba(0, 0, 0, 0.37) */
 }
 
-.messageNotification_repeat {
+.msgNotification{
     display: flex;
     justify-content: space-between;
     cursor: pointer;
@@ -96,6 +100,7 @@
 .messages_div {
     overflow-y: auto;
     height: 90%;
+    padding-top: .3em;
 }
 /* to show who user and other msg sender is user is right and other is left */
 .single_messageDiv--left,
@@ -116,6 +121,9 @@
     align-items: end;
     margin-right: .4em;
     color: white;
+}
+.single_messageDiv--right > div{
+    background-color: deepskyblue;
 }
 
 .message {
@@ -146,14 +154,13 @@
     margin: .2em 2.5em 0em 2.5em;
 }
 
-
-.composeMessage_div {
-    margin: -.1em 0em 0em .7em;
+.composeMsg_div {
     height: auto;
     position: relative;
-    top: 1.4em;
-    max-width: 30em;
-    min-width: 25em;
+    top: 1em;
+    max-width: 35em;
+    min-width: 30em;
+    width: 30em;
     margin: 0px auto;
 }
 
@@ -161,28 +168,36 @@
     width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .formCont_one,
 .formCont_three {
-    flex: 1;
     display: flex;
-    justify-content: center;
     align-items: center;
 }
 
-.formCont_one>p {
+.formCont_one {
     cursor: pointer;
 }
-
+.emoji_picker{
+    display: none;
+}
+.emoji_picker.open{
+    display: inline-block;
+    position: absolute;
+    z-index: 1000;
+    top: -21em;
+    left: -8em;
+    box-shadow: none;
+    border: none;
+}
 .formCont_two {
-    flex: 6;
 }
 
 .textarea {
     border-radius: 1.2em;
-    padding: .3em .5em;
+    padding: .8em .5em ;
     resize: none;
     border: none;
     font-size: .9em;
@@ -190,15 +205,11 @@
     height: auto;
     width: auto;
     position: absolute;
-    left: 8em;
+    left: 6em;
     bottom: -.1em;
     outline: none;
 }
 
-::placeholder {
-    font-size: .9em;
-    color: red;
-}
 
 #btn {
     cursor: pointer;

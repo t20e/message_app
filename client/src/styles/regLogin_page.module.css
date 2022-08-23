@@ -1,41 +1,49 @@
-::placeholder{
-    color: #AFAAB9;
+@import "global.css";
+
+
+body {
+    background-color: darkslategrey;
 }
 
-#regFormBody {
-    max-width:55rem ;
-    max-height: 60rem;
+#regFormCon {
     width: 80%;
     height: auto;
+    max-height: 35rem;
+    min-height: 30rem;
     margin: 0px auto;
     margin-top: 2em;
     border-radius: 1.2em 1.2em 1.2em 1.2em;
-    background-color: red;
-    background: transparent;
     display: flex;
-    box-shadow: 0 .3em .9em rgba(0, 0, 0, .5);
-}
-.forms {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 1.2em 0px 0px 1.2em;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
-    backdrop-filter: blur(2em);
+    /* background-color: white; */
+
+    background:  var(--bkGColor);
+    backdrop-filter:  var(--bkDropFilter);
+    box-shadow: var(--boxShadow);
 }
 
 .formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    border-radius: 1.2em 0px 0px 1.2em;
+    width: 40%;
+    height: 100%;
+    padding: .58rem 0;
+}
+
+.forms {
     width: 80%;
+    height: 100%;
     padding-bottom: 1.5em;
     text-align: center;
 }
 
-#loginForm{
-    display:contents;
+#loginForm {
+    display: contents;
+    height: 100%;
 }
+
 input {
     border: none;
     margin-top: .9em;
@@ -46,8 +54,10 @@ input {
     border-bottom: .1em solid black;
     outline: none;
 }
-#toggleCheckBox{
+
+#toggleCheckBox {
     border: none;
+    margin: 0;
 }
 
 input[type="file"] {
@@ -58,17 +68,19 @@ input[type="file"] {
     width: 5em;
     text-align: center;
 }
-.submitBtn{
-    background-color: blue;
+
+.submitBtn {
+    background-color: var(--primaryColor);
     border-radius: 2em;
     width: 6.25em;
     color: white;
     padding: 0;
-    margin-top:2.1em ;
+    margin-top: 2.1em;
     cursor: pointer;
     border: none;
 }
-.imgValP{
+
+.imgValP {
     color: red;
     display: block;
     font-size: .7rem;
@@ -77,57 +89,59 @@ input[type="file"] {
 
 .regFormAside {
     width: 60%;
-    height: 100%;
+    height: auto;
     background-color: whitesmoke;
     border-radius: 0px 1.2em 1.2em 0px;
     text-align: center;
 }
 
 .slantedDiv {
-    clip-path: polygon(0 0, 100% 0, 100% 24%, 50% 50%, 0 24%);
+    /* clip-path: polygon(0 0, 100% 0, 100% 24%, 50% 50%, 0 24%); */
+    clip-path: polygon(100% 65%, 50% 90%, 0 65%, 0 0, 100% 0);
+    height: 50%;
 }
 
 .slantedImg {
     border-top-right-radius: 1.2em;
     width: 100%;
 }
-.titles{
-    position: relative;
-    top: -9.3em;
+
+h1 {
+    font-family: var(--mainText);
 }
-.titlesP{
+
+.titlesP {
     margin-top: .9em;
 }
 
 #showPfp {
     visibility: visible;
-    margin-bottom: .9em;
     width: 3.7em;
     height: 3.7em;
     border-radius: 2em;
-    
 }
+
 .pfpLabel {
-    border: .03px solid blue;
+    border: .03px solid var(--primaryColor);
     padding: .3em .75em;
     cursor: pointer;
     font-size: .7rem;
-    margin-right: 1.2em;    
+    margin-right: 1.2em;
 }
 
 /* button toggle*/
-.btn1div{
-    height: 10%;
+.btn1div {
+    height: auto;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: .6em;
 }
-input[type="checkbox"]{
+
+input[type="checkbox"] {
     cursor: pointer;
     position: relative;
-    width: 11.25em ;
+    width: 11.25em;
     height: 2em;
     /* this is changing the size of the checkbox */
     appearance: none;
@@ -139,39 +153,62 @@ input[type="checkbox"]{
     transition: .0s;
     /* if u change transtiotion from .0s to a number it will make a form that changes hoe the input is added */
 }
-input:checked[type="checkbox"]{
-    background-color:white;
+
+input:checked[type="checkbox"] {
+    background-color: white;
 }
-input[type="checkbox"]:before{
+
+input[type="checkbox"]:before {
     content: '';
     position: absolute;
     width: 5em;
     height: 2em;
     border-radius: 2em;
     top: 0;
-    left: 0;
-    background-color: blue;
+    left: -.4em;
+    background-color: var(--primaryColor);
     transform: scale(1.1);
     transition: .5s;
 
 }
-input:checked[type="checkbox"]:before{
-    left: 5.5em;
+
+input:checked[type="checkbox"]:before {
+    left: 6.1em;
 }
-.toggleP{
+
+.toggleP {
     position: relative;
-    top:-1.7rem;
+    top: -1.9rem;
     text-align: center;
     color: white;
     pointer-events: none;
     display: flex;
-    width: 90%;
+    width: 92%;
     padding: 0px .6em;
     justify-content: space-between;
 }
-.pSpan{
-    color: #95969D;
+
+.pSpan {
+    color: var(--nonImportantText);
 }
-.p{
+
+.p {
     color: white;
+}
+
+@media (max-width: 780px) {
+    .regFormAside {
+        display: none;
+    }
+
+    #regFormCon {
+        width: 70%;
+        height: auto;
+    }
+
+    .formContainer {
+        width: 100%;
+        height: auto;
+    }
+
 }

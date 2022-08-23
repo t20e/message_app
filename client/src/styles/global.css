@@ -1,8 +1,35 @@
+@charset "UTF-8";
+
+@font-face{
+    font-family: satoshi-light;
+    src: url(Satoshi-Light.otf);
+}
+:root {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    --bkGColor: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    --bkDropFilter: blur(1em);
+    --boxShadow: 0 5px 15px rgba(0, 0, 0, .5);
+    --mainText: satoshi-light;
+    --textColor: black;
+    --nonImportantText: #727F83;
+
+
+
+    --primaryColor: #3066BE;
+    --secondaryColor: #FFE347;
+    --thirdColor: #52DEE5;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+::placeholder {
+    color: #AFAAB9;
+}
+
 /* for firefox */
 /* for some reason when i add this it cancels out the margin: 0px auto  */
 html {

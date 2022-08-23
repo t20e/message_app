@@ -23,6 +23,7 @@ const Register = ({formSubmission}) => {
         e.preventDefault();
         let formInfo = { firstName, lastName, age, email, password, confirmPassword };
         formSubmission(formInfo, '/api/user/register')
+        console.log('registering');
     }
     const showPfp = (e) => {
         if (!re.test(e.target.value)) {
