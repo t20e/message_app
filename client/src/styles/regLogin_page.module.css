@@ -1,10 +1,5 @@
 @import "global.css";
 
-
-body {
-    background-color: darkslategrey;
-}
-
 #regFormCon {
     width: 80%;
     height: auto;

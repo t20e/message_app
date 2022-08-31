@@ -13,7 +13,7 @@ const RegLogin = () => {
     // TODO get form errors and display it on the form
     const formSubmission = (formInfo, url) => {
         // console.log(formInfo);
-        axios.post(`http://127.0.0.1:8000${url}`, formInfo, { withCredentials: true })
+        axios.post(`http://localhost:8000${url}`, formInfo, { withCredentials: true })
             .then(res => {
                 console.log("response from server: ", res);
                 if (res.data.errors) {
@@ -21,7 +21,7 @@ const RegLogin = () => {
                 } else {
                     console.log('success');
                     localStorage.setItem('userToken', res.userToken);
-                    // redirect("/")
+                    redirect("/")
                 }
             })
             .catch(err => {
@@ -56,7 +56,7 @@ const RegLogin = () => {
                 <div className={styles.forms}>
                     {
                         whichForm == 'signUp' ?
-                            <Register formSubmission={formSubmission} /> : <Login formSubmission={formSubmission} />
+                            <Register formSubmission={formSubmission} styles={styles} /> : <Login styles={styles} formSubmission={formSubmission} />
                     }
                 </div>
             </section>

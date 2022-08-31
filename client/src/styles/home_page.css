@@ -1,14 +1,14 @@
 @import "global.css";
 
+
 #mainPageDiv {
     margin: 0px auto;
     width: 90vw;
     height: 100vh;
     max-height: 100rem;
     width: 100vw;
-    background-color: #13070C;
+    /* background-color: #13070C; */
 }
-
 .navBar{
     height: 5%;
     width: 100%;
@@ -32,6 +32,13 @@
     flex: 2;
     /* background-color:darkslategrey; */
     padding: .7em;
+}
+.noChatSelected{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: underline;
 }
 
 .colThree {

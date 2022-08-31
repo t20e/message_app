@@ -8,4 +8,5 @@ module.exports = (app)=>{
     app.get("/api/searchAllUsers", UserController.searchAllUsers);
     app.get("/api/searchUsers", UserController.searchUsers)
     app.get("/api/user/logUser", UserController.getLoggedUser)
+    app.get("/api/user/logout", UserController.logout)
 }

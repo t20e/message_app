@@ -6,7 +6,7 @@ import activeUsersIcon from '../imgsOnlyForDev/userPfp-01.svg'
 import usersInChatIcon from '../imgsOnlyForDev/multipleUsers.svg'
 import arrowIcon from '../imgsOnlyForDev/arrows.svg'
 
-const Nav = () => {
+const Nav = ({loggedUser}) => {
     const [showUsers, setShowUsers] = useState('')
     const [rotateArr, setRotateArr] = useState('')
     const showUsersInChat = () => {
@@ -48,7 +48,9 @@ const Nav = () => {
                         </div>
                     </div>
             </div>
-            <div className={styles.emptySpace}></div>
+            <div className={styles.emptySpace}>
+                <h1 style={{ color: 'blue'}}>{loggedUser.firstName}</h1>
+            </div>
         </div>
     );
 };

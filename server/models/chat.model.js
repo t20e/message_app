@@ -7,7 +7,7 @@ const ChatSchema = new Mongoose.Schema({
     messages:[],
         // every message will be in an object
         // looks like this 
-        // { from: user_id[1], body: 'Hello everyone,  what's up?' },
+        // { from: user_id[1], body: 'Hello everyone,  what's up?', date: 10-11-12  },
     status:{
         delete:Boolean,
     }

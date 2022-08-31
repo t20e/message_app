@@ -9,17 +9,17 @@ class UserController {
                 if (checkEmailDB.length === 0) {
                     User.create(req.body)
                         .then(user => {
-                            console.log(user._id);
+                            console.log(user.firstName);
                             //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
                             res
-                                .cookie("userToken",jwt.sign({
-                                    id: user._id,
+                                .cookie("userToken", jwt.sign({
+                                    _id: user._id,
                                     firstName: user.firstName,
                                     lastName: user.lastName
                                 }, process.env.SECRET_KEY), {
                                     httpOnly: true
                                 })
-                                .json({ msg: "successfully created user"});
+                                .json({ msg: "successfully created user" });
                         })
                         .catch(err => res.json(err));
                 } else {
@@ -29,27 +29,28 @@ class UserController {
             .catch(err => console.log("err!", err))
     }
     login = (req, res) => {
+        console.log("email:",req.body.email);
         User.findOne({ email: req.body.email })
             .then(user => {
-                if (user == null) {
+                if (user === null) {
                     res.json({ msg: "invalid login credentials" })
                 } else {
                     bcrypt.compare(req.body.password, user.password)
                         .then(checkPassword => {
                             if (checkPassword) {
-                                // delete user[]
                                 res
                                     .cookie("userToken", jwt.sign({
-                                        id: user._id,
+                                        _id: user._id,
                                         firstName: user.firstName,
                                         lastName: user.lastName
                                     }, process.env.SECRET_KEY), { httpOnly: true })
+                                    .json({ msg: 'successfully logged in' })
                             } else {
                                 res.json({ msg: "invalid login credentials" })
                             }
                         })
                         .catch(err => {
-                            res.json({ msg: "invalid login credentials" })
+                            res.json(err)
                             console.log(err);
                         })
                 }
@@ -58,19 +59,25 @@ class UserController {
                 res.json({ msg: err })
             })
     }
-    getLoggedUser = (req, res)=>{
-        const decodedJWT = jwt.decode(req.cookies.userToken,{complete:true})
-        User.findOne({_id:decodedJWT.payload.id})
-            .then(user=>{
-                res.json({results: user})
+
+    logout = (req, res) => {
+        res.clearCookie('userToken');
+        res.sendStatus(200);
+    }
+    getLoggedUser = (req, res) => {
+        const decodedJWT = jwt.decode(req.cookies.userToken, { complete: true })
+        // console.log("cookie user is:", decodedJWT.payload._id);
+        User.findOne({ _id: decodedJWT.payload._id })
+            .then(user => {
+                res.json({ results: user })
             })
-            .catch(err=>{
+            .catch(err => {
                 res.json(err)
             })
     }
     searchAllUsers = (req, res) => {
         // filter to return only necessary info such as id firstName lastName
-        User.find({},{"_id":1, "firstName":1, "lastName":1})
+        User.find({}, { "_id": 1, "firstName": 1, "lastName": 1 })
             .then(allUsers => {
                 res.json(allUsers)
             })
@@ -111,7 +118,7 @@ class UserController {
         // res.json({ 'err': error })
         res.json({ 'msg': `${req.body.searchVal}` })
     }
-    getAllUsers = (req, res) =>{
+    getAllUsers = (req, res) => {
         User.find()
     }
 }

@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from '../../styles/regLogin_page.module.css'
-import deletethisImg from '../../imgsOnlyForDev/black-screen.jpeg'
 
-const Register = ({formSubmission}) => {
-    const redirect = useNavigate();
+const Register = ({formSubmission, styles}) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
