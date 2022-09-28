@@ -25,7 +25,7 @@
 .colOne {
     flex: 1;
     padding: .7em;
-    /* background-color:darkslategrey; */
+    background-color: aqua;
 }
 
 .colTwo {

@@ -19,7 +19,7 @@ class UserController {
                                 }, process.env.SECRET_KEY), {
                                     httpOnly: true
                                 })
-                                .json({ msg: "successfully created user" });
+                                .json({ msg: "successfully created user", 'user':user });
                         })
                         .catch(err => res.json(err));
                 } else {
@@ -44,7 +44,7 @@ class UserController {
                                         firstName: user.firstName,
                                         lastName: user.lastName
                                     }, process.env.SECRET_KEY), { httpOnly: true })
-                                    .json({ msg: 'successfully logged in' })
+                                    .json({ msg: 'successfully logged in', 'user':user })
                             } else {
                                 res.json({ msg: "invalid login credentials" })
                             }
@@ -87,35 +87,35 @@ class UserController {
     }
     searchUsers = async (req, res) => {
         console.log(req.body.searchVal);
-        // let results = await User.aggregate([
-        //     {
-        //         $search: {
-        //             index: "autocomplete",
-        //             autocomplete: {
-        //                 query: req.body.searchVal,
-        //                 path: "firstName",
-        //                 fuzzy: {
-        //                     maxEdits: 1,
-        //                 },
-        //                 tokenOrder: "sequential",
-        //             },
-        //         },
-        //     },
-        //     {
-        //         $project: {
-        //             firstName: 1,
-        //         },
-        //     },
-        //     {
-        //         $limit: 20,
-        //     },
-        // ]);
-        // if (results) {
-        //     return res.json({ 'msg': 'hi' })
-        // } else {
-        //     res.json([]);
-        // }
-        // res.json({ 'err': error })
+        let results = await User.aggregate([
+            {
+                $search: {
+                    index: "autocomplete",
+                    autocomplete: {
+                        query: req.body.searchVal,
+                        path: "firstName",
+                        fuzzy: {
+                            maxEdits: 1,
+                        },
+                        tokenOrder: "sequential",
+                    },
+                },
+            },
+            {
+                $project: {
+                    firstName: 1,
+                },
+            },
+            {
+                $limit: 20,
+            },
+        ]);
+        if (results) {
+            return res.json({ 'msg': 'hi' })
+        } else {
+            res.json([]);
+        }
+        res.json({ 'err': error })
         res.json({ 'msg': `${req.body.searchVal}` })
     }
     getAllUsers = (req, res) => {

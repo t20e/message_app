@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styles from '../styles/nav.module.css'
 import deleteTHisImg from '../imgsOnlyForDev/black-screen.jpeg'
 import gearIcon from '../imgsOnlyForDev/cogwheel.svg'
 import activeUsersIcon from '../imgsOnlyForDev/userPfp-01.svg'
 import usersInChatIcon from '../imgsOnlyForDev/multipleUsers.svg'
 import arrowIcon from '../imgsOnlyForDev/arrows.svg'
+import {UserContext} from '../context/UserContext'
 
-const Nav = ({loggedUser}) => {
+const Nav = () => {
+    const { loggedUser, setLoggedUser } = useContext(UserContext);
+
     const [showUsers, setShowUsers] = useState('')
     const [rotateArr, setRotateArr] = useState('')
     const showUsersInChat = () => {

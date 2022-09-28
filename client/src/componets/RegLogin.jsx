@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/regLogin_page.module.css'
 import axios from 'axios';
 import groupPeopleONlyDev from '../imgsOnlyForDev/groupPeople.jpg'
 import Login from './RegLogin/Login';
 import Register from './RegLogin/Register';
+import {UserContext} from '../context/UserContext'
 
 const RegLogin = () => {
+    const { loggedUser, setLoggedUser } = useContext(UserContext);
     const redirect = useNavigate();
     // change form
     const [whichForm, setWhichForm] = useState('signUp')
@@ -19,8 +21,9 @@ const RegLogin = () => {
                 if (res.data.errors) {
                     // setFormErrors(res.data.errors)
                 } else {
-                    console.log('success');
+                    console.log('successfully log or reg!');
                     localStorage.setItem('userToken', res.userToken);
+                    setLoggedUser(res.data.user)
                     redirect("/")
                 }
             })
@@ -40,18 +43,18 @@ const RegLogin = () => {
     return (
         <div id={styles.regFormCon}>
             <section className={styles.formContainer}>
-                    <div className={styles.btn1div}>
-                        <label htmlFor="">
-                            <input type="checkbox" name="" onChange={toggleBtn} id={styles.toggleCheckBox} />
-                            <p className={styles.toggleP}>
-                                <span className={`${styles.pSpan} ${whichForm == 'signUp' ? styles.p : ''}`}>
-                                    Sign Up
-                                </span>
-                                <span className={`${styles.pSpan} ${whichForm == 'login' ? styles.p : ''}`}>
-                                    Log in
-                                </span>
-                            </p>
-                        </label>
+                <div className={styles.btn1div}>
+                    <label htmlFor="">
+                        <input type="checkbox" name="" onChange={toggleBtn} id={styles.toggleCheckBox} />
+                        <p className={styles.toggleP}>
+                            <span className={`${styles.pSpan} ${whichForm == 'signUp' ? styles.p : ''}`}>
+                                Sign Up
+                            </span>
+                            <span className={`${styles.pSpan} ${whichForm == 'login' ? styles.p : ''}`}>
+                                Log in
+                            </span>
+                        </p>
+                    </label>
                 </div>
                 <div className={styles.forms}>
                     {

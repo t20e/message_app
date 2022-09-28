@@ -22,18 +22,19 @@ class ChatController {
             })
 
     }
-    createMsg = (req, res) => {
-        console.log(req.body);
-        Chat.findOneAndUpdate({ _id: req.body.chatId },
-            { $push: { messages: req.body.message } },
+    createMsg = (data) => {
+        // console.log(data);
+        Chat.findOneAndUpdate({ _id: data.roomId },
+            { $push: { messages: data.body } },
             { new: true, runValidators: true }
         )
             .then(updatedChat => {
-                console.log(updatedChat);
-                res.json({ 'chat': updatedChat })
+                // console.log(updatedChat);
+                // res.json({ 'chat': updatedChat })
             })
             .catch(err => {
-                res.json({ msg: 'error adding message' })
+                return {'err': err}
+                // res.json({ msg: 'error adding message' })
             })
     }
 }

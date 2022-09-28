@@ -1,21 +1,30 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from '../styles/searchBar_comp.module.css'
 import searchIcon from '../imgsOnlyForDev/search_icon.svg'
-import { pullData } from '../services/apiConnect'
 import deletethisImg from '../imgsOnlyForDev/black-screen.jpeg'
 import axios from 'axios'
+import {UserContext} from '../context/UserContext'
 
 const SearchBar = ({ useCheckClickOutside, openChat }) => {
     const [searchedUsers, setSearchedUsers] = useState([]);
     const [defaultSearchUsers, setDefaultSearchUsers] = useState([]);
     const [searchVal, setSearchVal] = useState('')
     const [isOpen, setIsOpen] = useState(false)
+    const {loggedUser, setLoggedUser} = useContext(UserContext);
 
     useEffect(() => {
         axios.get('http://localhost:8000/api/searchAllUsers')
             .then(res => {
-                console.log("response from server: ", res.data);
-                setDefaultSearchUsers(res.data)
+                let data = res.data
+                console.log("response from server: ", data);
+                // for (let i = 0; i < data.length; i++) {
+                //     console.log('i', data[i]._id, loggedUser._id)
+                //     if (data[i]._id === loggedUser._id) {
+                //         data = data.splice(i, 1)
+                //         console.log("deleted");
+                //     }
+                // }
+                setDefaultSearchUsers(data)
             })
             .catch(err => {
                 console.log("err getting  users ", err);
@@ -31,14 +40,14 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
     }
     const searchPeople = (e) => {
         e.preventDefault()
-        if(searchVal !== ''){
+        if (searchVal !== '') {
             axios.get('http://localhost:8000/api/searchUsers', searchVal)
-            .then(res =>{
-                console.log(res.data);
-            })
-            .catch(err=>{
-                console.log(err);
-            })
+                .then(res => {
+                    console.log(res.data);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
         }
 
 
@@ -54,7 +63,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
         //     console.log(firstName, lastName);
         // }
 
-        
+
     }
     // close when clicked outside
     let domNode = useCheckClickOutside(() => {
@@ -73,7 +82,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
                     {
                         defaultSearchUsers.map((user, i) => {
                             return (
-                                <div key={i} className={styles.repeatedDiv} onClick={(e) =>{openChat([user._id])}}>
+                                <div key={i} className={styles.repeatedDiv} onClick={(e) => { openChat([user._id]) }}>
                                     <div className={styles.col1}>
                                         <img src={deletethisImg} alt="search users pfps" />
                                     </div>

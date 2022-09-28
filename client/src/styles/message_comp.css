@@ -1,6 +1,4 @@
 /* IMPORTANT!!! */
-/* anything with _n refers to the message notifitcation panel */
-/* any tag with _c ending refers to the chat_panel */
 /* any tag with _r ending refers to the right panel */
 /* start of message notification panel */
 
@@ -8,89 +6,14 @@
     font-size: .9em;
     color: red;
 }
-.mainCont_n {
-    background-color:darkslategrey;
-    /* max-height: 34.7em; */
-    width: 100%;
-    height: 90%;
-    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
-    backdrop-filter: blur(2em);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
-    border-radius: .8em;
-    /* padding: .7em; */
-    padding: .8em .09em 0em .2em;
-}
-
-.subMain{
-    /* background-color: red; */
-    height: 95%;
-    /* margin-top: 2em; */
-    /* max-width: 18em; */
-    overflow-y: auto;
-    /* box-shadow: 0em 8em 32 em 0em rgba(0, 0, 0, 0.37) */
-}
-
-.msgNotification{
-    display: flex;
-    justify-content: space-between;
-    cursor: pointer;
-}
-
-.left_n {
-    margin-top: .6em;
-    width: 30%;
-    display: flex;
-    align-items: center;
-}
-
-.usersPfp_n {
-    height: 2.5em;
-    width: 2.5em;
-    border-radius: 20em;
-    display: inline-block;
-    margin-left: .3em;
-}
-
-.newNotification_n {
-    opacity: 0;
-    height: .4em;
-    width: .4em;
-    display: block;
-    border-radius: 20em;
-    display: inline-block;
-    background-color: blue;
-}
-
-.newNotification_n.show {
-    opacity: 1;
-}
-
-.right_n {
-    width: 65%;
-    margin-top: -.3em;
-}
-
-.right_n h4 {
-    text-align: start;
-    margin-left: -1.2em;
-    color: white;
-}
-
-.right_n p {
-    color: white;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 /* message panel css here */
 /* any tag with _c ending refers to the chat_panel */
 /* all items under are chat panel css  */
-.mainCont_c_r {
+.mainCont {
     height: 100%;
     width: 100%;
-    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     backdrop-filter: blur(2em);
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     border-radius: .8em;
@@ -102,6 +25,7 @@
     height: 90%;
     padding-top: .3em;
 }
+
 /* to show who user and other msg sender is user is right and other is left */
 .single_messageDiv--left,
 .single_messageDiv--right {
@@ -110,7 +34,7 @@
     height: auto;
     width: auto;
     max-width: 50em;
-    margin: .1em 0em 0em .7em;
+    margin: .4em 0em 0em .7em;
 }
 
 .single_messageDiv--left {
@@ -122,7 +46,8 @@
     margin-right: .4em;
     color: white;
 }
-.single_messageDiv--right > div{
+
+.single_messageDiv--right>div {
     background-color: deepskyblue;
 }
 
@@ -150,40 +75,63 @@
 
 .dateOf_message {
     font-size: .5em;
-    color: silver;
+    color: #E6EFEC;
     margin: .2em 2.5em 0em 2.5em;
 }
 
-.composeMsg_div {
+
+#sendMessage_form {
     height: auto;
     position: relative;
-    top: 1em;
     max-width: 35em;
     min-width: 30em;
     width: 30em;
     margin: 0px auto;
 }
 
-#sendMessage_form {
+
+.composeMsg_cont{
     width: 100%;
+    height: auto;
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: flex-end;
+    padding: .5em;
+}
+.emojiPicker_cont{
+    background-color: red;
 }
 
-.formCont_one,
-.formCont_three {
+#compose__msg {
+    border-radius: 1.2em;
+    padding: .8em .5em;
+    resize: none;
+    border: none;
+    font-size: .9em;
+    position: absolute;
+    overflow: hidden;
+    height: auto;
+    min-height: 2em;
+    width: 20em;
+    background-color:white;
+    left: 6em;
+    bottom: -.1em;
+    outline: none;
     display: flex;
-    align-items: center;
+    flex-flow: column-reverse;
 }
 
-.formCont_one {
+.composeMsg_actionCont{
+    height: 2em;
+    width: 2em;
     cursor: pointer;
 }
-.emoji_picker{
+
+.emoji_picker {
     display: none;
 }
-.emoji_picker.open{
+
+.emoji_picker.open {
     display: inline-block;
     position: absolute;
     z-index: 1000;
@@ -192,31 +140,16 @@
     box-shadow: none;
     border: none;
 }
-.formCont_two {
-}
-
-.textarea {
-    border-radius: 1.2em;
-    padding: .8em .5em ;
-    resize: none;
-    border: none;
-    font-size: .9em;
-    overflow: hidden;
-    height: auto;
-    width: auto;
-    position: absolute;
-    left: 6em;
-    bottom: -.1em;
-    outline: none;
-}
 
 
 #btn {
     cursor: pointer;
-    height: 1.2em;
-    width: 1.2em;
+    height: 2em;
+    width: 2em;
     border: none;
-    background-image: url('../imgsOnlyForDev/sent.svg');
+    /* border-radius: 20em; */
+    background-image: url('../imgsOnlyForDev/sent.png');
+    background-size: cover;
     background-repeat: no-repeat;
     padding: 0;
     margin: 0;
