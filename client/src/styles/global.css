@@ -1,9 +1,10 @@
 @charset "UTF-8";
 
-@font-face{
+@font-face {
     font-family: satoshi-light;
     src: url(Satoshi-Light.otf);
 }
+
 :root {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
@@ -26,6 +27,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 ::placeholder {
     color: #AFAAB9;
 }
@@ -37,18 +39,19 @@ html {
     scrollbar-color: silver #f1f1f1; */
     /* scrollbar-width: thin; */
     scrollbar-width: none;
-    
+
 }
+
 body {
-    height: 100%;
-    width: 100%;
-    /* background-image: url('../imgsOnlyForDev/gradient_1.svg'); */
-    background-image: url('../imgsOnlyForDev/gradient_2.svg');
-    /* background-image: url('../imgsOnlyForDev/gradient_3.svg'); */
+    height: 100vh;
+    width: 100vw;
+    background-image: url('../imgsOnlyForDev/gradient_1.svg');
+    /* background-image: url('../imgsOnlyForDev/gradient_2.svg'); */
     /* background-color: #13070C; */
     background-repeat: no-repeat;
     background-size:cover;
 }
+
 /* width */
 ::-webkit-scrollbar {
     width: .2em;
@@ -68,8 +71,8 @@ body {
     border-radius: 20em;
 }
 
-/* Handle on hover */ 
+/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
     width: .4em;
     background: blue;
-} 
+}

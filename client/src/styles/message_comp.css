@@ -148,7 +148,7 @@
     width: 2em;
     border: none;
     /* border-radius: 20em; */
-    background-image: url('../imgsOnlyForDev/sent.png');
+    background-image: url('../imgsOnlyForDev/comment-arrow-up.svg');
     background-size: cover;
     background-repeat: no-repeat;
     padding: 0;

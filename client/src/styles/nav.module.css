@@ -5,6 +5,7 @@
     width: 100%;
     display: flex;
     flex-direction: row;
+    padding-top: .5em;
 }
 
 .profileActions {
@@ -28,9 +29,14 @@
     cursor: pointer;
 }
 
+.gear:hover {
+    transform: rotate(360deg);
+    transition: all 1.8s ease-in-out 0s;
+}
+
 .otherIcons>img {
-    height: 1.5em;
-    width: 1.5em;
+    height: 1.6em;
+    width: 1.6em;
     margin-left: 2em;
 }
 
@@ -54,21 +60,16 @@
     width: 1.7em;
 }
 
-.showUserInChatDiv {
-    background-color: yellow;
-}
-
-.showUserInChatDiv.show {
-    border: .1em black solid;
-    background-color: white;
-    width: 10rem;
-    height: auto;
-}
-
-.showUsersInchatArr {
+.usersInChatDiv {
     margin-left: .5em;
-    height: 1.2em;
-    width: 1.2em;
+    width: auto;
+    position: relative;
+}
+
+.usersInChatDiv.show {
+    background-color: white;
+    min-width: 10rem;
+    border-top-right-radius: .8em;
 }
 
 @keyframes rotateArr {
@@ -82,51 +83,59 @@
 
 }
 
+.arrBtn {
+    height: 1.2em;
+    width: 1.2em;
+}
+
 .rotateArr {
     animation: rotateArr .5s alternate;
     animation-fill-mode: forwards;
     /* filter: invert(100%) sepia(100%) saturate(0%) brightness(1000%); */
 }
 
-.usersInChat {
+.userDiv {
     display: none;
 }
-.usersInChat.show{
-    border-radius: 0 0 .8em .8em;
+
+.userDiv.show {
     background-color: white;
-    position: relative;
-    width: 10rem;
-    top: 2.3em;
-    left: -12em;
-    z-index: 1000;
+    min-width: 10rem;
+    padding: .2em .5em;
     height: auto;
-    flex-direction: column;
+    width: 10rem;
     display: block;
-    margin-left: 2em;
+    position: absolute;
+    z-index: 10000;
+    border-radius: 0 0 .8em .8em;
 }
 
 .repeatUser {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     margin-top: .2em;
+
 }
 
 .repeatUser>img {
     height: 1.5em;
     width: 1.5em;
-    border-radius: 50em;
+    border-radius: 5em;
     margin: 0 .5em 0 1em;
 }
-
+.repeatUser > p{
+    font-style: italic;
+    text-align: left;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 50%;
+    text-overflow: ellipsis;
+}
 .notActive {
-    color: transparent !important;
+    color: grey;
 }
 
-.usersInChat>pre {
-    color: var(--primaryColor);
-}
-
-.emptySpace {
-    flex: 1;
-    height: 100%;
+.active {
+    color: blue;
 }

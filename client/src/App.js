@@ -1,5 +1,6 @@
 import {
     BrowserRouter,
+    useNavigate,
     Route,
     Link,
     Routes
@@ -10,11 +11,12 @@ import { socket, SocketContext } from "./context/SocketContext";
 import HomePage from "./componets/HomePage";
 import RegLogin from "./componets/RegLogin";
 
-
 function App() {
-    const [loggedUser, setLoggedUser] = useState('hello from context')
+    const [loggedUser, setLoggedUser] = useState(null)
     // this will change the value only when the loggesUser, or SetLoggedUser is changed
     const userValue = useMemo(() => ({ loggedUser, setLoggedUser }), [loggedUser, setLoggedUser])
+
+
     return (
         <BrowserRouter>
             <div id="application">

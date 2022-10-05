@@ -1,28 +1,16 @@
-
-/* .mainCont {
+.mainCont {
     height: 100%;
     width: 100%;
+}
+
+.subMain {
+    padding: .8em .09em 0em 0em;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     backdrop-filter: blur(2em);
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     border-radius: .8em;
-    padding: .8em .09em 0em 0em;
-} */
-.mainCont {
-    background-color:darkslategrey;
-    /* max-height: 34.7em; */
-    width: 100%;
-    height: 90%;
-    background: linear-gradient(135deg, rgba(255,255,255, 0.1), rgba(255,255,255,0));
-    backdrop-filter: blur(2em);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
-    border-radius: .8em;
-    /* padding: .7em; */
-    padding: .8em .09em 0em .2em;
-}
-.subMain {
     /* background-color: red; */
-    height: 95%;
+    height: 90%;
     /* margin-top: 2em; */
     /* max-width: 18em; */
     overflow-y: auto;
@@ -34,7 +22,6 @@
     justify-content: space-between;
     cursor: pointer;
 }
-
 
 .left {
     margin-top: .6em;
@@ -77,9 +64,11 @@
 }
 
 .right p {
+    font-style: italic;
     color: white;
-    text-align: center;
+    text-align: left;
     overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
+    width: 50%;
+    text-overflow: ellipsis;
 }

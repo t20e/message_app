@@ -5,7 +5,7 @@ import axios from 'axios';
 import groupPeopleONlyDev from '../imgsOnlyForDev/groupPeople.jpg'
 import Login from './RegLogin/Login';
 import Register from './RegLogin/Register';
-import {UserContext} from '../context/UserContext'
+import { UserContext } from '../context/UserContext'
 
 const RegLogin = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -21,7 +21,7 @@ const RegLogin = () => {
                 if (res.data.errors) {
                     // setFormErrors(res.data.errors)
                 } else {
-                    console.log('successfully log or reg!');
+                    console.log('successfully log or reg!', res.userToken);
                     localStorage.setItem('userToken', res.userToken);
                     setLoggedUser(res.data.user)
                     redirect("/")

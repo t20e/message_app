@@ -6,32 +6,29 @@ import '../styles/global.css'
 import ChatPanel from './ChatPanel';
 import MsgNotification from './MsgNotification';
 import Nav from './Nav';
-import RightPanel from './RightPanel';
 import SearchBar from './SearchBar';
 import {UserContext} from '../context/UserContext'
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    // const [loggedUser, setLoggedUser] = useState({});
     const [usersInChat, setUsersInChat] = useState(false)
     const redirect = useNavigate()
 
     useEffect(() => {
-        if (loggedUser !== {} && localStorage.getItem('userToken')) {
+        if ( loggedUser === null) {
+            // console.log(loggedUser)
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
-                    console.log('logged in user', res.data);
+                    // console.log('logged in user', res.data);
                     res.data.results === null ?
-                        redirect('regLogin') :
+                        redirect('/regLogin') :
                         setLoggedUser(res.data.results)
                 })
                 .catch(err => {
                     console.log('err getting logged user');
                     redirect('/regLogin')
                 })
-        } else {
-            redirect('/regLogin')
-        }
+        } 
     }, []);
     const openChat = (users) => {
         if (users[0] === loggedUser._id) {
@@ -40,7 +37,7 @@ const HomePage = () => {
             users.push(loggedUser._id)
             setUsersInChat({ 'members': users })
         }
-        console.log(users)
+        // console.log(users)
     }
     const useCheckClickOutside = (handler) => {
         let domRef = useRef()
@@ -68,16 +65,15 @@ const HomePage = () => {
         date = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
         return date
     }
-
     return (
         <div id='mainPageDiv'>
             <div className='navBar'>
-                <Nav />
+                <Nav usersInChatProp={usersInChat}/>
             </div>
             <div className='underNavCont'>
                 <div className='colOne'>
                     <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                    <MsgNotification />
+                    <MsgNotification openChat={openChat}/>
                 </div>
                 <div className='colTwo'>
                     {usersInChat === false
@@ -86,9 +82,6 @@ const HomePage = () => {
                         :
                         <ChatPanel usersInChatProp={usersInChat} getCurrTime={getCurrTime} />
                     }
-                </div>
-                <div className='colThree'>
-                    <RightPanel />
                 </div>
             </div>
         </div>

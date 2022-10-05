@@ -4,7 +4,7 @@ const { login } = require("./user.controller");
 class ChatController {
     getChat = (req, res) => {
         Chat.find({ members: { $all: req.body.members } })
-            // the $all will get a document by the array but it knows the array inst ordered so it will work if the index are different
+            // the $all will get a document by an array but it knows the array isn’t ordered so it will find it by unordered array
             .then(chat => {
                 if (chat[0]['_id']) {
                     res.json({ 'msg': 'found chat', chat: chat[0] })
@@ -33,8 +33,19 @@ class ChatController {
                 // res.json({ 'chat': updatedChat })
             })
             .catch(err => {
-                return {'err': err}
+                return { 'err': err }
                 // res.json({ msg: 'error adding message' })
+            })
+    }
+
+    getAllChatsForUser = (req, res) => {
+        // console.log(req.body)
+        Chat.find({ members: { $all: [req.body._id] } })
+            .then(allChats => {
+                res.json({ 'results': allChats })
+            })
+            .catch(err => {
+                res.json({ 'err': err });
             })
     }
 }

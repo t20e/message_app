@@ -1,6 +1,8 @@
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+const ObjectId = require('mongodb').ObjectId;
+
 class UserController {
     register = (req, res) => {
         User.find({ email: req.body.email })
@@ -19,7 +21,7 @@ class UserController {
                                 }, process.env.SECRET_KEY), {
                                     httpOnly: true
                                 })
-                                .json({ msg: "successfully created user", 'user':user });
+                                .json({ msg: "successfully created user", 'user': user });
                         })
                         .catch(err => res.json(err));
                 } else {
@@ -29,7 +31,7 @@ class UserController {
             .catch(err => console.log("err!", err))
     }
     login = (req, res) => {
-        console.log("email:",req.body.email);
+        console.log("email:", req.body.email);
         User.findOne({ email: req.body.email })
             .then(user => {
                 if (user === null) {
@@ -44,7 +46,7 @@ class UserController {
                                         firstName: user.firstName,
                                         lastName: user.lastName
                                     }, process.env.SECRET_KEY), { httpOnly: true })
-                                    .json({ msg: 'successfully logged in', 'user':user })
+                                    .json({ msg: 'successfully logged in', 'user': user })
                             } else {
                                 res.json({ msg: "invalid login credentials" })
                             }
@@ -120,6 +122,21 @@ class UserController {
     }
     getAllUsers = (req, res) => {
         User.find()
+    }
+    getUsersInChat = (req, res) => {
+        console.log(req.body)
+        User.find({ "id": { "$in": [req.body] } }, { firstName: 1, lastName: 1, _id: 1 })
+            .then((users) => {
+                // console.log(users)
+                if (users.length > 0) {
+                    res.json(users);
+                } else {
+                    res.json({ 'err': 'could not find users' })
+                }
+            })
+            .catch((error) => {
+                res.json({ 'err': error })
+            })
     }
 }
 module.exports = new UserController();

@@ -9,4 +9,5 @@ module.exports = (app)=>{
     app.get("/api/searchUsers", UserController.searchUsers)
     app.get("/api/user/logUser", UserController.getLoggedUser)
     app.get("/api/user/logout", UserController.logout)
+    app.post("/api/usersInChat", UserController.getUsersInChat)
 }

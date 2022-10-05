@@ -3,10 +3,9 @@
 
 #mainPageDiv {
     margin: 0px auto;
-    width: 90vw;
+    width: 70vw;
     height: 100vh;
     max-height: 100rem;
-    width: 100vw;
     /* background-color: #13070C; */
 }
 .navBar{
@@ -24,8 +23,8 @@
 
 .colOne {
     flex: 1;
+    max-width: 35%;
     padding: .7em;
-    background-color: aqua;
 }
 
 .colTwo {
@@ -39,10 +38,4 @@
     justify-content: center;
     color: white;
     text-decoration: underline;
-}
-
-.colThree {
-    flex: 1;
-    /* background-color: darkslategray; */
-    padding: .7em;
 }

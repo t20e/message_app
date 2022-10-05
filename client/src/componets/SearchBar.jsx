@@ -16,7 +16,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
         axios.get('http://localhost:8000/api/searchAllUsers')
             .then(res => {
                 let data = res.data
-                console.log("response from server: ", data);
+                // console.log("response from server: ", data);
                 // for (let i = 0; i < data.length; i++) {
                 //     console.log('i', data[i]._id, loggedUser._id)
                 //     if (data[i]._id === loggedUser._id) {
@@ -82,6 +82,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
                     {
                         defaultSearchUsers.map((user, i) => {
                             return (
+                                //TODO make it an UL list
                                 <div key={i} className={styles.repeatedDiv} onClick={(e) => { openChat([user._id]) }}>
                                     <div className={styles.col1}>
                                         <img src={deletethisImg} alt="search users pfps" />

@@ -54,6 +54,10 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
 
     const sendMsg = (e) => {
         e.preventDefault();
+        if(msg.body === ''){
+            alert('Please enter a message');
+            return
+        }
         let date = getCurrTime()
         msg.timeStamp = date;
         let data = { "body": msg, "roomId": currChat._id }
@@ -66,8 +70,8 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     }
     const growTextarea = (e) => {
         // TODO it wont shrink after sending text
-        e.style.height = 'inherit';
-        e.style.height = `${e.scrollHeight}px`
+        // e.style.height = 'inherit';
+        // e.style.height = `${e.scrollHeight}px`
     }
     const emojiDivController = () => {
         openDiv === 'open' ? setOpenDiv(null) : setOpenDiv('open')
@@ -115,7 +119,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         return str
     }
 
-    console.log('reloading comp');
+    // console.log('reloading comp');
 
     const getMsgTime = (time) => {
         let { day, hour, min, month, year } = time
