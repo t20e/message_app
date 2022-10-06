@@ -8,6 +8,7 @@ import MsgNotification from './MsgNotification';
 import Nav from './Nav';
 import SearchBar from './SearchBar';
 import {UserContext} from '../context/UserContext'
+import UserSettings from './UserSettings';
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -84,6 +85,7 @@ const HomePage = () => {
                     }
                 </div>
             </div>
+            <UserSettings/>
         </div>
     )
 }

@@ -80,18 +80,18 @@
     100% {
         transform: rotate(90deg);
     }
-
 }
 
 .arrBtn {
-    height: 1.2em;
-    width: 1.2em;
+    height: 1em;
+    width: 1em;
+    filter: invert(true);
+    margin-left: .3em;
 }
 
 .rotateArr {
     animation: rotateArr .5s alternate;
     animation-fill-mode: forwards;
-    /* filter: invert(100%) sepia(100%) saturate(0%) brightness(1000%); */
 }
 
 .userDiv {
@@ -124,7 +124,8 @@
     border-radius: 5em;
     margin: 0 .5em 0 1em;
 }
-.repeatUser > p{
+
+.repeatUser>p {
     font-style: italic;
     text-align: left;
     overflow: hidden;
@@ -132,6 +133,7 @@
     width: 50%;
     text-overflow: ellipsis;
 }
+
 .notActive {
     color: grey;
 }

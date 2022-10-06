@@ -6,7 +6,6 @@
 }
 
 :root {
-    font-family: Arial, Helvetica, sans-serif;
     font-size: 16px;
     --bkGColor: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     --bkDropFilter: blur(1em);
@@ -26,6 +25,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: satoshi-light;
 }
 
 ::placeholder {

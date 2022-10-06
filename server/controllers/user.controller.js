@@ -125,7 +125,10 @@ class UserController {
     }
     getUsersInChat = (req, res) => {
         console.log(req.body)
-        User.find({ "id": { "$in": [req.body] } }, { firstName: 1, lastName: 1, _id: 1 })
+        // User.find({ "_id": { "$in": [req.body] } }, { firstName: 1, lastName: 1, _id: 1 })
+        // U CAN NOT PASS AN ARRAY OF IDS IT HAS TO BE AN OBJECT OR OTHER
+        User.find({"_id": req.body})
+        // User.find({ "_id": {"$in" : ObjectId("6333fb549d7877dd9440233c")} }, { firstName: 1, lastName: 1 })
             .then((users) => {
                 // console.log(users)
                 if (users.length > 0) {

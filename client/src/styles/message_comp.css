@@ -22,6 +22,7 @@
 
 .messages_div {
     overflow-y: auto;
+    overflow-x: hidden;
     height: 90%;
     padding-top: .3em;
 }
@@ -33,7 +34,7 @@
     flex-direction: column;
     height: auto;
     width: auto;
-    max-width: 50em;
+    /* max-width: 50em;  */
     margin: .4em 0em 0em .7em;
 }
 
@@ -52,21 +53,17 @@
 }
 
 .message {
+    overflow-wrap: break-word !important;
     height: auto;
     width: auto;
     max-width: 14.5em;
     background-color: white;
-    /* change the background color as the info 
-    from db is being rendered
-     at style tag to the html 
-    background-color: deepsky blue or white for the right messages
-     */
     border-radius: 1.2em;
     padding: .5em;
-    display: flex;
+    /* display: flex;
     justify-content: center;
-    align-items: center;
-    box-sizing: content-box;
+    align-items: center; */
+    /* box-sizing: content-box; */
 }
 
 .message>p {
@@ -103,6 +100,7 @@
 }
 
 #compose__msg {
+    resize: initial !important;
     border-radius: 1.2em;
     padding: .8em .5em;
     resize: none;

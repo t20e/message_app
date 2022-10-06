@@ -24,17 +24,19 @@ const Nav = ({ usersInChatProp }) => {
     }
     useEffect(() => {
         if (usersInChatProp !== false) {
-            console.log(usersInChatProp.members)
-            axios.post("http://localhost:8000/api/usersInChat", usersInChatProp.members)
+            // console.log(usersInChatProp)
+            let obj = []
+            usersInChatProp.members.forEach(user => {
+                obj.push({ "_id": user });
+            })
+            axios.post("http://localhost:8000/api/usersInChat", obj)
                 .then((res) => {
                     console.log(res.data, 'nav')
                     setUsersInChat(res.data)
-                    console.log(usersInChat)
                     setRotateArr()
                 })
                 .catch((error) => console.log(error))
         }
-
     }, [usersInChatProp]);
 
     return (

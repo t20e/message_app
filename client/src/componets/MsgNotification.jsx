@@ -33,9 +33,13 @@ const MsgNotification = ({ openChat }) => {
                             }
                             chatData.push(holder)
                         }
-                        // console.log(chatData)
                         // console.log(users)
-                        axios.post('http://localhost:8000/api/usersInChat', users)
+                        // U CAN NOT PASS AN ARRAY OF IDS IT HAS TO BE AN OBJECT OR OTHER
+                        let obj = []
+                        users.forEach(user => {
+                            obj.push({ "_id": user })
+                        })
+                        axios.post('http://localhost:8000/api/usersInChat', obj)
                             .then((res) => {
                                 // console.log(res.data, 'users')
                                 res.data.forEach(user => {

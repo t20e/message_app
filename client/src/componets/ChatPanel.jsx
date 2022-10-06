@@ -19,6 +19,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     })
     const [formErrors, setFormErrors] = useState({})
     const [openDiv, setOpenDiv] = useState(null)
+    const scrollBarDiv = useRef(null)
     useEffect(() => {
         // first check db with users in chat for a existing chat, if it doesnt create a new one
         if (usersInChatProp !== false) {
@@ -49,7 +50,10 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         })
         return () => socket.disconnect(true);
     }, [socket]);
-
+    useEffect(() => {
+        // console.log(scrollBarDiv.current.scrollHeight)
+        scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
+    }, [messages]);
 
 
     const sendMsg = (e) => {
@@ -67,11 +71,14 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
             body: '',
             date: ''
         })
+        // e.target.style.height = 'inherit';
+        // e.target.style.height = `auto`; 
+        // e.target.style.minHeight= `2em`; 
     }
     const growTextarea = (e) => {
         // TODO it wont shrink after sending text
-        // e.style.height = 'inherit';
-        // e.style.height = `${e.scrollHeight}px`
+        e.target.style.height = 'inherit';
+        e.target.style.height = `${e.target.scrollHeight}px`; 
     }
     const emojiDivController = () => {
         openDiv === 'open' ? setOpenDiv(null) : setOpenDiv('open')
@@ -149,7 +156,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     }
     return (
         <div className='mainCont'>
-            <div className='messages_div'>
+            <div ref={scrollBarDiv} className='messages_div'>
                 {Array.isArray(messages) ?
                     messages.map((i, index) => {
                         if (i.from === loggedUser._id) {
