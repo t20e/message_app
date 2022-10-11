@@ -7,15 +7,17 @@ import ChatPanel from './ChatPanel';
 import MsgNotification from './MsgNotification';
 import Nav from './Nav';
 import SearchBar from './SearchBar';
-import {UserContext} from '../context/UserContext'
+import { UserContext } from '../context/UserContext'
+import UserSettings from './UserSettings';
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChat, setUsersInChat] = useState(false)
     const redirect = useNavigate()
+    const [userSettingsPopUp, setUserSettingsPopUp] = useState(false)
 
     useEffect(() => {
-        if ( loggedUser === null) {
+        if (loggedUser === null) {
             // console.log(loggedUser)
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
@@ -28,8 +30,12 @@ const HomePage = () => {
                     console.log('err getting logged user');
                     redirect('/regLogin')
                 })
-        } 
+        }
     }, []);
+    const togglePopUpFunc = () => {
+        setUserSettingsPopUp(!userSettingsPopUp);
+    }
+
     const openChat = (users) => {
         if (users[0] === loggedUser._id) {
             alert('you can not send a message to ur self')
@@ -68,12 +74,12 @@ const HomePage = () => {
     return (
         <div id='mainPageDiv'>
             <div className='navBar'>
-                <Nav usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside}/>
+                <Nav togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
             </div>
             <div className='underNavCont'>
                 <div className='colOne'>
                     <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                    <MsgNotification openChat={openChat}/>
+                    <MsgNotification openChat={openChat} />
                 </div>
                 <div className='colTwo'>
                     {usersInChat === false
@@ -84,6 +90,10 @@ const HomePage = () => {
                     }
                 </div>
             </div>
+            {userSettingsPopUp ?
+                <UserSettings useCheckClickOutside={useCheckClickOutside} userSettingsPopUp={userSettingsPopUp} togglePopUpFunc={togglePopUpFunc} />
+                : null
+            }
         </div>
     )
 }

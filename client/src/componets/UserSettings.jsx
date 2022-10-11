@@ -1,46 +1,47 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styles from "../../styles/userSettings.module.css"
+import React, { useState, useContext } from 'react';
+import styles from "../styles/userSettings.module.css"
+import { ThemeContext } from "../context/ThemeContext";
+
 const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) => {
-    const [theme, setTheme] = useState()
-    const [fontFamily, setFontFamily] = useState()
-    const mainCont = useRef(null);
-    const [currBgKImg, setCurrBgKImg] = useState()
+    const { theme, setTheme } = useContext(ThemeContext);
     const [switchClassTheme, setSwitchClassTheme] = useState({
-        "light": undefined,
-        "dark": undefined,
-        "system": undefined,
+        light: undefined,
+        dark: undefined,
+        system: undefined,
     })
     const [switchClassBgk, setSwitchClassBgk] = useState({
         "night_fade": undefined,
         "fluid": undefined,
         "sunny_morning": undefined
     })
-    useEffect(() => {
-        toggle_popUp ?
-            mainCont.current.style.display = 'flex' : mainCont.current.style.display = 'none'
-    }, [toggle_popUp]);
-    const changeThemeSelected = (theme, e) => {
-        setSwitchClassTheme({ [theme]: styles.bg_img })
-        setTheme(theme)
-        // document.body.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), ${document.body.backgroundImage} `
-        console.log(document.body.backgroundImage)
+    const changeThemeSelected = (name, e) => {
+        setSwitchClassTheme({
+            [name]: styles.bg_img
+        })
+        setTheme({
+            ...theme,
+            mode: name
+        })
     };
-    const changeBgk = (bgk, i) => {
-        setSwitchClassBgk({ [bgk]: styles.bg_img })
-        if(theme === "dark"){
-            document.body.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)), url(https://portfolio-avis-s3.s3.amazonaws.com/app/images/${i})`
-        }else if(theme === "light"){
-            document.body.backgroundImage = `url(https://portfolio-avis-s3.s3.amazonaws.com/app/images/${i})`
-        }
-        // document.body.style.backgroundImage = `url(https://portfolio-avis-s3.s3.amazonaws.com/app/images/${i})`;
-        setCurrBgKImg("https://portfolio-avis-s3.s3.amazonaws.com/app/images/${i}")
+
+    const changeBgk = (name, e) => {
+        setSwitchClassBgk({ [name]: styles.bg_img })
+        setTheme({
+            ...theme,
+            bgk_url: e.target.src
+        })
     }
-    // TODO figure out how to call two refs for an element so i can use the useCheckClickOutside
-    // let domNode = useCheckClickOutside(() => {
-    //     togglePopUpFunc()
-    // })
+    const changeFont = (e) => {
+        setTheme({
+            ...theme,
+            fontFamily : e.target.value
+        })
+    }
+    let domNode = useCheckClickOutside(() => {
+        togglePopUpFunc()
+    })
     return (
-        <div ref={mainCont} className={styles.PopUpCont}>
+        <div ref={domNode} className={styles.PopUpCont}>
             <div className={styles.h1_div}>
                 <h2 >Appearance</h2>
             </div>
@@ -73,18 +74,18 @@ const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) =
                 <h4>Background</h4>
                 <p className={styles.p}>select a background image</p>
                 <div className={`${styles.radio__div}`}>
-                    <label htmlFor="1" onClick={changeThemeSelected}>
-                        <img className={`${styles.radio__img} ${switchClassBgk.night_fade}`} onClick={(e) => changeBgk("night_fade", "night_fade.png")} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png" />
+                    <label htmlFor="1">
+                        <img className={`${styles.radio__img} ${switchClassBgk.night_fade}`} onClick={(e) => changeBgk("night_fade", e)} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png" alt='select background color' />
                         <input type="radio" name="bg_img" id='1' />
                         <p>night fade</p>
                     </label>
                     <label htmlFor="2" >
-                        <img className={`${styles.radio__img} ${switchClassBgk.fluid} `} onClick={(e) => changeBgk("fluid", "fluid.jpg")} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/fluid.jpg" />
+                        <img className={`${styles.radio__img} ${switchClassBgk.fluid} `} onClick={(e) => changeBgk("fluid", e)} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/fluid.jpg" alt='select background color' />
                         <input type="radio" name="bg_img" id='2' />
                         <p>fluid</p>
                     </label>
                     <label htmlFor="3" >
-                        <img className={`${styles.radio__img} ${switchClassBgk.sunny_morning}`} onClick={(e) => changeBgk("sunny_morning", "sunny_mornig.jpg")} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/sunny_mornig.jpg" />
+                        <img className={`${styles.radio__img} ${switchClassBgk.sunny_morning}`} onClick={(e) => changeBgk("sunny_morning", e)} src="https://portfolio-avis-s3.s3.amazonaws.com/app/images/sunny_mornig.jpg" alt='select background color' />
                         <input type="radio" name="bg_img" id='3' />
                         <p>sunny morning</p>
                     </label>
@@ -97,11 +98,11 @@ const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) =
                     <p className={styles.p}>switch font family</p>
                 </div>
                 <div>
-                    <select name="font" id={styles.font_select}>
-                        <option value="satoshi">satoshi</option>
-                        <option value="Ariel">Ariel</option>
-                        <option value="peru">peru</option>
-                        <option value="demi">demi</option>
+                    <select name="font" onChange={(e) => changeFont(e)} id={styles.font_select}>
+                        <option value="Satoshi">Satoshi</option>
+                        <option value="Arial, Helvetica, sans-serif">Arial</option>
+                        <option value="Verdana, Geneva, Tahoma, sans-serif">Tahoma</option>
+                        <option value="'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">Gill Sans</option>
                     </select>
                 </div>
             </div>

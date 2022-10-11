@@ -7,14 +7,12 @@ import usersInChatIcon from '../imgsOnlyForDev/group_of_users.png'
 import arrowIcon from '../imgsOnlyForDev/arrows.svg'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios';
-import UserSettings from './nav/UserSettings';
 
-const Nav = ({ usersInChatProp, useCheckClickOutside }) => {
+const Nav = ({ usersInChatProp, togglePopUpFunc }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChat, setUsersInChat] = useState([])
     const [showUsersDiv, setShowUsersDiv] = useState('')
     const [rotateArr, setRotateArr] = useState('')
-    const [toggle_popUp, setToggle_popUp] = useState(false)
 
 
     const showUsersInChat = () => {
@@ -43,9 +41,6 @@ const Nav = ({ usersInChatProp, useCheckClickOutside }) => {
         }
     }, [usersInChatProp]);
 
-    const togglePopUpFunc = () => {
-        setToggle_popUp(!toggle_popUp)
-    }
 
     return (
         <div className={styles.navCont}>
@@ -75,7 +70,6 @@ const Nav = ({ usersInChatProp, useCheckClickOutside }) => {
                     </div>
                     : null}
             </div>
-            <UserSettings useCheckClickOutside={useCheckClickOutside} toggle_popUp={toggle_popUp} togglePopUpFunc={togglePopUpFunc} />
         </div>
     );
 };

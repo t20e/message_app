@@ -1,105 +1,120 @@
 @charset "UTF-8";
 
 @font-face {
-    font-family: "satoshi";
-    src: url(Satoshi-Light.otf);
-    font-weight: lighter;
-    font-style: normal;
+  font-family: "satoshi";
+  src: url(Satoshi-Light.otf);
+  font-weight: lighter;
+  font-style: normal;
 }
+
 @font-face {
-    font-family: "satoshi";
-    src: url(Satoshi-Regular.otf);
-    font-weight: normal;
-    font-style: normal;
+  font-family: "satoshi";
+  src: url(Satoshi-Regular.otf);
+  font-weight: normal;
+  font-style: normal;
 }
+
 @font-face {
-    font-family: "satoshi";
-    src: url(Satoshi-Bold.otf);
-    font-weight: bolder;
-    font-style: normal;
+  font-family: "satoshi";
+  src: url(Satoshi-Bold.otf);
+  font-weight: bolder;
+  font-style: normal;
 }
+
 @font-face {
-    font-family: "satoshi";
-    src: url(Satoshi-LightItalic.otf);
-    font-weight: lighter;
-    font-style: italic;
+  font-family: "satoshi";
+  src: url(Satoshi-LightItalic.otf);
+  font-weight: lighter;
+  font-style: italic;
 }
 
 :root {
-    font-size: 16px;
-    --bgkColor: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
-    --bkDropFilter: blur(1em);
-    --boxShadow:  0 5px 15px rgba(0, 0, 0, .5);
-    --textColor: black;
-    --nonImportantText: #727F83;
-
-
-
-    --primaryColor: #3066BE;
-    --secondaryColor: #FFE347;
-    --thirdColor: #52DEE5;
+  font-size: 16px;
+  font-family: Satoshi;
+  --bgkColor: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  --bkDropFilter: blur(1em);
+  --boxShadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  --textColor: black;
+  --nonImportantText: #727f83;
+  --primaryColor: #3066be;
+  --secondaryColor: #ffe347;
+  --thirdColor: #52dee5;
 }
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: satoshi;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-h1, h2{
-    font-weight: lighter;
-}
-p, a, h2, h3, h4, h5, h6{
-    font-family: satoshi;
-    font-weight: lighter;
-}
+
 ::placeholder {
-    color: #AFAAB9;
+  color: #afaab9;
 }
 
 /* for firefox */
 /* for some reason when i add this it cancels out the margin: 0px auto  */
 html {
-    /* overflow-y: scroll;
+  /* overflow-y: scroll;
     scrollbar-color: silver #f1f1f1; */
-    /* scrollbar-width: thin; */
-    scrollbar-width: none;
-
+  /* scrollbar-width: thin; */
+  scrollbar-width: none;
 }
 
 body {
-    height: 100vh;
-    width: 100vw;
-    /* light */
-    background-image: url('https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png');
-    /* darken bgk img */
-    /* background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url(../imgsOnlyForDev/night_fade.png); */
-    /* background-image: url('../imgsOnlyForDev/gradient_2.svg'); */
-    /* background-color: #13070C; */
-    background-repeat: no-repeat;
-    background-size:cover;
+  height: 100vh;
+  width: 100vw;
+  /* light */
+  background-image: url("https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png");
+  /* darken bgk img */
+  /* background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url(https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png); */
+  /* background-image: url('../imgsOnlyForDev/gradient_2.svg'); */
+  /* background-color: #13070C; */
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+h1,
+h2 {
+  font-weight: normal;
+}
+
+p,
+a,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: lighter;
+}
+
+img{
+  -webkit-user-drag: none;
 }
 /* width */
 ::-webkit-scrollbar {
-    width: .2em;
-    position: relative;
-    left: 2em;
+  width: 0.2em;
+  position: relative;
+  left: 2em;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 20em;
+  background: #f1f1f1;
+  border-radius: 20em;
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-    background: silver;
-    border-radius: 20em;
+  background: silver;
+  border-radius: 20em;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-    width: .4em;
-    background: blue;
+  width: 0.4em;
+  background: blue;
 }
