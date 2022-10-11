@@ -1,6 +1,4 @@
-/* IMPORTANT!!! */
-/* any tag with _r ending refers to the right panel */
-/* start of message notification panel */
+@import url("global.css");
 
 ::placeholder {
     font-size: .9em;
@@ -13,7 +11,7 @@
 .mainCont {
     height: 100%;
     width: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    background: var(--bgkColor);
     backdrop-filter: blur(2em);
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     border-radius: .8em;

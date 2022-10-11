@@ -8,7 +8,6 @@ import MsgNotification from './MsgNotification';
 import Nav from './Nav';
 import SearchBar from './SearchBar';
 import {UserContext} from '../context/UserContext'
-import UserSettings from './UserSettings';
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -69,7 +68,7 @@ const HomePage = () => {
     return (
         <div id='mainPageDiv'>
             <div className='navBar'>
-                <Nav usersInChatProp={usersInChat}/>
+                <Nav usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside}/>
             </div>
             <div className='underNavCont'>
                 <div className='colOne'>
@@ -85,7 +84,6 @@ const HomePage = () => {
                     }
                 </div>
             </div>
-            <UserSettings/>
         </div>
     )
 }

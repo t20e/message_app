@@ -49,21 +49,6 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
                     console.log(err);
                 })
         }
-
-
-
-        // console.log(e.target.value);
-        // // validate the input to stop any special characters
-        // let searchItem = e.toLowerCase();
-        // if (/\s/g.test(e)) {
-        //     console.log(';spaces');
-        //     let firstName = e.split(" ")[0].toLowerCase()
-        //     let lastName = e.split(" ")[1].toLowerCase()
-        //     searchItem = [firstName, lastName]
-        //     console.log(firstName, lastName);
-        // }
-
-
     }
     // close when clicked outside
     let domNode = useCheckClickOutside(() => {

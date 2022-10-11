@@ -7,12 +7,16 @@ import usersInChatIcon from '../imgsOnlyForDev/group_of_users.png'
 import arrowIcon from '../imgsOnlyForDev/arrows.svg'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios';
+import UserSettings from './nav/UserSettings';
 
-const Nav = ({ usersInChatProp }) => {
+const Nav = ({ usersInChatProp, useCheckClickOutside }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChat, setUsersInChat] = useState([])
     const [showUsersDiv, setShowUsersDiv] = useState('')
     const [rotateArr, setRotateArr] = useState('')
+    const [toggle_popUp, setToggle_popUp] = useState(false)
+
+
     const showUsersInChat = () => {
         if (showUsersDiv === '') {
             setShowUsersDiv(styles.show)
@@ -39,12 +43,16 @@ const Nav = ({ usersInChatProp }) => {
         }
     }, [usersInChatProp]);
 
+    const togglePopUpFunc = () => {
+        setToggle_popUp(!toggle_popUp)
+    }
+
     return (
         <div className={styles.navCont}>
             <div className={styles.profileActions}>
                 <img src={deleteTHisImg} id={styles.userImg} alt="pfp icon" />
                 <div className={styles.otherIcons}>
-                    <img src={gearIcon} className={styles.gear} alt="gear icon" />
+                    <img src={gearIcon} onClick={togglePopUpFunc} className={styles.gear} alt="gear icon" />
                     <img src={activeUsersIcon} alt="user profile icon" />
                 </div>
             </div>
@@ -67,6 +75,7 @@ const Nav = ({ usersInChatProp }) => {
                     </div>
                     : null}
             </div>
+            <UserSettings useCheckClickOutside={useCheckClickOutside} toggle_popUp={toggle_popUp} togglePopUpFunc={togglePopUpFunc} />
         </div>
     );
 };

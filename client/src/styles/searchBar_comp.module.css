@@ -1,3 +1,5 @@
+@import "global.css";
+
 .searchBarCont {
     width: 100%;
     display: flex;
@@ -11,7 +13,7 @@
 
 #searchForm {
     width: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    background: var(--bgkColor);
     backdrop-filter: blur(1em);
     box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
     display: flex;

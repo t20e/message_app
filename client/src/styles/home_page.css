@@ -6,7 +6,6 @@
     width: 70vw;
     height: 100vh;
     max-height: 100rem;
-    /* background-color: #13070C; */
 }
 .navBar{
     height: 5%;
@@ -29,7 +28,6 @@
 
 .colTwo {
     flex: 2;
-    /* background-color:darkslategrey; */
     padding: .7em;
 }
 .noChatSelected{

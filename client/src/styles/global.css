@@ -1,16 +1,35 @@
 @charset "UTF-8";
 
 @font-face {
-    font-family: satoshi-light;
+    font-family: "satoshi";
     src: url(Satoshi-Light.otf);
+    font-weight: lighter;
+    font-style: normal;
+}
+@font-face {
+    font-family: "satoshi";
+    src: url(Satoshi-Regular.otf);
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: "satoshi";
+    src: url(Satoshi-Bold.otf);
+    font-weight: bolder;
+    font-style: normal;
+}
+@font-face {
+    font-family: "satoshi";
+    src: url(Satoshi-LightItalic.otf);
+    font-weight: lighter;
+    font-style: italic;
 }
 
 :root {
     font-size: 16px;
-    --bkGColor: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    --bgkColor: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
     --bkDropFilter: blur(1em);
-    --boxShadow: 0 5px 15px rgba(0, 0, 0, .5);
-    --mainText: satoshi-light;
+    --boxShadow:  0 5px 15px rgba(0, 0, 0, .5);
     --textColor: black;
     --nonImportantText: #727F83;
 
@@ -25,9 +44,15 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: satoshi-light;
+    font-family: satoshi;
 }
-
+h1, h2{
+    font-weight: lighter;
+}
+p, a, h2, h3, h4, h5, h6{
+    font-family: satoshi;
+    font-weight: lighter;
+}
 ::placeholder {
     color: #AFAAB9;
 }
@@ -45,13 +70,15 @@ html {
 body {
     height: 100vh;
     width: 100vw;
-    background-image: url('../imgsOnlyForDev/gradient_1.svg');
+    /* light */
+    background-image: url('https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png');
+    /* darken bgk img */
+    /* background-image: linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url(../imgsOnlyForDev/night_fade.png); */
     /* background-image: url('../imgsOnlyForDev/gradient_2.svg'); */
     /* background-color: #13070C; */
     background-repeat: no-repeat;
     background-size:cover;
 }
-
 /* width */
 ::-webkit-scrollbar {
     width: .2em;
