@@ -1,9 +1,10 @@
-import React, { useState, useContext } from 'react';
-import styles from "../styles/userSettings.module.css"
-import { ThemeContext } from "../context/ThemeContext";
+import React, { useState, useContext, useEffect } from 'react';
+import styles from "../../styles/userSettings.module.css"
+import { ThemeContext } from "../../context/ThemeContext";
 
-const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) => {
+const UserSettings = ({ togglePopUpFunc, useCheckClickOutside }) => {
     const { theme, setTheme } = useContext(ThemeContext);
+    // const [font_selected, setFont_selected] = useState(theme.fontFamily)
     const [switchClassTheme, setSwitchClassTheme] = useState({
         light: undefined,
         dark: undefined,
@@ -14,6 +15,14 @@ const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) =
         "fluid": undefined,
         "sunny_morning": undefined
     })
+    useEffect(() => {
+        setSwitchClassTheme({
+            [theme.mode]: styles.bg_img
+        })
+        setSwitchClassBgk({
+            [theme.bgk_name] : styles.bg_img
+        })
+    }, []);
     const changeThemeSelected = (name, e) => {
         setSwitchClassTheme({
             [name]: styles.bg_img
@@ -28,13 +37,14 @@ const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) =
         setSwitchClassBgk({ [name]: styles.bg_img })
         setTheme({
             ...theme,
-            bgk_url: e.target.src
+            bgk_url: e.target.src,
+            bgk_name : name
         })
     }
     const changeFont = (e) => {
         setTheme({
             ...theme,
-            fontFamily : e.target.value
+            fontFamily: e.target.value
         })
     }
     let domNode = useCheckClickOutside(() => {
@@ -98,18 +108,17 @@ const UserSettings = ({ toggle_popUp, togglePopUpFunc, useCheckClickOutside }) =
                     <p className={styles.p}>switch font family</p>
                 </div>
                 <div>
-                    <select name="font" onChange={(e) => changeFont(e)} id={styles.font_select}>
+                    <select name="font" defaultValue={theme.fontFamily} onChange={(e) => changeFont(e)} id={styles.font_select}>
                         <option value="Satoshi">Satoshi</option>
-                        <option value="Arial, Helvetica, sans-serif">Arial</option>
-                        <option value="Verdana, Geneva, Tahoma, sans-serif">Tahoma</option>
-                        <option value="'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">Gill Sans</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Tahoma">Tahoma</option>
+                        <option value="Gill Sans">Gill Sans</option>
                     </select>
                 </div>
             </div>
             <hr className={styles.__hrlast} />
             <div className={styles.btnCont}>
-                <input type="submit" onClick={togglePopUpFunc} className={`${styles.__btn} ${styles.__color}`} value="Cancel" />
-                <input type="submit" className={styles.__btn} value="Save changes" />
+                <input type="submit" onClick={togglePopUpFunc} className={styles.__btn} value="close" />
             </div>
         </div>
     );

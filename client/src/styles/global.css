@@ -43,6 +43,7 @@
   --primaryColor: #3066be;
   --secondaryColor: #ffe347;
   --thirdColor: #52dee5;
+  --filterForIcons: 0%;
 }
 
 * {
@@ -117,4 +118,8 @@ img{
 ::-webkit-scrollbar-thumb:hover {
   width: 0.4em;
   background: blue;
+}
+.imgColorSwitch{
+  -webkit-filter: invert(var(--filterForIcons)); 
+  filter: invert(var(--filterForIcons)); 
 }

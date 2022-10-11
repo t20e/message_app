@@ -82,21 +82,18 @@
 
 .btnCont {
     display: flex;
-    justify-content: space-around;
-    height: 20%;
+    height: 15%;
+    align-items: center;
+    justify-content: center;
 }
 
 .__btn {
+    margin: 0;
     border-radius: .5em;
-    border: none;
-    background-color: dodgerblue;
-    color: white;
     height: 2em;
     width: 10em;
     text-align: center;
     cursor: pointer;
-}
-.__color {
     border: .1em solid grey;
     background-color: white;
     color: black;

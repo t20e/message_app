@@ -8,7 +8,10 @@ import MsgNotification from './MsgNotification';
 import Nav from './Nav';
 import SearchBar from './SearchBar';
 import { UserContext } from '../context/UserContext'
-import UserSettings from './UserSettings';
+import UserSettings from './popUps/UserSettings';
+import UserProfile from './popUps/UserProfile';
+import chat_panel_css from '../styles/chat_panel.module.css'
+
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -84,7 +87,7 @@ const HomePage = () => {
                 <div className='colTwo'>
                     {usersInChat === false
                         ?
-                        <div className={`mainCont noChatSelected`}>select another user to create a chat</div>
+                        <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
                         :
                         <ChatPanel usersInChatProp={usersInChat} getCurrTime={getCurrTime} />
                     }
@@ -94,6 +97,7 @@ const HomePage = () => {
                 <UserSettings useCheckClickOutside={useCheckClickOutside} userSettingsPopUp={userSettingsPopUp} togglePopUpFunc={togglePopUpFunc} />
                 : null
             }
+            <UserProfile/>
         </div>
     )
 }

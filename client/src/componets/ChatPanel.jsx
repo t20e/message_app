@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import '../styles/message_comp.css'
+import styles from '../styles/chat_panel.module.css'
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
-import smileyFace from "../imgsOnlyForDev/smiley_face.png"
+import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
 import { SocketContext } from '../context/SocketContext';
+
 
 const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -13,7 +14,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     const [currChat, setCurrChat] = useState({ _id: null })
     const [messages, setMessages] = useState([])
     const [msg, setMsg] = useState({
-        'from': loggedUser._id,
+        'from': loggedUser ? loggedUser._id : null,
         'body': '',
         'timeStamp': null
     })
@@ -38,7 +39,6 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
                 })
         }
     }, [usersInChatProp]);
-
     // socket io
     useEffect(() => {
         socket.on("connect", () => {
@@ -58,7 +58,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
 
     const sendMsg = (e) => {
         e.preventDefault();
-        if(msg.body === ''){
+        if (msg.body === '') {
             alert('Please enter a message');
             return
         }
@@ -78,16 +78,17 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     const growTextarea = (e) => {
         // TODO it wont shrink after sending text
         e.target.style.height = 'inherit';
-        e.target.style.height = `${e.target.scrollHeight}px`; 
+        e.target.style.height = `${e.target.scrollHeight}px`;
     }
     const emojiDivController = () => {
-        openDiv === 'open' ? setOpenDiv(null) : setOpenDiv('open')
+        openDiv === 'show' ? setOpenDiv(null) : setOpenDiv('show')
     }
     const onEmojiClick = (event, emojiObject) => {
         // console.log(emojiObject);
-        msg.body = msg.body + ' 0x' + emojiObject.unified + ' '
+        // msg.body = msg.body + ' 0x' + emojiObject.unified + ' '
         setMsg({
             ...msg,
+            body: msg.body + ' 0x' + emojiObject.unified + ' '
             // body: message.body + ' ' + " "+ emojiObject.emoji
         })
         emojiDivController()
@@ -126,8 +127,6 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         return str
     }
 
-    // console.log('reloading comp');
-
     const getMsgTime = (time) => {
         let { day, hour, min, month, year } = time
         // console.log(typeof(day), hour, min, month, year);
@@ -155,28 +154,28 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         growTextarea(e)
     }
     return (
-        <div className='mainCont'>
-            <div ref={scrollBarDiv} className='messages_div'>
+        <div className={styles.mainCont}>
+            <div ref={scrollBarDiv} className={styles.messages_div}>
                 {Array.isArray(messages) ?
                     messages.map((i, index) => {
                         if (i.from === loggedUser._id) {
                             return (
-                                <div key={index} className='single_messageDiv--right'>
-                                    <div className='message' >
+                                <div key={index} className={styles.single_messageDiv__right}>
+                                    <div className={`${styles.message}`} >
                                         <p>{convertUnicode(i.body)}</p>
                                     </div>
-                                    <p className='dateOf_message'>
+                                    <p className={styles.dateOf_message}>
                                         {getMsgTime(i.timeStamp)}
                                     </p>
                                 </div>
                             )
                         } else {
                             return (
-                                <div key={index} className='single_messageDiv--left'>
-                                    <div className='message'>
+                                <div key={index} className={styles.single_messageDiv__left}>
+                                    <div className={styles.message}>
                                         <p>{convertUnicode(i.body)}</p>
                                     </div>
-                                    <p className='dateOf_message'>
+                                    <p className={styles.dateOf_message}>
                                         {getMsgTime(i.timeStamp)}
                                     </p>
                                 </div>
@@ -186,26 +185,22 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
                     : <div></div>
                 }
             </div>
-            <form id='sendMessage_form' onSubmit={sendMsg}>
-                <div className='composeMsg_cont'>
-                    <div className='composeMsg_actionCont'>
-                        <img src={smileyFace} className="emoji_btn_toggle" alt="smiley face" onClick={emojiDivController} />
-                        <div className={`emoji_picker ${openDiv}`}>
+            <form id={styles.sendMessage_form} onSubmit={sendMsg}>
+                <div className={styles.composeMsg_cont}>
+                    <div className={styles.composeMsg_actionCont}>
+                        <img src={smileyFace} className={`${styles.emoji_btn_toggle} ${"imgColorSwitch"}`} alt="smiley face" onClick={emojiDivController} />
+                        <div className={`${styles.emoji_picker} ${styles.openDiv}`}>
                             <Picker onEmojiClick={onEmojiClick} />
                         </div>
                     </div>
-                    <textarea id='compose__msg' autoFocus maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
-
-                    {/* <contentEditable id='compose__msg' onChange={(e) => editInputs(e)}  ></contentEditable> */}
-                    {/* <div id='compose__msg' name='body'  onInput={(e) => editInputs(e)} value={convertUnicode(message.body)} placeholder='message...' contentEditable></div> */}
-                    {/* <textarea className="textarea" autoFocus contentEditable maxLength={350} name='body' onChange={(e) => editInputs(e)} value={convertUnicode(message.body)} placeholder='message...' cols="35" rows="1"></textarea> */}
-                    <div className='composeMsg_actionCont'>
-                        <input type="submit" id='btn' value="" />
+                    <textarea id={styles.compose__msg} autoFocus maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                    <div className={styles.composeMsg_actionCont}>
+                        <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                     </div>
                 </div>
             </form>
         </div>
-    );
+    )
 };
 
 

@@ -59,7 +59,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
             <form id={styles.searchForm} onSubmit={searchPeople}>
                 <input type="text" className={'inputClass'} onClick={showDefaultSearchUsers} onChange={(e) => (searchPeople(e), setSearchVal(e.target.value))} placeholder='search people' />
                 <button onClick={searchPeople}>
-                    <img src={searchIcon} alt="search icon" />
+                    <img src={searchIcon} className="imgColorSwitch" alt="search icon" />
                 </button>
             </form>
             <div className={`${styles.usersSearchDiv} ${isOpen ? styles.show : ''} `}>

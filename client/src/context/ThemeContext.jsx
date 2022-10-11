@@ -1,8 +1,10 @@
 import { useState, createContext, useEffect } from "react";
-export const UiTheme = {
+let UiTheme = {
     "mode": "light",
     "fontFamily": "Satoshi",
-    "bgk_url": "https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png"
+    "bgk_url": "https://portfolio-avis-s3.s3.amazonaws.com/app/images/night_fade.png",
+    "bgk_name": "night_fade",
+
 }
 export const ThemeContext = createContext();
 
@@ -10,8 +12,12 @@ const userPcTheme = () => {
     let theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     return theme;
 }
-UiTheme.mode = userPcTheme()
-
+if (localStorage.getItem("theme")) {
+    UiTheme = JSON.parse(localStorage.getItem("theme"))
+} else {
+    UiTheme.mode = userPcTheme()
+}
+console.log(localStorage.getItem("theme"))
 export const ThemeProvider = (props) => {
     const [theme, setTheme] = useState(UiTheme);
     useEffect(() => {
@@ -20,10 +26,13 @@ export const ThemeProvider = (props) => {
         }
         if (theme.mode === "dark") {
             document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url(${theme.bgk_url})`
+            document.documentElement.style.setProperty('--filterForIcons', '100%');
         } else {
+            document.documentElement.style.setProperty('--filterForIcons', '0%');
             document.body.style.backgroundImage = `url(${theme.bgk_url})`
         }
         document.documentElement.style.fontFamily = theme.fontFamily;
+        localStorage.setItem('theme', JSON.stringify(theme))
     }, [theme]);
     return (
         <ThemeContext.Provider value={{ theme, setTheme }}>
