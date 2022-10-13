@@ -14,7 +14,7 @@ const MsgNotification = ({ openChat }) => {
             if (loggedUser._id) {
                 axios.post('http://localhost:8000/api/getAllChatsForUser', { "_id": loggedUser._id })
                     .then(res => {
-                        // console.log('all chats for user', res.data.results);
+                        console.log('all chats for user', res.data.results);
                         setChats([])
                         let chatData = []
                         let users = [];
@@ -42,6 +42,7 @@ const MsgNotification = ({ openChat }) => {
                         axios.post('http://localhost:8000/api/usersInChat', obj)
                             .then((res) => {
                                 // console.log(res.data, 'users')
+                                if(res.data.length > 0) {
                                 res.data.forEach(user => {
                                     // console.log(user)
                                     chatData.forEach((chat) => {
@@ -52,6 +53,7 @@ const MsgNotification = ({ openChat }) => {
                                 })
                                 // console.log(chatData)
                                 setChats(chatData)
+                            }
                             })
                             .catch((err) => {
                                 console.log(err, 'err')

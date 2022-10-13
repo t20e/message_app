@@ -1,6 +1,5 @@
 
 ::placeholder {
-    font-size: .9em;
     color: red;
 }
 
@@ -11,8 +10,8 @@
     height: 100%;
     width: 100%;
     background: var(--bgkColor);
-    backdrop-filter: blur(2em);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    box-shadow: var(--boxShadow);
+    backdrop-filter: var(--bkDropFilter);
     border-radius: .8em;
     padding: .8em .09em 0em 0em;
 }
@@ -84,7 +83,7 @@
 }
 
 
-.composeMsg_cont{
+.composeMsg_cont {
     width: 100%;
     height: auto;
     display: flex;
@@ -92,7 +91,8 @@
     align-items: flex-end;
     padding: .5em;
 }
-.emojiPicker_cont{
+
+.emojiPicker_cont {
     background-color: red;
 }
 
@@ -108,7 +108,7 @@
     height: auto;
     min-height: 2em;
     width: 20em;
-    background-color:white;
+    background-color: white;
     left: 6em;
     bottom: -.1em;
     outline: none;
@@ -116,7 +116,11 @@
     flex-flow: column-reverse;
 }
 
-.composeMsg_actionCont{
+#compose__msg::placeholder {
+    color: black;
+}
+
+.composeMsg_actionCont {
     height: 2em;
     width: 2em;
     cursor: pointer;
@@ -126,7 +130,7 @@
     display: none;
 }
 
-.emoji_picker.open {
+.emoji_picker.show {
     display: inline-block;
     position: absolute;
     z-index: 1000;
@@ -149,6 +153,7 @@
     padding: 0;
     margin: 0;
 }
+
 
 
 /* any tag with -R ending refers to the right panel */

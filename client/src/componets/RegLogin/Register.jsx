@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Register = ({formSubmission, styles}) => {
+const Register = ({ formSubmission, styles }) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
@@ -9,30 +9,40 @@ const Register = ({formSubmission, styles}) => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [formErrors, setFormErrors] = useState({})
-
     const [renderImg, setRenderimg] = useState('')
-    const [renderImgErr, setRenderImgErr] = useState()
+    const [renderImgErr, setRenderImgErr] = useState(null)
     const re = new RegExp(
         "[^\\s]+(.*?)\\.(jpg|jpeg|png|gif|JPG|JPEG|PNG|GIF)$"
     )
     const register = (e) => {
         e.preventDefault();
-        let formInfo = { firstName, lastName, age, email, password, confirmPassword };
-        formSubmission(formInfo, '/api/user/register')
+        // TO SEND IMGS IN A REACT APP U NEED TO USE THE new FormData();    OBJ;
+        // let formData = { firstName, lastName, age, email, password, confirmPassword, profilePic };
+        const formData = new FormData();
+        formData.append("profilePic", profilePic);
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
+        formData.append("age", age);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("confirmPassword", confirmPassword);
+
+        formSubmission(formData, '/api/user/register')
         console.log('registering');
     }
     const showPfp = (e) => {
         if (!re.test(e.target.value)) {
             console.log('not a valid image')
-            setRenderImgErr('only jpegs, jpg, png images allowed')
+            setRenderImgErr('only jpegs, jpg, png images allowed!')
             setProfilePic('')
             setRenderimg('')
         } else {
-            setRenderImgErr('')
+            setProfilePic(e.target.files[0]);
+            setRenderImgErr(null)
             let img = URL.createObjectURL(e.target.files[0])
             setRenderimg(img)
-
         }
+        console.log(profilePic, renderImg);
     }
     return (
         <div>
@@ -45,15 +55,14 @@ const Register = ({formSubmission, styles}) => {
                 <p className={styles.formErrors}>{formErrors.firstName?.message}</p>
                 <input type="text" name='lastName' placeholder='last name' onChange={(e) => setLastName(e.target.value)} />
                 <p className={styles.formErrors}>{formErrors.lastName?.message}</p>
-                <div >
+                <div className={styles.file_age_cont}>
                     <label className={styles.pfpLabel}> upload profile picture
-                        <input type="file" name="profilePic" onChange={(e) => (setProfilePic(e.target.files[0]), showPfp(e))} />
+                        <input type="file" className={styles.fileInput} accept="image/*" name="profilePic" onChange={(e) => (showPfp(e))} />
                     </label>
                     <input type="number" className={styles.age} name='age' placeholder='age' onChange={(e) => setAge(e.target.value)} />
                     <p className={styles.formErrors}>{formErrors.age?.message}</p>
-                    <p className={styles.imgValP}>{formErrors.pfp?.message}</p>
                     {
-                        renderImgErr != '' ?
+                        renderImgErr !== null ?
                             <p className={styles.imgValP}>{renderImgErr}</p>
                             : ''
                     }

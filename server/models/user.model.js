@@ -20,7 +20,8 @@ const UserSchema = new Mongoose.Schema({
         max: [120, 'age cant be more than 120']
     },
     profilePic: {
-        type: Number,
+        type: String,
+        default: "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg",
     },
     email: ({
         type: String,

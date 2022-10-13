@@ -1,5 +1,3 @@
-@import "global.css";
-
 .searchBarCont {
     width: 100%;
     display: flex;
@@ -14,8 +12,8 @@
 #searchForm {
     width: 100%;
     background: var(--bgkColor);
-    backdrop-filter: blur(1em);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    box-shadow: var(--boxShadow);
+    backdrop-filter: var(--bkDropFilter);
     display: flex;
     align-items: center;
     border-radius: .8em;

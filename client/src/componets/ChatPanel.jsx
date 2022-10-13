@@ -193,7 +193,7 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
                             <Picker onEmojiClick={onEmojiClick} />
                         </div>
                     </div>
-                    <textarea id={styles.compose__msg} autoFocus maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                    <textarea id={styles.compose__msg}  maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
                     <div className={styles.composeMsg_actionCont}>
                         <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                     </div>

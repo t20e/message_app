@@ -1,5 +1,3 @@
-@import "global.css";
-
 .mainCont {
     height: 100%;
     width: 100%;
@@ -8,8 +6,8 @@
 .subMain {
     padding: .8em .09em 0em 0em;
     background: var(--bgkColor);
-    backdrop-filter: blur(2em);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, .5);
+    box-shadow: var(--boxShadow);
+    backdrop-filter: var(--bkDropFilter);
     border-radius: .8em;
     height: 90%;
     overflow-y: auto;

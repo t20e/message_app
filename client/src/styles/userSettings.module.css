@@ -1,3 +1,4 @@
+
 .PopUpCont {
     position: absolute;
     z-index: 1000;
@@ -6,26 +7,31 @@
     height: 65vh;
     transform: translate(-50%, -50%);
     width: 40vw;
-    background-color: white;
+    background: var(--bgkColor);
+    box-shadow: var(--boxShadow);
+    backdrop-filter: var(--bkDropFilter);
     border-radius: .8em;
     display: flex;
     flex-direction: column;
 }
-.h1_div{
+
+.h1_div {
     height: 10%;
     padding: .3em .8em;
 }
 
-.pad{
-    margin: .3em .8em  1em .8em;
+.pad {
+    margin: .3em .8em 1em .8em;
     text-align: start;
 }
-.p{
+
+.p {
     margin-top: -.4em;
     font-size: .8rem;
     color: gray;
 }
-.PopUpCont > hr {
+
+.PopUpCont>hr {
     background-color: #f0f0f0;
     width: 95%;
     float: center;
@@ -33,7 +39,8 @@
     height: .1em;
     align-self: center;
 }
-.radio__cont{
+
+.radio__cont {
     height: 30%;
 }
 
@@ -52,7 +59,8 @@
     font-size: .7rem;
     color: grey;
 }
-.radio__div>label>img{
+
+.radio__div>label>img {
     cursor: pointer;
 }
 
@@ -61,20 +69,24 @@
     width: 7em;
     border-radius: .5em;
 }
-.fontSwitchDiv{
+
+.fontSwitchDiv {
     height: 15%;
     display: flex;
     justify-content: space-between;
 
 }
-.bg_img{
-    background-color: dodgerblue;   
+
+.bg_img {
+    background-color: dodgerblue;
     padding: .15em;
 
 }
-#font_select{
+
+#font_select {
     cursor: pointer;
 }
+
 .__hrlast {
     width: 100% !important;
     align-self: center;

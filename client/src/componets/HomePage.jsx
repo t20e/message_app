@@ -17,7 +17,8 @@ const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChat, setUsersInChat] = useState(false)
     const redirect = useNavigate()
-    const [userSettingsPopUp, setUserSettingsPopUp] = useState(false)
+    const [settingsPopUp, setSettingsPopUp] = useState(false)
+    const [blurPage, setblurPage] = useState(false)
 
     useEffect(() => {
         if (loggedUser === null) {
@@ -25,9 +26,10 @@ const HomePage = () => {
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
                     // console.log('logged in user', res.data);
-                    res.data.results === null ?
-                        redirect('/regLogin') :
-                        setLoggedUser(res.data.results)
+                    if (res.data.results === null) {
+                        redirect('/regLogin')
+                    }
+                    setLoggedUser(res.data.results)
                 })
                 .catch(err => {
                     console.log('err getting logged user');
@@ -36,7 +38,7 @@ const HomePage = () => {
         }
     }, []);
     const togglePopUpFunc = () => {
-        setUserSettingsPopUp(!userSettingsPopUp);
+        setSettingsPopUp(!settingsPopUp);
     }
 
     const openChat = (users) => {
@@ -74,30 +76,34 @@ const HomePage = () => {
         date = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
         return date
     }
+
     return (
         <div id='mainPageDiv'>
-            <div className='navBar'>
-                <Nav togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
-            </div>
-            <div className='underNavCont'>
-                <div className='colOne'>
-                    <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                    <MsgNotification openChat={openChat} />
+            <span className={settingsPopUp ? 'blurBehindPopUp' : null}>
+                <div className='navBar'>
+                    <Nav togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
                 </div>
-                <div className='colTwo'>
-                    {usersInChat === false
-                        ?
-                        <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
-                        :
-                        <ChatPanel usersInChatProp={usersInChat} getCurrTime={getCurrTime} />
-                    }
+                <div className='underNavCont'>
+                    <div className='colOne'>
+                        <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
+                        <MsgNotification openChat={openChat} />
+                    </div>
+                    <div className='colTwo'>
+                        {usersInChat === false
+                            ?
+                            <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
+                            :
+                            <ChatPanel usersInChatProp={usersInChat} getCurrTime={getCurrTime} />
+                        }
+                    </div>
                 </div>
-            </div>
-            {userSettingsPopUp ?
-                <UserSettings useCheckClickOutside={useCheckClickOutside} userSettingsPopUp={userSettingsPopUp} togglePopUpFunc={togglePopUpFunc} />
+            </span>
+            {settingsPopUp ? (
+                <UserSettings useCheckClickOutside={useCheckClickOutside} togglePopUpFunc={togglePopUpFunc} />
+                )
                 : null
             }
-            <UserProfile/>
+            <UserProfile />
         </div>
     )
 }

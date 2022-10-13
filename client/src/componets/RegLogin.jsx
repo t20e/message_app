@@ -13,9 +13,9 @@ const RegLogin = () => {
     // change form
     const [whichForm, setWhichForm] = useState('signUp')
     // TODO get form errors and display it on the form
-    const formSubmission = (formInfo, url) => {
-        // console.log(formInfo);
-        axios.post(`http://localhost:8000${url}`, formInfo, { withCredentials: true })
+    const formSubmission = (formData, url) => {
+        // console.log(formData);
+        axios.post(`http://localhost:8000${url}`, formData, { withCredentials: true })
             .then(res => {
                 console.log("response from server: ", res);
                 if (res.data.errors) {

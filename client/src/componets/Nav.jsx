@@ -41,11 +41,13 @@ const Nav = ({ usersInChatProp, togglePopUpFunc }) => {
         }
     }, [usersInChatProp]);
 
-
+    useEffect(() => {
+        console.log(loggedUser)
+    }, [loggedUser]);
     return (
         <div className={styles.navCont}>
             <div className={styles.profileActions}>
-                <img src={deleteTHisImg} id={styles.userImg} alt="pfp icon" />
+                <img src={loggedUser? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} id={styles.userImg} alt="pfp icon" />
                 <div className={styles.otherIcons}>
                     <img src={gearIcon} onClick={togglePopUpFunc} className={`${styles.gear} ${"imgColorSwitch"}`} alt="gear icon" />
                     <img src={user_icon} className="imgColorSwitch" alt="user profile icon" />
@@ -61,7 +63,7 @@ const Nav = ({ usersInChatProp, togglePopUpFunc }) => {
                                 return (
                                     <div key={i} className={styles.repeatUser}>
                                         <pre className={styles.active}>•</pre>
-                                        <img  src={deleteTHisImg} alt="" />
+                                        <img src={deleteTHisImg} alt="" />
                                         <p>{`${user.firstName}`} {`${user.lastName}`}</p>
                                     </div>
                                 )

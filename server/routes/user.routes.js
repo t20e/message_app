@@ -1,9 +1,14 @@
 const UserController = require('../controllers/user.controller')
-const { authenticate } = require('../config/jwt.config')
+// multer is the package that allows express to read and use imgs received from the frontend
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
-module.exports = (app)=>{
-    // app.get("/api/users", authenticate, getAllUsers)
-    app.post("/api/user/register", UserController.register);
+
+module.exports = (app) => {
+    // the upload.single('profilePic) allows to send a single imgs, this wont allow u to send more than one imgs 
+    // then name inside ex profilePic needs to match whatever u named the img in the obj
+    app.post("/api/user/register", upload.single('profilePic'), UserController.register);
     app.post("/api/user/login", UserController.login);
     app.get("/api/searchAllUsers", UserController.searchAllUsers);
     app.get("/api/searchUsers", UserController.searchUsers)

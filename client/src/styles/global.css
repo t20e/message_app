@@ -31,11 +31,9 @@
 :root {
   font-size: 16px;
   font-family: Satoshi;
-  --bgkColor: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.1),
-    rgba(255, 255, 255, 0)
-  );
+  --bgkColor: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.1),
+      rgba(255, 255, 255, 0));
   --bkDropFilter: blur(1em);
   --boxShadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   --textColor: black;
@@ -77,6 +75,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
 }
+
 h1,
 h2 {
   font-weight: normal;
@@ -92,9 +91,14 @@ h6 {
   font-weight: lighter;
 }
 
-img{
+input {
+  color: white;
+}
+
+img {
   -webkit-user-drag: none;
 }
+
 /* width */
 ::-webkit-scrollbar {
   width: 0.2em;
@@ -119,7 +123,16 @@ img{
   width: 0.4em;
   background: blue;
 }
-.imgColorSwitch{
-  -webkit-filter: invert(var(--filterForIcons)); 
-  filter: invert(var(--filterForIcons)); 
+
+.imgColorSwitch {
+  -webkit-filter: invert(var(--filterForIcons));
+  filter: invert(var(--filterForIcons));
+}
+
+/* hide input arrows  */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
