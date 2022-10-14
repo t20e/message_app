@@ -37,6 +37,7 @@
 }
 
 #regForm > input:not(:last-child){
+    border-radius: .4em;
     border: none;
     margin-top: .9em;
     width: 80%;
@@ -48,6 +49,7 @@
 }
 
 #loginForm > input:not(:last-child){
+    border-radius: .4em;
     border: none;
     margin-top: .9em;
     width: 80%;

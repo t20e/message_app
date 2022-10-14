@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const ObjectId = require('mongodb').ObjectId;
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const randomstring = require("randomstring");
+const { response } = require("express");
 
 const bucket_name = process.env.BUCKET_NAME
 const bucket_region = process.env.BUCKET_REGION
@@ -19,23 +20,39 @@ const s3 = new S3Client({
 
 })
 class UserController {
+    addPfpToAws = (file) => {
+        const rand_string = randomstring.generate(32)
+        const params = {
+            Bucket: bucket_name,
+            // TODO the files arent foinf in to the right folder its creating a new folder
+            Key: `client/message-app/${rand_string}`,
+            Body: file.buffer,
+            ContentType: file.mimtype,
+        }
+        const command = new PutObjectCommand(params);
+        s3.send(command)
+        return rand_string;
+    }
+    deletePfpFromAws = (id) => {
+        try {
+            const params = {
+                Bucket: bucket_name,
+                Key: `client/message-app/${id}`
+            }
+            const command = new DeleteObjectCommand(params)
+            s3.send(command);
+        } catch (err) {
+            console.log("Error", err);
+        }
+    }
     register = async (req, res) => {
         // req.file.buffer      contains the img // everything else in it is just details about the img
         if (req.file) {
-            const rand_string = randomstring.generate(32)
-            const params = {
-                Bucket: bucket_name,
-                // TODO the files arent foinf in to the right folder its creating a new folder
-                Key: `client/message-app/${rand_string}`,
-                Body: req.file.buffer,
-                ContentType: req.file.mimtype,
-            }
-            const command = new PutObjectCommand(params);
-            await s3.send(command)
-            const data = req.body
-            data['profilePic'] = rand_string
-            // console.log(data)
+            req.body['profilePic'] = await this.addPfpToAws(req.file)
+        } else {
+            delete req.body['profilePic']
         }
+
         const addUserToDB = await User.find({ email: req.body.email })
             .then(checkEmailDB => {
                 console.log("response from mongoose", checkEmailDB)
@@ -54,9 +71,9 @@ class UserController {
                                 })
                                 .json({ msg: "successfully created user", 'user': user });
                         })
-                        .catch(err => res.json(err));
+                        .catch(err => res.json({ err: err }));
                 } else {
-                    res.json({ errors: { email: { message: "Email is taken!" } } })
+                    res.json({ err: { email: { message: "Email is taken!" } } })
                 }
             })
             .catch(err => console.log("err!", err))
@@ -66,7 +83,7 @@ class UserController {
         User.findOne({ email: req.body.email })
             .then(user => {
                 if (user === null) {
-                    res.json({ msg: "invalid login credentials" })
+                    res.json({ err: "invalid login credentials" })
                 } else {
                     bcrypt.compare(req.body.password, user.password)
                         .then(checkPassword => {
@@ -79,7 +96,7 @@ class UserController {
                                     }, process.env.SECRET_KEY), { httpOnly: true })
                                     .json({ msg: 'successfully logged in', 'user': user })
                             } else {
-                                res.json({ msg: "invalid login credentials" })
+                                res.json({ err: "invalid login credentials" })
                             }
                         })
                         .catch(err => {
@@ -172,16 +189,39 @@ class UserController {
                 res.json({ 'err': error })
             })
     }
-    // delete user pfp
+
     updateUser = async (req, res) => {
-        // find the user and get their pfp id
-        const params = {
-            Bucket: bucket_name,
-            // Key: the id of the users pfp img
+        // TODO the password and confirm password arent being compared
+        if (req.file && req.body.pfpId.length !== 32) {
+            // this means that the user doesnt already have a pfp and they uploaded a new one
+            req.body['profilePic'] = await this.addPfpToAws(req.file)
+        } else if (req.file && req.body.pfpId.length === 32) {
+            // this mean that the user has a pfp and it needs to be updated
+            await this.deletePfpFromAws(req.body.pfpId);
+            req.body['profilePic'] = await this.addPfpToAws(req.file)
         }
-        const command = DeleteObjectCommand(params)
-        await S3Client.send(command);
+        if (req.body.pfpId) {
+            delete req.body['pfpId']
+        }
+        if (req.body.email) {
+            res.json({ msg: 'can not change email address' })
+        }
+        req.body.address = JSON.parse(req.body.address)
+        console.log(req.body);
+        User.findByIdAndUpdate(
+            { _id: req.params._id },
+            req.body,
+            // the new will return the new updated user instead of the old
+            { new: true, runValidators: true, context: 'query' }
+            // {context: ‘query'} allows the validator to use the this keyword
+        )
+            .then(updatedUser => {
+                res.json({result: updatedUser})
+            })
+            .catch(err => {
+                res.json({ error: err, msg: 'err updating User' })
+            })
+
     }
-    // then update the user in the mongoDb
 }
 module.exports = new UserController();

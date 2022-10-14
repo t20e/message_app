@@ -84,7 +84,7 @@
 .arrBtn {
     height: 1em;
     width: 1em;
-    filter: invert(true);
+    /* filter: invert(true); */
     margin-left: .3em;
 }
 

@@ -15,4 +15,5 @@ module.exports = (app) => {
     app.get("/api/user/logUser", UserController.getLoggedUser)
     app.get("/api/user/logout", UserController.logout)
     app.post("/api/usersInChat", UserController.getUsersInChat)
+    app.put("/api/users/update/:_id",  upload.single('profilePic'), UserController.updateUser)
 }

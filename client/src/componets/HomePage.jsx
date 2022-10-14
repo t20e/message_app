@@ -18,10 +18,11 @@ const HomePage = () => {
     const [usersInChat, setUsersInChat] = useState(false)
     const redirect = useNavigate()
     const [settingsPopUp, setSettingsPopUp] = useState(false)
+    const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [blurPage, setblurPage] = useState(false)
 
     useEffect(() => {
-        if (loggedUser === null) {
+        if (loggedUser.firstName === "") {
             // console.log(loggedUser)
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
@@ -39,6 +40,9 @@ const HomePage = () => {
     }, []);
     const togglePopUpFunc = () => {
         setSettingsPopUp(!settingsPopUp);
+    }
+    const openUserProfilePopUp = () => {
+        setUserProfilePopUp(!userProfilePopUp);
     }
 
     const openChat = (users) => {
@@ -81,7 +85,7 @@ const HomePage = () => {
         <div id='mainPageDiv'>
             <span className={settingsPopUp ? 'blurBehindPopUp' : null}>
                 <div className='navBar'>
-                    <Nav togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
+                    <Nav openUserProfilePopUp={openUserProfilePopUp} togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
                 </div>
                 <div className='underNavCont'>
                     <div className='colOne'>
@@ -100,10 +104,13 @@ const HomePage = () => {
             </span>
             {settingsPopUp ? (
                 <UserSettings useCheckClickOutside={useCheckClickOutside} togglePopUpFunc={togglePopUpFunc} />
-                )
+            )
                 : null
             }
-            <UserProfile />
+            {userProfilePopUp ?
+                <UserProfile openUserProfilePopUp={openUserProfilePopUp} useCheckClickOutside={useCheckClickOutside}/>
+                : null
+            }
         </div>
     )
 }

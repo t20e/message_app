@@ -42,31 +42,33 @@ const UserSchema = new Mongoose.Schema({
         type: Boolean,
         default: false
     }),
-    addresses:[
-        {
-            addressOne:({
-                type:String,
-            }),
-            addressTwo:({
-                type:String
-            }),
-            postalCade:({
-                type:String
-            }),
-            city:({
-                type:String
-            }),
-            state:({
-                type:String
-            }),
-            country:({
-                type:String
-            }),
-            lastUpdatedAddress:({
-                type:Date
-            }),
-        }
-    ],
+    address:
+    {
+        addressOne: ({
+            type: String,
+            default: ""
+        }),
+        addressTwo: ({
+            type: String,
+            default:""
+        }),
+        postalCode: ({
+            type: String,
+            defa:"",
+        }),
+        city: ({
+            type: String,
+            defa:"",
+        }),
+        state: ({
+            type: String,
+            defa:"",
+        }),
+        country: ({
+            type: String,
+            defa:""
+        }),
+    },
 }, { timestamps: true })
 
 

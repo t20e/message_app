@@ -18,8 +18,9 @@ const RegLogin = () => {
         axios.post(`http://localhost:8000${url}`, formData, { withCredentials: true })
             .then(res => {
                 console.log("response from server: ", res);
-                if (res.data.errors) {
+                if (res.data.err) {
                     // setFormErrors(res.data.errors)
+                    alert('login creditianals invalid')
                 } else {
                     console.log('successfully log or reg!', res.userToken);
                     localStorage.setItem('userToken', res.userToken);

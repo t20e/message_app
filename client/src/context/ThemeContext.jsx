@@ -17,7 +17,6 @@ if (localStorage.getItem("theme")) {
 } else {
     UiTheme.mode = userPcTheme()
 }
-console.log(localStorage.getItem("theme"))
 export const ThemeProvider = (props) => {
     const [theme, setTheme] = useState(UiTheme);
     useEffect(() => {

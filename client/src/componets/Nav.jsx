@@ -8,7 +8,7 @@ import arrowIcon from '../imgsOnlyForDev/arrows.svg'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios';
 
-const Nav = ({ usersInChatProp, togglePopUpFunc }) => {
+const Nav = ({ usersInChatProp, openUserProfilePopUp, togglePopUpFunc }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChat, setUsersInChat] = useState([])
     const [showUsersDiv, setShowUsersDiv] = useState('')
@@ -42,15 +42,15 @@ const Nav = ({ usersInChatProp, togglePopUpFunc }) => {
     }, [usersInChatProp]);
 
     useEffect(() => {
-        console.log(loggedUser)
+        // console.log(loggedUser)
     }, [loggedUser]);
     return (
         <div className={styles.navCont}>
             <div className={styles.profileActions}>
-                <img src={loggedUser? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} id={styles.userImg} alt="pfp icon" />
+                <img src={loggedUser ? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} id={styles.userImg} alt="pfp icon" />
                 <div className={styles.otherIcons}>
-                    <img src={gearIcon} onClick={togglePopUpFunc} className={`${styles.gear} ${"imgColorSwitch"}`} alt="gear icon" />
-                    <img src={user_icon} className="imgColorSwitch" alt="user profile icon" />
+                    <img src={gearIcon} onClick={() => togglePopUpFunc()} className={`${styles.gear} ${"imgColorSwitch"}`} alt="gear icon" />
+                    <img src={user_icon} onClick={(e) => openUserProfilePopUp()} className="imgColorSwitch" alt="user profile icon" />
                 </div>
             </div>
             <div className={styles.chatInfoCont}>

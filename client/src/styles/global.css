@@ -93,6 +93,7 @@ h6 {
 
 input {
   color: white;
+  padding-top: 1em ;
 }
 
 img {
@@ -135,4 +136,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+input[type=number] {
+  -moz-appearance:textfield;
 }

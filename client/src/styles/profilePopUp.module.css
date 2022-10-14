@@ -1,9 +1,10 @@
-.content{
+.content {
     position: absolute;
     z-index: 1000;
-    top: 40%;
+    top: 50%;
     left: 50%;
-    height: 65vh;
+    height: auto;
+    min-height: 65vh;
     transform: translate(-50%, -50%);
     width: 40vw;
     background: var(--bgkColor);
@@ -11,17 +12,19 @@
     backdrop-filter: var(--bkDropFilter);
     border-radius: .8em;
 }
-.content>form{
+
+.content>form {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
-
-.pfpCont{
+.pfpCont {
+    margin: 1em 0;
     position: relative;
     display: flex;
     justify-content: center;
@@ -37,11 +40,13 @@
     position: relative;
     cursor: pointer;
 }
-.cameraOverPfp{
+
+.cameraOverPfp {
     display: none;
     pointer-events: none;
 }
-.cameraOverPfp.show{
+
+.cameraOverPfp.show {
     display: flex;
     background-color: white;
     opacity: .2;
@@ -50,31 +55,119 @@
     border-radius: 50em;
     position: absolute;
 }
-.inputDiv{
-    width: 100%;
-    height: 2rem;
-    margin-top: 1em;
+
+.inputDiv {
+    width: 70%;
+    height: auto;
+    margin-top: .6em;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
 }
-.inputDiv> input{
+
+.inputSameLineDiv {
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.input {
+    color: black;
     border-radius: .4em;
+    width: 100%;
     border: none;
+    padding: .2em 0 0 .5em;
     height: 2em;
-    width: 50%;
-    border: none;
-    margin-top: .9em;
-    width: 80%;
-    height: 50px;
-    padding-left: .9em;
-    background-color: rgb(0, 0, 0, .0);
-    border-bottom: .1em solid black;
+    background-color: whites;
     outline: none;
+    border: none;
 }
-.btn{
+
+.input::-webkit-input-placeholder {
+    color: grey;
+}
+
+.confirmPasswordDiv{
+    display: none;
+}
+.confirmPasswordDiv.show {
+    margin-top: .6em;
+    display: block;
+}
+
+.nameInput {
+    width: 49%;
+}
+.emailNotAllowed{
+    background-color: #E3E2DE;
+}
+.sameLineInputsDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.addressInfoCont {
+    display: none;
+}
+
+.addressInfoCont.show {
+    display: contents;
+}
+
+.addressCont>div:first-child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: .5em;
+}
+
+.addressCont>div {
+    margin-top: .6em;
+}
+
+.addressCont>div:first-child>img {
+    height: 1em;
+    width: 1em;
+    margin: .1em 0 0 .5em;
+}
+
+.addressInfoCont {
+    width: 100%;
+}
+
+.addressInfoCont>div:not(:first-child) {
+    margin-top: .6em;
+}
+
+.addOne {
+    width: 49% !important;
+}
+
+.addTwo {
+    width: 20% !important;
+}
+
+.smallerDiv {
+    width: 29%;
+}
+
+.largerDiv {
+    width: 49%;
+}
+
+.content form>div:last-child {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-bottom: 1em;
+
+}
+
+.btn {
     background-color: var(--primaryColor);
-    border-radius: 2em;
     display: inline-block;
     width: 6.25em !important;
     color: white;
@@ -83,4 +176,11 @@
     height: 2em;
     cursor: pointer;
     border: none;
+    border-radius: .5em;
+}
+
+.closeBtn {
+    border: .1em solid grey;
+    background-color: white;
+    color: black;
 }

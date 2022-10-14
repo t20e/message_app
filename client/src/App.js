@@ -13,7 +13,27 @@ import RegLogin from "./componets/RegLogin";
 import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
-    const [loggedUser, setLoggedUser] = useState(null)
+    // the new obj doesnt have the adress if it wasnt added by user
+    let emptyObj = {
+        firstName: "",
+        lastName: "",
+        age: "",
+        profilePic: "",
+        email: "",
+        password: "",
+        isActive: "",
+        address:
+        {
+            addressOne: "",
+            addressTwo: "",
+            postalCode: "",
+            city: "",
+            state: "",
+            country: "",
+        },
+
+    }
+    const [loggedUser, setLoggedUser] = useState(emptyObj)
     // this will change the value only when the loggesUser, or SetLoggedUser is changed
     const userValue = useMemo(() => ({ loggedUser, setLoggedUser }), [loggedUser, setLoggedUser])
     return (
