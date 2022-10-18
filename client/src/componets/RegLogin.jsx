@@ -6,6 +6,7 @@ import groupPeopleONlyDev from '../imgsOnlyForDev/groupPeople.jpg'
 import Login from './RegLogin/Login';
 import Register from './RegLogin/Register';
 import { UserContext } from '../context/UserContext'
+import GitLink from './GitLink';
 
 const RegLogin = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
@@ -25,6 +26,7 @@ const RegLogin = () => {
                     console.log('successfully log or reg!', res.userToken);
                     localStorage.setItem('userToken', res.userToken);
                     setLoggedUser(res.data.user)
+                    localStorage.setItem('_id', res.data.user._id)
                     redirect("/")
                 }
             })
@@ -74,6 +76,7 @@ const RegLogin = () => {
                 </div>
                 <i>learn more about us here</i>
             </aside>
+            <GitLink />
         </div>
     );
 };

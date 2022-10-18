@@ -1,8 +1,14 @@
-const ChatController = require('../controllers/chat.controller')
-
+const ChatController = require('../controllers/chat.controller');
+const UserController = require('../controllers/user.controller');
+let userId;
 module.exports = (io) => {
     io.on("connection", socket => {
         console.log("socket id: " + socket.id);;
+
+        socket.on("setUserActive", (_id) => {
+            UserController.setUserActive(_id, true);
+            userId = _id;
+        })
 
         socket.on("join_room", (roomId) => {
             console.log("socket room id:", roomId);
@@ -30,6 +36,7 @@ module.exports = (io) => {
 
         socket.on('disconnect', () => {
             console.info('Client disconnected');
+            UserController.setUserActive(userId, false);
         });
     })
 }

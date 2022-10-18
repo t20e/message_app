@@ -10,10 +10,9 @@ module.exports = (app) => {
     // then name inside ex profilePic needs to match whatever u named the img in the obj
     app.post("/api/user/register", upload.single('profilePic'), UserController.register);
     app.post("/api/user/login", UserController.login);
-    app.get("/api/searchAllUsers", UserController.searchAllUsers);
-    app.get("/api/searchUsers", UserController.searchUsers)
     app.get("/api/user/logUser", UserController.getLoggedUser)
     app.get("/api/user/logout", UserController.logout)
     app.post("/api/usersInChat", UserController.getUsersInChat)
     app.put("/api/users/update/:_id",  upload.single('profilePic'), UserController.updateUser)
+    app.get("/api/searchUsers/:name", UserController.searchAllUsers);
 }

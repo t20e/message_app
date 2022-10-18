@@ -1,5 +1,6 @@
 const Chat = require("../models/chat.model");
 const { login } = require("./user.controller");
+const UserController = require('../controllers/user.controller')
 
 class ChatController {
     getChat = (req, res) => {
@@ -39,10 +40,14 @@ class ChatController {
     }
 
     getAllChatsForUser = (req, res) => {
-        // console.log(req.body)
         Chat.find({ members: { $all: [req.body._id] } })
             .then(allChats => {
-                res.json({ 'results': allChats })
+                UserController.getUsersInChat(req, res, allChats)
+                // let users = [{}]
+                // for(let i in allChats) {
+                //     console.log(users[i].members)
+                // }
+                // res.json({ 'results': allChats })
             })
             .catch(err => {
                 res.json({ 'err': err });

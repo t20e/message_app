@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import styles from "../../styles/userSettings.module.css"
 import { ThemeContext } from "../../context/ThemeContext";
 
-const UserSettings = ({ togglePopUpFunc, useCheckClickOutside }) => {
+const UserSettings = ({ openSettingsPopUp, useCheckClickOutside }) => {
     const { theme, setTheme } = useContext(ThemeContext);
     // const [font_selected, setFont_selected] = useState(theme.fontFamily)
     const [switchClassTheme, setSwitchClassTheme] = useState({
@@ -48,7 +48,7 @@ const UserSettings = ({ togglePopUpFunc, useCheckClickOutside }) => {
         })
     }
     let domNode = useCheckClickOutside(() => {
-        togglePopUpFunc()
+        openSettingsPopUp()
     })
     return (
         <div ref={domNode} className={styles.PopUpCont}>
@@ -118,7 +118,7 @@ const UserSettings = ({ togglePopUpFunc, useCheckClickOutside }) => {
             </div>
             <hr className={styles.__hrlast} />
             <div className={styles.btnCont}>
-                <input type="submit" onClick={togglePopUpFunc} className={styles.__btn} value="close" />
+                <input type="submit" onClick={openSettingsPopUp} className={styles.__btn} value="close" />
             </div>
         </div>
     );

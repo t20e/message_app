@@ -4,7 +4,7 @@ import { UserContext } from '../../context/UserContext';
 import deltethisimg from '../../imgsOnlyForDev/arrows.svg';
 import axios from 'axios';
 
-const UserProfile = ({openUserProfilePopUp, useCheckClickOutside}) => {
+const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [pfp, setPfp] = useState(loggedUser ? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg")
     const [imgHover, setImgHover] = useState(false)
@@ -62,7 +62,6 @@ const UserProfile = ({openUserProfilePopUp, useCheckClickOutside}) => {
         for (let pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
-
         axios.put(`http://localhost:8000/api/users/update/${loggedUser._id}`, formData, {withCredentials: true})
             .then(res => {
                 console.log(res.data)
@@ -108,7 +107,7 @@ const UserProfile = ({openUserProfilePopUp, useCheckClickOutside}) => {
         inputFile.current.click();
     }
     let domNode = useCheckClickOutside(() => {
-        openUserProfilePopUp()
+        openProfilePopUp()
     })
     const showAddressDiv = ()=>{
         setOpenAdressDiv(!openAdressDiv)
@@ -188,7 +187,7 @@ const UserProfile = ({openUserProfilePopUp, useCheckClickOutside}) => {
                     </div>
 
                     <div>
-                        <input type="submit" className={`${styles.btn} ${styles.closeBtn}`} onClick={() => openUserProfilePopUp()} value="close" />
+                        <input type="submit" className={`${styles.btn} ${styles.closeBtn}`} onClick={() => openProfilePopUp()} value="close" />
                         <input type="submit" className={styles.btn} value="update" />
                     </div>
                 </form>

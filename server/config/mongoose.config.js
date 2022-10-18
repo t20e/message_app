@@ -1,7 +1,6 @@
 const mongoose = require("mongoose")
-const dbName = 'message_app_db'
 
-mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@personal-projects-db.3ruyg.mongodb.net/${dbName}?retryWrites=true&w=majority`
+mongoose.connect(`mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASSWORD}@personal-projects-db.3ruyg.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`
 , {
     useNewUrlParser: true,
     useUnifiedTopology: true

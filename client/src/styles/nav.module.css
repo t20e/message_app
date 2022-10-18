@@ -66,7 +66,6 @@
 }
 
 .usersInChatDiv.show {
-    background-color: white;
     min-width: 10rem;
     border-top-right-radius: .8em;
 }
@@ -82,9 +81,9 @@
 }
 
 .arrBtn {
+    cursor: pointer;
     height: 1em;
     width: 1em;
-    /* filter: invert(true); */
     margin-left: .3em;
 }
 
@@ -99,21 +98,22 @@
 
 .userDiv.show {
     background-color: white;
-    min-width: 10rem;
-    padding: .2em .5em;
+    min-width: 12rem;
+    padding: .4em .5em;
     height: auto;
-    width: 10rem;
+    width: auto;
     display: block;
     position: absolute;
+    top: 1.5rem;
     z-index: 10000;
-    border-radius: 0 0 .8em .8em;
+    border-radius: 0 0 .4em .4em;
 }
 
 .repeatUser {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-top: .2em;
+    margin: .4em 0;
 
 }
 

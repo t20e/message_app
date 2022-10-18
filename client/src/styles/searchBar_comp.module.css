@@ -28,7 +28,9 @@
     outline: none;
     margin: 0;
 }
-
+.input{
+    padding: .6em 0;
+}
 button {
     background: transparent;
     border: none;

@@ -11,19 +11,21 @@ import { UserContext } from '../context/UserContext'
 import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
 import chat_panel_css from '../styles/chat_panel.module.css'
+import { SocketContext } from '../context/SocketContext';
+import GitLink from './GitLink';
 
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const [usersInChat, setUsersInChat] = useState(false)
+    const socket = useContext(SocketContext);
+    const [usersInChatId, setUsersInChatId] = useState(false)
     const redirect = useNavigate()
-    const [settingsPopUp, setSettingsPopUp] = useState(false)
     const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [blurPage, setblurPage] = useState(false)
+    const [settingsPopUp, setSettingsPopUp] = useState(false);
 
     useEffect(() => {
-        if (loggedUser.firstName === "") {
-            // console.log(loggedUser)
+        if (loggedUser === undefined) {
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
                     // console.log('logged in user', res.data);
@@ -31,6 +33,7 @@ const HomePage = () => {
                         redirect('/regLogin')
                     }
                     setLoggedUser(res.data.results)
+                    localStorage.setItem('_id', res.data.results._id)
                 })
                 .catch(err => {
                     console.log('err getting logged user');
@@ -38,21 +41,27 @@ const HomePage = () => {
                 })
         }
     }, []);
-    const togglePopUpFunc = () => {
-        setSettingsPopUp(!settingsPopUp);
+
+    useEffect(() => {
+        socket.on("connect", () => {
+            console.log("socket_id: ", socket.id);
+            socket.emit("setUserActive", localStorage.getItem("_id"));
+        });
+        return () => socket.disconnect(true);
+    }, [socket]);
+
+    const openSettingsPopUp = () => {
+        setSettingsPopUp(!settingsPopUp)
+        setblurPage(!blurPage);
     }
-    const openUserProfilePopUp = () => {
-        setUserProfilePopUp(!userProfilePopUp);
+    const openProfilePopUp = () => {
+        setUserProfilePopUp(!userProfilePopUp)
+        setblurPage(!blurPage);
     }
 
     const openChat = (users) => {
-        if (users[0] === loggedUser._id) {
-            alert('you can not send a message to ur self')
-        } else {
-            users.push(loggedUser._id)
-            setUsersInChat({ 'members': users })
-        }
-        // console.log(users)
+        users.push(loggedUser._id)
+        setUsersInChatId({ 'members': users })
     }
     const useCheckClickOutside = (handler) => {
         let domRef = useRef()
@@ -80,12 +89,12 @@ const HomePage = () => {
         date = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
         return date
     }
-
+    
     return (
         <div id='mainPageDiv'>
-            <span className={settingsPopUp ? 'blurBehindPopUp' : null}>
+            <span className={blurPage ? 'blurBehindPopUp' : null}>
                 <div className='navBar'>
-                    <Nav openUserProfilePopUp={openUserProfilePopUp} togglePopUpFunc={togglePopUpFunc} usersInChatProp={usersInChat} useCheckClickOutside={useCheckClickOutside} />
+                    <Nav openSettingsPopUp={openSettingsPopUp} openProfilePopUp={openProfilePopUp} usersInChatIdProp={usersInChatId} useCheckClickOutside={useCheckClickOutside} />
                 </div>
                 <div className='underNavCont'>
                     <div className='colOne'>
@@ -93,22 +102,25 @@ const HomePage = () => {
                         <MsgNotification openChat={openChat} />
                     </div>
                     <div className='colTwo'>
-                        {usersInChat === false
+                        {usersInChatId === false
                             ?
                             <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
                             :
-                            <ChatPanel usersInChatProp={usersInChat} getCurrTime={getCurrTime} />
+                            <ChatPanel useCheckClickOutside={useCheckClickOutside} socket={socket} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                         }
                     </div>
                 </div>
             </span>
+            <div>
+                <GitLink/>
+            </div>
             {settingsPopUp ? (
-                <UserSettings useCheckClickOutside={useCheckClickOutside} togglePopUpFunc={togglePopUpFunc} />
+                <UserSettings useCheckClickOutside={useCheckClickOutside} openSettingsPopUp={openSettingsPopUp} />
             )
                 : null
             }
             {userProfilePopUp ?
-                <UserProfile openUserProfilePopUp={openUserProfilePopUp} useCheckClickOutside={useCheckClickOutside}/>
+                <UserProfile openProfilePopUp={openProfilePopUp} useCheckClickOutside={useCheckClickOutside} />
                 : null
             }
         </div>

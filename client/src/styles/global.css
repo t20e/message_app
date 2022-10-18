@@ -34,7 +34,7 @@
   --bgkColor: linear-gradient(135deg,
       rgba(255, 255, 255, 0.1),
       rgba(255, 255, 255, 0));
-  --bkDropFilter: blur(1em);
+  --bkDropFilter: blur(.7rem);
   --boxShadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   --textColor: black;
   --nonImportantText: #727f83;
@@ -93,7 +93,7 @@ h6 {
 
 input {
   color: white;
-  padding-top: 1em ;
+  padding-top: 1em;
 }
 
 img {
@@ -137,6 +137,82 @@ input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
 input[type=number] {
-  -moz-appearance:textfield;
+  -moz-appearance: textfield;
+}
+
+.err {
+  color: red;
+}
+
+.gitLink {
+  position: absolute;
+  top: 75vh;
+  left: 60vw;
+  display: flex;
+  align-items: center;
+}
+
+@keyframes growAlert {
+  0% {
+    width: 0rem;
+  }
+
+  10% {
+    width: 15rem;
+  }
+
+  90% {
+    width: 15rem;
+  }
+
+  100% {
+    width: 0rem;
+  }
+}
+
+
+.gitLinkAlert {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  min-width: 15rem;
+  background-color: transparent;
+  user-select: none;
+}
+
+.gitLinkAlert div {
+  height: 2rem;
+  padding-left: 1em;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  background-color: white;
+  border-radius: 1em 0 0 1em;
+  margin-right: -1.2rem;
+  animation-name: growAlert;
+  animation-duration: 15s;
+  animation-fill-mode: forwards;
+  overflow: hidden;
+  white-space: nowrap;
+
+}
+
+
+.gitLinkAlert h4 {
+  margin-right: 2em;
+}
+
+#linkImg {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-color: white;
+  height: 2.3rem;
+  width: 2.3rem;
+  padding: 5px;
+  border-radius: 50px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+    rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }

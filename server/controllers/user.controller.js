@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const ObjectId = require('mongodb').ObjectId;
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const randomstring = require("randomstring");
-const { response } = require("express");
 
 const bucket_name = process.env.BUCKET_NAME
 const bucket_region = process.env.BUCKET_REGION
@@ -76,7 +75,10 @@ class UserController {
                     res.json({ err: { email: { message: "Email is taken!" } } })
                 }
             })
-            .catch(err => console.log("err!", err))
+            .catch(err => {
+                console.log("err!", err)
+                res.json({ err: err })
+            });
     }
     login = (req, res) => {
         console.log("email:", req.body.email);
@@ -126,68 +128,51 @@ class UserController {
             })
     }
     searchAllUsers = (req, res) => {
-        // filter to return only necessary info such as id firstName lastName
-        User.find({}, { "_id": 1, "firstName": 1, "lastName": 1 })
-            .then(allUsers => {
-                res.json(allUsers)
+        User.aggregate([
+            {
+                "$search": {
+                    "autocomplete": {
+                        "query": `${req.params.name}`,
+                        "path": "firstName",
+                        // fuzzy allow typos etc its very flexible
+                        "fuzzy": {
+                            "maxEdits": 1
+                        }
+                    }
+                }
+            }
+        ])
+            .then((data) => {
+                res.json(data)
             })
-            .catch(err => {
-                res.json({ msg: err })
-            })
+            .catch((err) => {
+                res.status(500).send({ message: err.message })
+            });
     }
-    searchUsers = async (req, res) => {
-        console.log(req.body.searchVal);
-        let results = await User.aggregate([
-            {
-                $search: {
-                    index: "autocomplete",
-                    autocomplete: {
-                        query: req.body.searchVal,
-                        path: "firstName",
-                        fuzzy: {
-                            maxEdits: 1,
-                        },
-                        tokenOrder: "sequential",
-                    },
-                },
-            },
-            {
-                $project: {
-                    firstName: 1,
-                },
-            },
-            {
-                $limit: 20,
-            },
-        ]);
-        if (results) {
-            return res.json({ 'msg': 'hi' })
-        } else {
-            res.json([]);
-        }
-        res.json({ 'err': error })
-        res.json({ 'msg': `${req.body.searchVal}` })
-    }
+
     getAllUsers = (req, res) => {
         User.find()
     }
+    setUserActive = (_id, boolean) => {
+        User.findOneAndUpdate(
+            { _id: _id },
+            [{ $set: { isActive: boolean } }]
+        )
+            .then((data) => {
+                console.log('set User active', data);
+            })
+            .catch((err) => { console.log('set User active err', err); });
+    };
     getUsersInChat = (req, res) => {
         console.log(req.body)
-        // User.find({ "_id": { "$in": [req.body] } }, { firstName: 1, lastName: 1, _id: 1 })
-        // U CAN NOT PASS AN ARRAY OF IDS IT HAS TO BE AN OBJECT OR OTHER
-        User.find({ "_id": req.body })
-            // User.find({ "_id": {"$in" : ObjectId("6333fb549d7877dd9440233c")} }, { firstName: 1, lastName: 1 })
+        User.find({ _id: req.body }, {isActive: 1, firstName:1, lastName:1, profilePic:1})
             .then((users) => {
-                // console.log(users)
-                if (users.length > 0) {
-                    res.json(users);
-                } else {
-                    res.json({ 'err': 'could not find users' })
-                }
+                res.json(users)
             })
-            .catch((error) => {
-                res.json({ 'err': error })
-            })
+            .catch((err) => {
+                console.error(err)
+                res.json({ err: err })
+            });
     }
 
     updateUser = async (req, res) => {
@@ -216,7 +201,7 @@ class UserController {
             // {context: ‘query'} allows the validator to use the this keyword
         )
             .then(updatedUser => {
-                res.json({result: updatedUser})
+                res.json({ result: updatedUser })
             })
             .catch(err => {
                 res.json({ error: err, msg: 'err updating User' })

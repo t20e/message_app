@@ -1,4 +1,3 @@
-
 ::placeholder {
     color: red;
 }
@@ -102,15 +101,15 @@
     padding: .8em .5em;
     resize: none;
     border: none;
-    font-size: .9em;
+    font-size: 1em;
     position: absolute;
     overflow: hidden;
     height: auto;
     min-height: 2em;
     width: 20em;
     background-color: white;
-    left: 6em;
-    bottom: -.1em;
+    left: 5rem;
+    bottom: .3rem;
     outline: none;
     display: flex;
     flex-flow: column-reverse;
@@ -130,14 +129,11 @@
     display: none;
 }
 
-.emoji_picker.show {
-    display: inline-block;
-    position: absolute;
-    z-index: 1000;
-    top: -21em;
-    left: -8em;
-    box-shadow: none;
-    border: none;
+.show {
+    position: relative;
+    top: -25rem;
+    left: -7.5rem;
+    display: block;
 }
 
 

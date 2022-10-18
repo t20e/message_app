@@ -4,12 +4,10 @@ import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
-import { SocketContext } from '../context/SocketContext';
 
 
-const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
+const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socket }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const socket = useContext(SocketContext);
     // currentChatId will contain info about chat it will change when users change
     const [currChat, setCurrChat] = useState({ _id: null })
     const [messages, setMessages] = useState([])
@@ -21,10 +19,11 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     const [formErrors, setFormErrors] = useState({})
     const [openDiv, setOpenDiv] = useState(null)
     const scrollBarDiv = useRef(null)
+    const textarea = useRef(null)
     useEffect(() => {
         // first check db with users in chat for a existing chat, if it doesnt create a new one
-        if (usersInChatProp !== false) {
-            axios.post('http://localhost:8000/api/chat', usersInChatProp)
+        if (usersInChatIdProp !== false) {
+            axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
                     console.log('respond from server, getting or creating chat', res.data);
                     setCurrChat({
@@ -38,12 +37,10 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
                     console.log(err);
                 })
         }
-    }, [usersInChatProp]);
+    }, [usersInChatIdProp]);
     // socket io
     useEffect(() => {
-        socket.on("connect", () => {
-            // console.log("socket_id: ", socket.id);
-        });
+
         socket.on("res_msg", data => {
             console.log("new msg", data);
             setMessages(current => [...current, { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }])
@@ -71,9 +68,9 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
             body: '',
             date: ''
         })
-        // e.target.style.height = 'inherit';
-        // e.target.style.height = `auto`; 
-        // e.target.style.minHeight= `2em`; 
+        textarea.current.style.height = 'inherit';
+        textarea.current.style.height = `auto`; 
+        textarea.current.style.minHeight= `2em`; 
     }
     const growTextarea = (e) => {
         // TODO it wont shrink after sending text
@@ -81,18 +78,15 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         e.target.style.height = `${e.target.scrollHeight}px`;
     }
     const emojiDivController = () => {
-        openDiv === 'show' ? setOpenDiv(null) : setOpenDiv('show')
+        openDiv === 'show' ? setOpenDiv("") : setOpenDiv(styles.show)
     }
     const onEmojiClick = (event, emojiObject) => {
-        // console.log(emojiObject);
-        // msg.body = msg.body + ' 0x' + emojiObject.unified + ' '
         setMsg({
             ...msg,
             body: msg.body + ' 0x' + emojiObject.unified + ' '
-            // body: message.body + ' ' + " "+ emojiObject.emoji
         })
         emojiDivController()
-        console.log(msg);
+        console.log(msg.body);
     };
     const editInputs = (e) => {
         //*** IF U ARE USING A CHECKBOX OR SOMETHING OTHER THEN TEXT OR # USE AN IF STATEMENTS */
@@ -103,27 +97,25 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
     }
     const convertUnicode = (str) => {
         if (str.includes('0x')) {
-            // console.log('has emoji');
+            console.log(msg.body)
+            console.log('has emoji');
             for (let i = 0; i < str.length; i++) {
-                if (str[i] === '0' && str[i + 1] === 'x' && str[i - 1] === ' ') {
-                    // i is the start of the slice
-                    let end;
-                    for (let k = i; k < str.length; k++) {
-                        if (str[k] === " ") {
-                            end = k
+                if (str[i] === '0' && str[i + 1] === 'x' && str[i - 1] === " ") {
+                    // i is the start
+                    let end = i + 1;
+                    for (let v = i + 1; v < str.length; v++) {
+                        if (str[v] === " ") {
+                            end = v
                             break;
                         }
                     }
-                    // console.log(i, end);
-                    let emoji = String.fromCodePoint(str.slice(i, end))
+                    let emoji = String.fromCodePoint(str.slice(i, end));
                     // console.log(emoji);
-                    let newStr = str.slice(0, i) + emoji + str.slice(end)
-                    // console.log(newStr);
-                    str = newStr
+                    let newStr = str.slice(0, i) + emoji + str.slice(end);
+                    str = newStr;
                 }
             }
         }
-        // console.log(str);
         return str
     }
 
@@ -153,6 +145,9 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
         editInputs(e)
         growTextarea(e)
     }
+    let domNode = useCheckClickOutside(() => {
+        setOpenDiv("")
+    })
     return (
         <div className={styles.mainCont}>
             <div ref={scrollBarDiv} className={styles.messages_div}>
@@ -188,12 +183,12 @@ const ChatPanel = ({ usersInChatProp, getCurrTime }) => {
             <form id={styles.sendMessage_form} onSubmit={sendMsg}>
                 <div className={styles.composeMsg_cont}>
                     <div className={styles.composeMsg_actionCont}>
-                        <img src={smileyFace} className={`${styles.emoji_btn_toggle} ${"imgColorSwitch"}`} alt="smiley face" onClick={emojiDivController} />
-                        <div className={`${styles.emoji_picker} ${styles.openDiv}`}>
+                        <img src={smileyFace} className="imgColorSwitch" alt="smiley face icon" onClick={() => emojiDivController()} />
+                        <div ref={domNode} className={`${styles.emoji_picker} ${openDiv}`}>
                             <Picker onEmojiClick={onEmojiClick} />
                         </div>
                     </div>
-                    <textarea id={styles.compose__msg}  maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                    <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
                     <div className={styles.composeMsg_actionCont}>
                         <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                     </div>
