@@ -32,6 +32,16 @@ class UserController {
         s3.send(command)
         return rand_string;
     }
+    addChatToUser = (chatId, members) => {
+        User.updateMany({ _id: members },
+            { $push: { allChats: chatId } })
+            .then(() => {
+                console.log('updated users chat')
+                return { msg: 'updated user' }
+            })
+            .catch(err => { console.error(err) });
+    }
+
     deletePfpFromAws = (id) => {
         try {
             const params = {
@@ -146,7 +156,7 @@ class UserController {
                 res.json(data)
             })
             .catch((err) => {
-                res.status(500).send({ message: err.message })
+                res.json({ err: err })
             });
     }
 
@@ -159,13 +169,14 @@ class UserController {
             [{ $set: { isActive: boolean } }]
         )
             .then((data) => {
-                console.log('set User active', data);
+                // console.log('set User active', data);
             })
             .catch((err) => { console.log('set User active err', err); });
     };
+
     getUsersInChat = (req, res) => {
         console.log(req.body)
-        User.find({ _id: req.body }, {isActive: 1, firstName:1, lastName:1, profilePic:1})
+        User.find({ _id: req.body }, { isActive: 1, firstName: 1, lastName: 1, profilePic: 1 })
             .then((users) => {
                 res.json(users)
             })

@@ -42,6 +42,9 @@ const UserSchema = new Mongoose.Schema({
         type: Boolean,
         default: false
     }),
+    allChats:[
+        // chatIds
+    ],
     address:
     {
         addressOne: ({

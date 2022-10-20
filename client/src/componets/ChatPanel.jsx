@@ -4,9 +4,11 @@ import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
+import { SocketContext } from '../context/SocketContext';
 
 
-const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socket }) => {
+const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, changeCurrChat }) => {
+    const socket = useContext(SocketContext);
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     // currentChatId will contain info about chat it will change when users change
     const [currChat, setCurrChat] = useState({ _id: null })
@@ -22,6 +24,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
     const textarea = useRef(null)
     useEffect(() => {
         // first check db with users in chat for a existing chat, if it doesnt create a new one
+        // console.log(usersInChatIdProp)
         if (usersInChatIdProp !== false) {
             axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
@@ -31,6 +34,8 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
                     })
                     setMessages(res.data.chat.messages)
                     // console.log('chatId', currChat._id) 
+                    // console.log(messages, 'messages')
+                    changeCurrChat(currChat._id)
                     socket.emit("join_room", res.data.chat._id);
                 })
                 .catch(err => {
@@ -40,18 +45,18 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
     }, [usersInChatIdProp]);
     // socket io
     useEffect(() => {
+        socket.on("connect", () => {
+            console.log("socket_id: ", socket.id);
+            socket.emit("setUserActive", localStorage.getItem("_id"));
+        });
 
         socket.on("res_msg", data => {
-            console.log("new msg", data);
+            // console.log("new msg", data);
             setMessages(current => [...current, { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }])
         })
+
         return () => socket.disconnect(true);
     }, [socket]);
-    useEffect(() => {
-        // console.log(scrollBarDiv.current.scrollHeight)
-        scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
-    }, [messages]);
-
 
     const sendMsg = (e) => {
         e.preventDefault();
@@ -61,7 +66,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
         }
         let date = getCurrTime()
         msg.timeStamp = date;
-        let data = { "body": msg, "roomId": currChat._id }
+        let data = { "msg": msg, "roomId": currChat._id }
         socket.emit("new_msg", data);
         setMsg({
             ...msg,
@@ -69,9 +74,13 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
             date: ''
         })
         textarea.current.style.height = 'inherit';
-        textarea.current.style.height = `auto`; 
-        textarea.current.style.minHeight= `2em`; 
+        textarea.current.style.height = `auto`;
+        textarea.current.style.minHeight = `2em`;
     }
+    useEffect(() => {
+        // console.log(scrollBarDiv.current.scrollHeight)
+        scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
+    }, [messages]);
     const growTextarea = (e) => {
         // TODO it wont shrink after sending text
         e.target.style.height = 'inherit';
@@ -83,10 +92,10 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
     const onEmojiClick = (event, emojiObject) => {
         setMsg({
             ...msg,
-            body: msg.body + ' 0x' + emojiObject.unified + ' '
+            body: msg.body + ' %@' + emojiObject.unified + '#$ '
         })
         emojiDivController()
-        console.log(msg.body);
+        // console.log(msg.body);
     };
     const editInputs = (e) => {
         //*** IF U ARE USING A CHECKBOX OR SOMETHING OTHER THEN TEXT OR # USE AN IF STATEMENTS */
@@ -96,23 +105,28 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
         })
     }
     const convertUnicode = (str) => {
-        if (str.includes('0x')) {
-            console.log(msg.body)
-            console.log('has emoji');
+        // console.log(str, 'str')
+        if (str.includes('%@')) {
+            // console.log('has emoji');
             for (let i = 0; i < str.length; i++) {
-                if (str[i] === '0' && str[i + 1] === 'x' && str[i - 1] === " ") {
+                if (str[i] === '%' && str[i + 1] === '@') {
                     // i is the start
-                    let end = i + 1;
+                    let end;
                     for (let v = i + 1; v < str.length; v++) {
-                        if (str[v] === " ") {
-                            end = v
+                        if (str[v] === "$" && str[v - 1] === "#") {
+                            end = v + 1
                             break;
                         }
                     }
-                    let emoji = String.fromCodePoint(str.slice(i, end));
-                    // console.log(emoji);
-                    let newStr = str.slice(0, i) + emoji + str.slice(end);
-                    str = newStr;
+                    // console.log(str[i], str[end], i, end)
+                    let removeSymbols = str.substring(i, end);
+                    removeSymbols = removeSymbols.slice(2, removeSymbols.length - 2)
+                    // console.log(removeSymbols, 'remove symbols');
+                    let emoji = String.fromCodePoint(parseInt(removeSymbols, 16))
+                    // console.log(emoji)
+                    let newStr = str.slice(0, i - 1) + " " + emoji + " " + str.slice(end);
+                    // console.log(newStr)
+                    str = newStr
                 }
             }
         }
@@ -120,25 +134,28 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, socke
     }
 
     const getMsgTime = (time) => {
-        let { day, hour, min, month, year } = time
-        // console.log(typeof(day), hour, min, month, year);
-        let date = getCurrTime()
-        if (min === date.min) {
-            // sent a min ago
-            // FIXME
-            return 'a min ago'
-        } else if (hour === date.hour) {
-            // sent before the last hour pasted
-            return `${date.min - min} mins ago`
-        } else if (day === date.day && hour !== date.hour) {
-            // sent between longer then one hour ago but before one dat ago
-            return `${hour - 24} hours ago`
-        } else if (day === date.day - 1) {
-            // sent yesterday
-            return `yesterday`
-        } else {
-            // sent days ago
-            return `${month}-${day} `
+        // console.log(time)
+        if (time !== undefined) {
+            let { day, hour, min, month, year } = time
+            // console.log(typeof(day), hour, min, month, year);
+            let date = getCurrTime()
+            if (min === date.min) {
+                // sent a min ago
+                // FIXME
+                return 'a min ago'
+            } else if (hour === date.hour) {
+                // sent before the last hour pasted
+                return `${date.min - min} mins ago`
+            } else if (day === date.day && hour !== date.hour) {
+                // sent between longer then one hour ago but before one dat ago
+                return `${hour - 24} hours ago`
+            } else if (day === date.day - 1) {
+                // sent yesterday
+                return `yesterday`
+            } else {
+                // sent days ago
+                return `${month}-${day} `
+            }
         }
     }
     const twoFunc = (e) => {

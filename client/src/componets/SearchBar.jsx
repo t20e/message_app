@@ -45,16 +45,20 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
                         <p className='err'>{searchErr}</p> : null}
                     {
                         searchedUsers.map((user, i) => {
-                            return (
-                                <div key={i} className={styles.repeatedDiv} onClick={(e) => { openChat([user._id]) }}>
-                                    <div className={styles.col1}>
-                                        <img src={user.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${user.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} alt="searched users pfps" />
+                            if (user._id === loggedUser._id) {
+                                return null
+                            } else {
+                                return (
+                                    <div key={i} className={styles.repeatedDiv} onClick={(e) => { openChat([user._id]) }}>
+                                        <div className={styles.col1}>
+                                            <img src={user.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${user.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} alt="searched users pfps" />
+                                        </div>
+                                        <div className={styles.col2}>
+                                            <p>{user.firstName} {user.lastName}</p>
+                                        </div>
                                     </div>
-                                    <div className={styles.col2}>
-                                        <p>{user.firstName} {user.lastName}</p>
-                                    </div>
-                                </div>
-                            )
+                                )
+                            }
                         })
                     }
                 </div>

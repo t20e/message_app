@@ -1,4 +1,3 @@
-
 #regFormCon {
     width: 80%;
     height: auto;
@@ -36,7 +35,7 @@
     height: 100%;
 }
 
-#regForm > input:not(:last-child){
+#regForm>input:not(:last-child) {
     border-radius: .4em;
     border: none;
     margin-top: .9em;
@@ -48,7 +47,7 @@
     outline: none;
 }
 
-#loginForm > input:not(:last-child){
+#loginForm>input:not(:last-child) {
     border-radius: .4em;
     border: none;
     margin-top: .9em;
@@ -59,14 +58,17 @@
     border-bottom: .1em solid black;
     outline: none;
 }
+
 #toggleCheckBox {
     border: none;
     margin: 0;
 }
-.file_age_cont{
+
+.file_age_cont {
     margin-top: .9em;
 }
-.fileInput{
+
+.fileInput {
     display: none;
 }
 

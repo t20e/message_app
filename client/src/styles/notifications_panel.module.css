@@ -4,7 +4,6 @@
 }
 
 .subMain {
-    padding: .8em .09em 0em 0em;
     background: var(--bgkColor);
     box-shadow: var(--boxShadow);
     backdrop-filter: var(--bkDropFilter);
@@ -17,6 +16,7 @@
     display: flex;
     justify-content: space-between;
     cursor: pointer;
+    padding: .8em .09em .8em 0em;
 }
 
 .left {

@@ -15,4 +15,5 @@ module.exports = (app) => {
     app.post("/api/usersInChat", UserController.getUsersInChat)
     app.put("/api/users/update/:_id",  upload.single('profilePic'), UserController.updateUser)
     app.get("/api/searchUsers/:name", UserController.searchAllUsers);
+    
 }

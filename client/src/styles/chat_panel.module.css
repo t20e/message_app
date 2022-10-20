@@ -144,6 +144,7 @@
     border: none;
     /* border-radius: 20em; */
     background-image: url('../imgsOnlyForDev/send_arrow.svg');
+    background-color: transparent   !important;
     background-size: cover;
     background-repeat: no-repeat;
     padding: 0;

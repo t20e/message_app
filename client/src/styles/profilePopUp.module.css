@@ -21,7 +21,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
+    color: #F4F7F3;
 }
 
 .pfpCont {
@@ -74,15 +74,16 @@
 }
 
 .input {
-    color: black;
+    color: white;
     border-radius: .4em;
     width: 100%;
     border: none;
     padding: .2em 0 0 .5em;
     height: 2em;
-    background-color: whites;
     outline: none;
-    border: none;
+
+    background-color: rgb(0, 0, 0, .0);
+    border-bottom: .1em solid black;
 }
 
 .input::-webkit-input-placeholder {

@@ -66,7 +66,7 @@ const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSet
                                     <div key={i} className={styles.repeatUser}>
                                         <pre className={user.isActive ? styles.active : styles.notActive }>•</pre>
                                         <img src={user.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${user.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"}  alt="" />
-                                        <h4>{`${user.firstName}`} {`${user.lastName}`}</h4>
+                                        <h4>{user._id === loggedUser._id ? "you" : `${user.firstName} ${user.lastName}`}</h4>
                                     </div>
                                 )
                             })}

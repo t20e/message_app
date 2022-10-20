@@ -34,7 +34,7 @@
   --bgkColor: linear-gradient(135deg,
       rgba(255, 255, 255, 0.1),
       rgba(255, 255, 255, 0));
-  --bkDropFilter: blur(.7rem);
+  --bkDropFilter: blur(.3rem);
   --boxShadow: 0 5px 15px rgba(0, 0, 0, 0.5);
   --textColor: black;
   --nonImportantText: #727f83;
@@ -215,4 +215,10 @@ input[type=number] {
   border-radius: 50px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+.currChatSelected{
+  background: var(--bgkColor);
+  box-shadow: var(--boxShadow);
+  backdrop-filter: var(--bkDropFilter);
+
 }

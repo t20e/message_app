@@ -17,12 +17,12 @@ module.exports = (io) => {
         })
 
         socket.on("new_msg", (data) => {
-            console.log(`room: ${data.roomId}, message: ${data.body}`)
+            console.log("creating msg")
             let createMsg = ChatController.createMsg(data)
-            // if(createMsg.err){
+            // if ('err' in createMsg) {
             //     console.log('err creating msg')
             // }
-            io.to(data.roomId).emit("res_msg", (data.body));
+            io.to(data.roomId).emit("res_msg", (data.msg));
         })
 
         socket.on("typing", (roomId) => {

@@ -11,18 +11,17 @@ import { UserContext } from '../context/UserContext'
 import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
 import chat_panel_css from '../styles/chat_panel.module.css'
-import { SocketContext } from '../context/SocketContext';
 import GitLink from './GitLink';
 
 
 const HomePage = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const socket = useContext(SocketContext);
     const [usersInChatId, setUsersInChatId] = useState(false)
     const redirect = useNavigate()
     const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [blurPage, setblurPage] = useState(false)
     const [settingsPopUp, setSettingsPopUp] = useState(false);
+    const [msgCompCurrChat, setMsgCompCurrChat ] = useState(false)
 
     useEffect(() => {
         if (loggedUser === undefined) {
@@ -42,14 +41,10 @@ const HomePage = () => {
         }
     }, []);
 
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log("socket_id: ", socket.id);
-            socket.emit("setUserActive", localStorage.getItem("_id"));
-        });
-        return () => socket.disconnect(true);
-    }, [socket]);
 
+    const changeCurrChat = (chat_id)=>{
+        setMsgCompCurrChat(chat_id)
+    }
     const openSettingsPopUp = () => {
         setSettingsPopUp(!settingsPopUp)
         setblurPage(!blurPage);
@@ -66,14 +61,16 @@ const HomePage = () => {
     const useCheckClickOutside = (handler) => {
         let domRef = useRef()
         useEffect(() => {
-            let checkHandler = (e) => {
-                if (!domRef.current.contains(e.target)) {
-                    handler()
+            if (domRef.current !== undefined) {
+                let checkHandler = (e) => {
+                    if (!domRef.current.contains(e.target)) {
+                        handler()
+                    }
                 }
-            }
-            document.addEventListener("mousedown", checkHandler)
-            return () => {
-                document.removeEventListener("mousedown", checkHandler)
+                document.addEventListener("mousedown", checkHandler)
+                return () => {
+                    document.removeEventListener("mousedown", checkHandler)
+                }
             }
         });
         return domRef
@@ -89,7 +86,7 @@ const HomePage = () => {
         date = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
         return date
     }
-    
+
     return (
         <div id='mainPageDiv'>
             <span className={blurPage ? 'blurBehindPopUp' : null}>
@@ -99,20 +96,20 @@ const HomePage = () => {
                 <div className='underNavCont'>
                     <div className='colOne'>
                         <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                        <MsgNotification openChat={openChat} />
+                        <MsgNotification msgCompCurrChat={msgCompCurrChat} openChat={openChat} />
                     </div>
                     <div className='colTwo'>
                         {usersInChatId === false
                             ?
                             <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
                             :
-                            <ChatPanel useCheckClickOutside={useCheckClickOutside} socket={socket} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
+                            <ChatPanel changeCurrChat={changeCurrChat} useCheckClickOutside={useCheckClickOutside}  usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                         }
                     </div>
                 </div>
             </span>
             <div>
-                <GitLink/>
+                <GitLink />
             </div>
             {settingsPopUp ? (
                 <UserSettings useCheckClickOutside={useCheckClickOutside} openSettingsPopUp={openSettingsPopUp} />
