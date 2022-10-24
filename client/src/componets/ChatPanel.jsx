@@ -5,12 +5,13 @@ import Picker from 'emoji-picker-react';
 import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
 import { SocketContext } from '../context/SocketContext';
+import { AllChatsContext } from "../context/AllChatsContext"
 
 
-const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, changeCurrChat }) => {
+const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => {
     const socket = useContext(SocketContext);
+    const { allChatsState, setAllChatsState } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    // currentChatId will contain info about chat it will change when users change
     const [currChat, setCurrChat] = useState({ _id: null })
     const [messages, setMessages] = useState([])
     const [msg, setMsg] = useState({
@@ -34,8 +35,11 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, chang
                     })
                     setMessages(res.data.chat.messages)
                     // console.log('chatId', currChat._id) 
-                    // console.log(messages, 'messages')
-                    changeCurrChat(currChat._id)
+                    setAllChatsState({
+                        ...allChatsState,
+                        currChat_id: res.data.chat._id,
+                        currUsersInChat: res.data.chat.members
+                    })
                     socket.emit("join_room", res.data.chat._id);
                 })
                 .catch(err => {
@@ -44,19 +48,13 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, chang
         }
     }, [usersInChatIdProp]);
     // socket io
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log("socket_id: ", socket.id);
-            socket.emit("setUserActive", localStorage.getItem("_id"));
-        });
 
+    useEffect(() => {
         socket.on("res_msg", data => {
             // console.log("new msg", data);
             setMessages(current => [...current, { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }])
         })
-
-        return () => socket.disconnect(true);
-    }, [socket]);
+    }, [socket])
 
     const sendMsg = (e) => {
         e.preventDefault();
@@ -68,6 +66,12 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime, chang
         msg.timeStamp = date;
         let data = { "msg": msg, "roomId": currChat._id }
         socket.emit("new_msg", data);
+        let id = currChat._id
+        //  TODO check if that id is alrady in the state else rerender the message alert component
+        setAllChatsState({
+            ...allChatsState,
+            allChats: { ...allChatsState.allChats, id: 'hi' }
+        })
         setMsg({
             ...msg,
             body: '',

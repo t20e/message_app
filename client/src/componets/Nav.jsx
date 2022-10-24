@@ -7,13 +7,17 @@ import usersInChatIcon from '../imgsOnlyForDev/many_users_logo.svg'
 import arrowIcon from '../imgsOnlyForDev/arrows.svg'
 import { UserContext } from '../context/UserContext'
 import axios from 'axios';
+import logoutIcon from '../imgsOnlyForDev/logout.svg'
+import { useNavigate } from 'react-router-dom';
+import { AllChatsContext } from "../context/AllChatsContext"
 
-const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSettingsPopUp }) => {
+
+const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const [usersInChat, setUsersInChat] = useState([])
+    const { allChatsState, setAllChatsState } = useContext(AllChatsContext)
     const [showUsersDiv, setShowUsersDiv] = useState('')
     const [rotateArr, setRotateArr] = useState('')
-
+    const redirect = useNavigate()
     const showUsersInChat = () => {
         if (showUsersDiv === '') {
             setShowUsersDiv(styles.show)
@@ -23,22 +27,6 @@ const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSet
             setRotateArr('')
         }
     }
-    useEffect(() => {
-        if (usersInChatIdProp !== false) {
-            // console.log(usersInChatIdProp)
-            let obj = []
-            usersInChatIdProp.members.forEach(user => {
-                obj.push({ "_id": user });
-            })
-            axios.post("http://localhost:8000/api/usersInChat", obj)
-                .then((res) => {
-                    console.log(res.data, 'nav')
-                    setUsersInChat(res.data)
-                    setRotateArr()
-                })
-                .catch((error) => console.log(error))
-        }
-    }, [usersInChatIdProp]);
 
     useEffect(() => {
         // console.log(loggedUser)
@@ -46,6 +34,15 @@ const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSet
     let domNode = useCheckClickOutside(() => {
         setShowUsersDiv("")
     })
+    const logout = () => {
+        axios.get('http://localhost:8000/api/users/logout', { withCredentials: true })
+            .then(res => {
+                redirect('/regLogin')
+            })
+            .catch(err => {
+                console.log(err, 'err logging out')
+            })
+    }
     return (
         <div className={styles.navCont}>
             <div className={styles.profileActions}>
@@ -57,15 +54,15 @@ const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSet
             </div>
             <div className={styles.chatInfoCont}>
                 <img src={usersInChatIcon} className={`${styles.chatIcon} ${"imgColorSwitch"}`} alt="users in chat" onClick={showUsersInChat} />
-                {usersInChatIdProp !== false ?
+                {allChatsState.currUsersInChat !== undefined ?
                     <div className={`${styles.usersInChatDiv} ${showUsersDiv}`}>
                         <img src={arrowIcon} className={`${styles.arrBtn} ${rotateArr} ${"imgColorSwitch"}`} onClick={showUsersInChat} />
                         <div ref={domNode} className={`${styles.userDiv} ${showUsersDiv}`}>
-                            {usersInChat.map((user, i) => {
+                            {allChatsState.currUsersInChat.map((user, i) => {
                                 return (
                                     <div key={i} className={styles.repeatUser}>
-                                        <pre className={user.isActive ? styles.active : styles.notActive }>•</pre>
-                                        <img src={user.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${user.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"}  alt="" />
+                                        <pre className={user.isActive ? styles.active : styles.notActive}>•</pre>
+                                        <img src={user.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${user.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} alt="" />
                                         <h4>{user._id === loggedUser._id ? "you" : `${user.firstName} ${user.lastName}`}</h4>
                                     </div>
                                 )
@@ -74,6 +71,9 @@ const Nav = ({ usersInChatIdProp, openProfilePopUp,useCheckClickOutside, openSet
                     </div>
                     : null}
             </div>
+            <span className={styles.logoutSpan}>
+                <img src={logoutIcon} onClick={() => logout()} className={styles.logoutIcon} alt="" />
+            </span>
         </div>
     );
 };

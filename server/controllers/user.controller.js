@@ -174,17 +174,6 @@ class UserController {
             .catch((err) => { console.log('set User active err', err); });
     };
 
-    getUsersInChat = (req, res) => {
-        console.log(req.body)
-        User.find({ _id: req.body }, { isActive: 1, firstName: 1, lastName: 1, profilePic: 1 })
-            .then((users) => {
-                res.json(users)
-            })
-            .catch((err) => {
-                console.error(err)
-                res.json({ err: err })
-            });
-    }
 
     updateUser = async (req, res) => {
         // TODO the password and confirm password arent being compared
@@ -218,6 +207,10 @@ class UserController {
                 res.json({ error: err, msg: 'err updating User' })
             })
 
+    }
+    logout = (req, res) => {
+        res.clearCookie('userToken');
+        res.sendStatus(200);
     }
 }
 module.exports = new UserController();

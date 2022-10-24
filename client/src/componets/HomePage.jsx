@@ -12,17 +12,20 @@ import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
 import chat_panel_css from '../styles/chat_panel.module.css'
 import GitLink from './GitLink';
+import { SocketContext } from '../context/SocketContext';
 
 
 const HomePage = () => {
+    const socket = useContext(SocketContext);
+
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChatId, setUsersInChatId] = useState(false)
     const redirect = useNavigate()
-    const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [blurPage, setblurPage] = useState(false)
+    // 
+    const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [settingsPopUp, setSettingsPopUp] = useState(false);
-    const [msgCompCurrChat, setMsgCompCurrChat ] = useState(false)
-
+    const [msgCompCurrChat, setMsgCompCurrChat] = useState(null)
     useEffect(() => {
         if (loggedUser === undefined) {
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
@@ -40,9 +43,15 @@ const HomePage = () => {
                 })
         }
     }, []);
+    useEffect(() => {
+        socket.on("connect", () => {
+            console.log("socket_id: ", socket.id);
+            socket.emit("setUserActive", localStorage.getItem("_id"));
+        });
+        return () => socket.disconnect(true);
+    }, [socket]);
 
-
-    const changeCurrChat = (chat_id)=>{
+    const changeCurrChat = (chat_id) => {
         setMsgCompCurrChat(chat_id)
     }
     const openSettingsPopUp = () => {
@@ -103,7 +112,7 @@ const HomePage = () => {
                             ?
                             <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
                             :
-                            <ChatPanel changeCurrChat={changeCurrChat} useCheckClickOutside={useCheckClickOutside}  usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
+                            <ChatPanel changeCurrChat={changeCurrChat} useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                         }
                     </div>
                 </div>

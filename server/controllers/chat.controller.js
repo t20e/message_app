@@ -9,7 +9,28 @@ class ChatController {
         req.body.members.map(id => {
             arr.push(ObjectId(id))
         })
-        Chat.find({ members: { $all: arr } })
+        Chat.aggregate(
+            [
+                {
+                    $match: {
+                        members: {
+                            $all:
+                                arr
+                        }
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "users",
+                        localField: "members",
+                        foreignField: "_id",
+                        as: "members",
+                    }
+                }
+            ]
+        )
+            // Chat.find({ members: { $all: arr } })
             // the $all will get a document by an array but it knows the array isn’t ordered so it will find it by unordered array
             // the document array of members has to match the arr of ids
             .then(chat => {
