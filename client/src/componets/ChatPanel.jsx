@@ -10,11 +10,14 @@ import { AllChatsContext } from "../context/AllChatsContext"
 
 const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => {
     const socket = useContext(SocketContext);
-    const { allChatsState, setAllChatsState } = useContext(AllChatsContext)
+    const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const [currChat, setCurrChat] = useState({ _id: null })
-    const [messages, setMessages] = useState([])
-    const [msg, setMsg] = useState({
+    const [currChat, setCurrChat] = useState({
+        _id: undefined,
+        members: [],
+        messages: []
+    })
+    const [composeMsg, setComposeMsg] = useState({
         'from': loggedUser ? loggedUser._id : null,
         'body': '',
         'timeStamp': null
@@ -30,16 +33,30 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
             axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
                     console.log('respond from server, getting or creating chat', res.data);
-                    setCurrChat({
-                        _id: res.data.chat._id,
-                    })
-                    setMessages(res.data.chat.messages)
                     // console.log('chatId', currChat._id) 
-                    setAllChatsState({
-                        ...allChatsState,
+                    setChatsContext({
+                        ...chatsContext,
                         currChat_id: res.data.chat._id,
                         currUsersInChat: res.data.chat.members
                     })
+                    setCurrChat({
+                        _id: res.data.chat._id,
+                        messages: res.data.chat.messages,
+                        members: res.data.chat.members
+                    })
+                    if (!chatsContext.allChats[res.data.chat._id]) {
+                        // add the whole chat to the allChats context
+                        setChatsContext({
+                            ...chatsContext,
+                            allChats: {
+                                ...chatsContext.allChats,
+                                [res.data.chat._id]: {
+                                    members: res.data.chat.members,
+                                    messages: res.data.chat.messages
+                                }
+                            }
+                        })
+                    }
                     socket.emit("join_room", res.data.chat._id);
                 })
                 .catch(err => {
@@ -52,28 +69,47 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     useEffect(() => {
         socket.on("res_msg", data => {
             // console.log("new msg", data);
-            setMessages(current => [...current, { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }])
+            let res_msg = { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }
+            setCurrChat({
+                ...currChat,
+                messages: [...currChat.messages, res_msg]
+            })
+            // setChatsContext({
+            //     ...chatsContext,
+            //     allChats: {
+            //         ...chatsContext.allChats,
+            //         [currChat._id]: {
+            //             ...chatsContext.allChats[currChat._id],
+            //             messages: [...chatsContext.allChats[currChat._id].messages, res_msg]
+            //         }
+            //     }
+            // })
         })
-    }, [socket])
+    }, [socket, currChat, chatsContext])
+
 
     const sendMsg = (e) => {
         e.preventDefault();
-        if (msg.body === '') {
+        if (composeMsg.body === '') {
             alert('Please enter a message');
             return
         }
         let date = getCurrTime()
-        msg.timeStamp = date;
-        let data = { "msg": msg, "roomId": currChat._id }
+        composeMsg.timeStamp = date;
+        let data = { "msg": composeMsg, "roomId": currChat._id }
         socket.emit("new_msg", data);
-        let id = currChat._id
-        //  TODO check if that id is alrady in the state else rerender the message alert component
-        setAllChatsState({
-            ...allChatsState,
-            allChats: { ...allChatsState.allChats, id: 'hi' }
+        setChatsContext({
+            ...chatsContext,
+            allChats: {
+                ...chatsContext.allChats,
+                [currChat._id]: {
+                    ...chatsContext.allChats[currChat._id],
+                    messages: [...chatsContext.allChats[currChat._id].messages, composeMsg]
+                }
+            }
         })
-        setMsg({
-            ...msg,
+        setComposeMsg({
+            ...composeMsg,
             body: '',
             date: ''
         })
@@ -84,9 +120,8 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     useEffect(() => {
         // console.log(scrollBarDiv.current.scrollHeight)
         scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
-    }, [messages]);
+    }, [currChat.messages]);
     const growTextarea = (e) => {
-        // TODO it wont shrink after sending text
         e.target.style.height = 'inherit';
         e.target.style.height = `${e.target.scrollHeight}px`;
     }
@@ -94,17 +129,16 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
         openDiv === 'show' ? setOpenDiv("") : setOpenDiv(styles.show)
     }
     const onEmojiClick = (event, emojiObject) => {
-        setMsg({
-            ...msg,
-            body: msg.body + ' %@' + emojiObject.unified + '#$ '
+        setComposeMsg({
+            ...composeMsg,
+            body: composeMsg.body + ' %@' + emojiObject.unified + '#$ '
         })
         emojiDivController()
         // console.log(msg.body);
     };
     const editInputs = (e) => {
-        //*** IF U ARE USING A CHECKBOX OR SOMETHING OTHER THEN TEXT OR # USE AN IF STATEMENTS */
-        setMsg({
-            ...msg,
+        setComposeMsg({
+            ...composeMsg,
             [e.target.name]: [e.target.value]
         })
     }
@@ -152,7 +186,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
                 return `${date.min - min} mins ago`
             } else if (day === date.day && hour !== date.hour) {
                 // sent between longer then one hour ago but before one dat ago
-                return `${hour - 24} hours ago`
+                return `${24 - hour} hours ago`
             } else if (day === date.day - 1) {
                 // sent yesterday
                 return `yesterday`
@@ -172,8 +206,8 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     return (
         <div className={styles.mainCont}>
             <div ref={scrollBarDiv} className={styles.messages_div}>
-                {Array.isArray(messages) ?
-                    messages.map((i, index) => {
+                {Array.isArray(currChat.messages) ?
+                    currChat.messages.map((i, index) => {
                         if (i.from === loggedUser._id) {
                             return (
                                 <div key={index} className={styles.single_messageDiv__right}>
@@ -209,7 +243,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
                             <Picker onEmojiClick={onEmojiClick} />
                         </div>
                     </div>
-                    <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(msg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                    <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
                     <div className={styles.composeMsg_actionCont}>
                         <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                     </div>
@@ -219,7 +253,5 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     )
 };
 
-
-ChatPanel.propTypes = {};
 
 export default ChatPanel;

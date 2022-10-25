@@ -30,7 +30,6 @@ class ChatController {
                 }
             ]
         )
-            // Chat.find({ members: { $all: arr } })
             // the $all will get a document by an array but it knows the array isn’t ordered so it will find it by unordered array
             // the document array of members has to match the arr of ids
             .then(chat => {
@@ -44,7 +43,28 @@ class ChatController {
                         .then(chat => {
                             // add chat id to user chat
                             UserController.addChatToUser(chat._id, req.body.members)
-                            res.json({ 'msg': 'no existing chat, created one', 'chat': chat })
+                            Chat.aggregate(
+                                [
+                                    {
+                                        $match: {
+                                            _id: chat._id
+                                        }
+                                    },
+                                    {
+                                        $lookup:
+                                        {
+                                            from: "users",
+                                            localField: "members",
+                                            foreignField: "_id",
+                                            as: "members",
+                                        }
+                                    }
+                                ]
+                            )
+                            .then(newChat =>{
+                                res.json({ 'msg': 'no existing chat, created one', 'chat': newChat });
+                            })
+                            .catch(err => res.json({msg: 'err find a chat that was created from this request', err:err}))
                         })
                         .catch(err => {
                             res.json({ 'msg': 'err creating chat' })

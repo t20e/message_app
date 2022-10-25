@@ -25,7 +25,6 @@ const HomePage = () => {
     // 
     const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [settingsPopUp, setSettingsPopUp] = useState(false);
-    const [msgCompCurrChat, setMsgCompCurrChat] = useState(null)
     useEffect(() => {
         if (loggedUser === undefined) {
             axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
@@ -51,9 +50,6 @@ const HomePage = () => {
         return () => socket.disconnect(true);
     }, [socket]);
 
-    const changeCurrChat = (chat_id) => {
-        setMsgCompCurrChat(chat_id)
-    }
     const openSettingsPopUp = () => {
         setSettingsPopUp(!settingsPopUp)
         setblurPage(!blurPage);
@@ -105,14 +101,14 @@ const HomePage = () => {
                 <div className='underNavCont'>
                     <div className='colOne'>
                         <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                        <MsgNotification msgCompCurrChat={msgCompCurrChat} openChat={openChat} />
+                        <MsgNotification  openChat={openChat} />
                     </div>
                     <div className='colTwo'>
                         {usersInChatId === false
                             ?
                             <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
                             :
-                            <ChatPanel changeCurrChat={changeCurrChat} useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
+                            <ChatPanel  useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                         }
                     </div>
                 </div>

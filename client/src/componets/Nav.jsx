@@ -14,7 +14,7 @@ import { AllChatsContext } from "../context/AllChatsContext"
 
 const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const { allChatsState, setAllChatsState } = useContext(AllChatsContext)
+    const { chatsContext, setChatsContext  } = useContext(AllChatsContext)
     const [showUsersDiv, setShowUsersDiv] = useState('')
     const [rotateArr, setRotateArr] = useState('')
     const redirect = useNavigate()
@@ -54,11 +54,11 @@ const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
             </div>
             <div className={styles.chatInfoCont}>
                 <img src={usersInChatIcon} className={`${styles.chatIcon} ${"imgColorSwitch"}`} alt="users in chat" onClick={showUsersInChat} />
-                {allChatsState.currUsersInChat !== undefined ?
+                {chatsContext.currUsersInChat !== undefined ?
                     <div className={`${styles.usersInChatDiv} ${showUsersDiv}`}>
                         <img src={arrowIcon} className={`${styles.arrBtn} ${rotateArr} ${"imgColorSwitch"}`} onClick={showUsersInChat} />
                         <div ref={domNode} className={`${styles.userDiv} ${showUsersDiv}`}>
-                            {allChatsState.currUsersInChat.map((user, i) => {
+                            {chatsContext.currUsersInChat.map((user, i) => {
                                 return (
                                     <div key={i} className={styles.repeatUser}>
                                         <pre className={user.isActive ? styles.active : styles.notActive}>•</pre>

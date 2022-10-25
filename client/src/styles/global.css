@@ -148,8 +148,8 @@ input[type=number] {
 
 .gitLink {
   position: absolute;
-  top: 75vh;
-  left: 60vw;
+  top: 80vh;
+  left: 64vw;
   display: flex;
   align-items: center;
 }
