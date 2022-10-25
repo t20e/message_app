@@ -12,11 +12,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     const socket = useContext(SocketContext);
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const [currChat, setCurrChat] = useState({
-        _id: undefined,
-        members: [],
-        messages: []
-    })
+    const [currChatId, setCurrChatId] = useState(undefined)
     const [composeMsg, setComposeMsg] = useState({
         'from': loggedUser ? loggedUser._id : null,
         'body': '',
@@ -26,6 +22,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     const [openDiv, setOpenDiv] = useState(null)
     const scrollBarDiv = useRef(null)
     const textarea = useRef(null)
+    const [updateScrollBar, setUpdateScrollBar] = useState(false)
     useEffect(() => {
         // first check db with users in chat for a existing chat, if it doesnt create a new one
         // console.log(usersInChatIdProp)
@@ -33,17 +30,7 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
             axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
                     console.log('respond from server, getting or creating chat', res.data);
-                    // console.log('chatId', currChat._id) 
-                    setChatsContext({
-                        ...chatsContext,
-                        currChat_id: res.data.chat._id,
-                        currUsersInChat: res.data.chat.members
-                    })
-                    setCurrChat({
-                        _id: res.data.chat._id,
-                        messages: res.data.chat.messages,
-                        members: res.data.chat.members
-                    })
+                    setCurrChatId(res.data.chat._id)
                     if (!chatsContext.allChats[res.data.chat._id]) {
                         // add the whole chat to the allChats context
                         setChatsContext({
@@ -54,9 +41,11 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
                                     members: res.data.chat.members,
                                     messages: res.data.chat.messages
                                 }
-                            }
+                            },
+                            currUsersInChat : res.data.chat.members
                         })
                     }
+                    setUpdateScrollBar(!updateScrollBar)
                     socket.emit("join_room", res.data.chat._id);
                 })
                 .catch(err => {
@@ -69,45 +58,34 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     useEffect(() => {
         socket.on("res_msg", data => {
             // console.log("new msg", data);
-            let res_msg = { 'from': data.from, 'body': data.body, 'timeStamp': data.timeStamp }
-            setCurrChat({
-                ...currChat,
-                messages: [...currChat.messages, res_msg]
+            const { msg, roomId } = data
+            let res_msg = { 'from': msg.from, 'body': msg.body, 'timeStamp': msg.timeStamp }
+            setChatsContext({
+                ...chatsContext,
+                allChats: {
+                    ...chatsContext.allChats,
+                    [roomId]: {
+                        ...chatsContext.allChats[roomId],
+                        messages: [...chatsContext.allChats[roomId].messages, res_msg]
+                    }
+                }
             })
-            // setChatsContext({
-            //     ...chatsContext,
-            //     allChats: {
-            //         ...chatsContext.allChats,
-            //         [currChat._id]: {
-            //             ...chatsContext.allChats[currChat._id],
-            //             messages: [...chatsContext.allChats[currChat._id].messages, res_msg]
-            //         }
-            //     }
-            // })
+            setUpdateScrollBar(!updateScrollBar)
         })
-    }, [socket, currChat, chatsContext])
+    }, [socket, updateScrollBar])
 
 
     const sendMsg = (e) => {
         e.preventDefault();
         if (composeMsg.body === '') {
-            alert('Please enter a message');
-            return
+            setFormErrors({ msg: 'Please enter a message' })
+            return;
         }
         let date = getCurrTime()
         composeMsg.timeStamp = date;
-        let data = { "msg": composeMsg, "roomId": currChat._id }
+        let data = { "msg": composeMsg, "roomId": currChatId }
         socket.emit("new_msg", data);
-        setChatsContext({
-            ...chatsContext,
-            allChats: {
-                ...chatsContext.allChats,
-                [currChat._id]: {
-                    ...chatsContext.allChats[currChat._id],
-                    messages: [...chatsContext.allChats[currChat._id].messages, composeMsg]
-                }
-            }
-        })
+        setFormErrors({})
         setComposeMsg({
             ...composeMsg,
             body: '',
@@ -120,7 +98,8 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     useEffect(() => {
         // console.log(scrollBarDiv.current.scrollHeight)
         scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
-    }, [currChat.messages]);
+    }, [updateScrollBar]);
+
     const growTextarea = (e) => {
         e.target.style.height = 'inherit';
         e.target.style.height = `${e.target.scrollHeight}px`;
@@ -203,37 +182,39 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     let domNode = useCheckClickOutside(() => {
         setOpenDiv("")
     })
+
     return (
         <div className={styles.mainCont}>
             <div ref={scrollBarDiv} className={styles.messages_div}>
-                {Array.isArray(currChat.messages) ?
-                    currChat.messages.map((i, index) => {
-                        if (i.from === loggedUser._id) {
-                            return (
-                                <div key={index} className={styles.single_messageDiv__right}>
-                                    <div className={`${styles.message}`} >
-                                        <p>{convertUnicode(i.body)}</p>
+                {chatsContext.allChats[currChatId] !== undefined ?
+                    chatsContext.allChats[currChatId].messages.length > 0 ?
+                        chatsContext.allChats[currChatId].messages.map((i, index) => {
+                            if (i.from === loggedUser._id) {
+                                return (
+                                    <div key={index} className={styles.single_messageDiv__right}>
+                                        <div className={`${styles.message}`} >
+                                            <p>{convertUnicode(i.body)}</p>
+                                        </div>
+                                        <p className={styles.dateOf_message}>
+                                            {getMsgTime(i.timeStamp)}
+                                        </p>
                                     </div>
-                                    <p className={styles.dateOf_message}>
-                                        {getMsgTime(i.timeStamp)}
-                                    </p>
-                                </div>
-                            )
-                        } else {
-                            return (
-                                <div key={index} className={styles.single_messageDiv__left}>
-                                    <div className={styles.message}>
-                                        <p>{convertUnicode(i.body)}</p>
+                                )
+                            } else {
+                                return (
+                                    <div key={index} className={styles.single_messageDiv__left}>
+                                        <div className={styles.message}>
+                                            <p>{convertUnicode(i.body)}</p>
+                                        </div>
+                                        <p className={styles.dateOf_message}>
+                                            {getMsgTime(i.timeStamp)}
+                                        </p>
                                     </div>
-                                    <p className={styles.dateOf_message}>
-                                        {getMsgTime(i.timeStamp)}
-                                    </p>
-                                </div>
-                            )
-                        }
-                    })
-                    : <div></div>
-                }
+                                )
+                            }
+                        })
+                        : null
+                    : null}
             </div>
             <form id={styles.sendMessage_form} onSubmit={sendMsg}>
                 <div className={styles.composeMsg_cont}>
@@ -244,6 +225,16 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
                         </div>
                     </div>
                     <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                    {formErrors.msg ?
+                        <div className='errCont upArrErrCont'>
+                            <div className='adjustPos adjustPosUpArr'>
+                                <div className='imgErr'></div>
+                                <p className='err'>
+                                    {formErrors.msg}
+                                </p>
+                            </div>
+                        </div>
+                        : null}
                     <div className={styles.composeMsg_actionCont}>
                         <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                     </div>

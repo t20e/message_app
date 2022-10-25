@@ -42,6 +42,7 @@
   --secondaryColor: #ffe347;
   --thirdColor: #52dee5;
   --filterForIcons: 0%;
+  --settingsPopUpInvert : black;
 }
 
 * {
@@ -146,10 +147,52 @@ input[type=number] {
   color: red;
 }
 
+.errCont {
+  border-radius: .5em;
+  overflow: hidden;
+  position: relative;
+  height: 0;
+}
+
+.adjustPos {
+  height: 1.8rem;
+  width: auto;
+  background-color: #FFECEF;
+  -webkit-clip-path: polygon(0 50%, 3% 40%, 3% 0, 100% 0, 100% 100%, 3% 100%, 3% 60%);
+  clip-path: polygon(0 50%, 3% 40%, 3% 0, 100% 0, 100% 100%, 3% 100%, 3% 60%);
+  align-items: center;
+  display: flex;
+  padding: 1.5rem;
+  z-index: 1000;
+  position: fixed;
+  left: 0;
+  margin-top: -2.5rem;
+  left: 35%;
+}
+
+.upArrErrCont {
+  top: 8vh;
+}
+
+.adjustPosUpArr {
+  left: 10rem;
+  -webkit-mask-clip: polygon(0 8%, 45% 8%, 50% 0, 55% 8%, 100% 8%, 100% 100%, 0 100%);
+  clip-path: polygon(0 8%, 45% 8%, 50% 0, 55% 8%, 100% 8%, 100% 100%, 0 100%);
+}
+
+.imgErr {
+  background-image: url(../imgsOnlyForDev/err_exclamationPoint.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
+  height: 2rem !important;
+  width: 2rem !important;
+  margin-right: 2rem;
+}
+
 .gitLink {
-  position: absolute;
-  top: 80vh;
-  left: 64vw;
+  position: relative;
+  left: 45vw;
+  top: 2vh;
   display: flex;
   align-items: center;
 }
@@ -216,6 +259,7 @@ input[type=number] {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
     rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
-#currChatSelected{
+
+#currChatSelected {
   box-shadow: var(--boxShadow);
 }

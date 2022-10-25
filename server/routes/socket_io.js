@@ -22,7 +22,7 @@ module.exports = (io) => {
             // if ('err' in createMsg) {
             //     console.log('err creating msg')
             // }
-            io.to(data.roomId).emit("res_msg", (data.msg));
+            io.to(data.roomId).emit("res_msg", (data));
         })
 
         socket.on("typing", (roomId) => {

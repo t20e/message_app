@@ -9,7 +9,6 @@
     width: 40vw;
     background: var(--bgkColor);
     box-shadow: var(--boxShadow);
-    backdrop-filter: var(--bkDropFilter);
     border-radius: .8em;
     display: flex;
     flex-direction: column;
@@ -27,10 +26,12 @@
 
 .p {
     margin-top: -.4em;
+    margin-left: .5em;
     font-size: .8rem;
-    color: gray;
 }
-
+.PopUpCont{
+    color: var(--settingsPopUpInvert);
+}
 .PopUpCont>hr {
     background-color: #f0f0f0;
     width: 95%;
@@ -52,12 +53,6 @@
 
 .radio__div>label>input {
     display: none;
-}
-
-.radio__div>label>p {
-    text-align: start;
-    font-size: .7rem;
-    color: grey;
 }
 
 .radio__div>label>img {

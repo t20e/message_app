@@ -65,7 +65,12 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
         axios.put(`http://localhost:8000/api/users/update/${loggedUser._id}`, formData, {withCredentials: true})
             .then(res => {
                 console.log(res.data)
-                setLoggedUser(res.data.result)
+                if(res.data.error){
+                    alert('err updating user check input')
+                }else{
+                    setLoggedUser(res.data.result)
+                    openProfilePopUp()
+                }
             })
             .catch(err => console.log(err));
     }
@@ -132,7 +137,7 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
                     <div className={`${styles.inputDiv} ${styles.sameLineInputsDiv}`}>
                         <div className={styles.largerDiv}>
                             <p>Email</p>
-                            <input className={`${styles.input} ${styles.emailNotAllowed}`} onClick={() => alert('cant change email')} type="text" readOnly name='email' placeholder={loggedUser.email} />
+                            <input className={`${styles.input} ${styles.emailNotAllowed}`} type="text" readOnly name='email' placeholder={loggedUser.email} />
                         </div>
                         <div className={styles.smallerDiv}>
                             <p>Age</p>
@@ -187,7 +192,7 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
                     </div>
 
                     <div>
-                        <input type="submit" className={`${styles.btn} ${styles.closeBtn}`} onClick={() => openProfilePopUp()} value="close" />
+                        <input type="button" className={`${styles.btn} ${styles.closeBtn}`} onClick={() => openProfilePopUp()} value="close" />
                         <input type="submit" className={styles.btn} value="update" />
                     </div>
                 </form>

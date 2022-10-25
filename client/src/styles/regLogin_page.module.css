@@ -1,8 +1,8 @@
 #regFormCon {
     width: 80%;
-    height: auto;
-    max-height: 35rem;
+    max-height: 40rem;
     min-height: 30rem;
+    height: auto;
     margin: 0px auto;
     margin-top: 2em;
     border-radius: 1.2em 1.2em 1.2em 1.2em;
@@ -87,7 +87,7 @@
     border-radius: 2em;
     width: 6.25em;
     color: white;
-    padding: 0;
+    padding: .3em 1em;
     margin-top: 2.1em;
     cursor: pointer;
     border: none;
@@ -160,12 +160,13 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 2em;
 }
 
 input[type="checkbox"] {
     cursor: pointer;
     position: relative;
-    width: 11.25em;
+    width: 12rem;
     height: 2em;
     /* this is changing the size of the checkbox */
     appearance: none;
@@ -185,7 +186,7 @@ input:checked[type="checkbox"] {
 input[type="checkbox"]:before {
     content: '';
     position: absolute;
-    width: 5em;
+    width: 6rem;
     height: 2em;
     border-radius: 2em;
     top: 0;
@@ -197,19 +198,25 @@ input[type="checkbox"]:before {
 }
 
 input:checked[type="checkbox"]:before {
-    left: 6.1em;
+    left: 6.5rem;
 }
 
 .toggleP {
     position: relative;
-    top: -1.9rem;
+    top: -2rem;
+    left: 0rem;
     text-align: center;
     color: white;
     pointer-events: none;
     display: flex;
-    width: 92%;
+    width: 100%;
     padding: 0px .6em;
     justify-content: space-between;
+}
+@-moz-document url-prefix() {
+    input:checked[type="checkbox"]:before {
+        left: 6rem;
+    }
 }
 
 .pSpan {

@@ -10,6 +10,7 @@ import GitLink from './GitLink';
 
 const RegLogin = () => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
+    const [formErrors, setFormErrors] = useState({})
     const redirect = useNavigate();
     // change form
     const [whichForm, setWhichForm] = useState('signUp')
@@ -20,10 +21,11 @@ const RegLogin = () => {
             .then(res => {
                 console.log("response from server: ", res);
                 if (res.data.err) {
-                    // setFormErrors(res.data.errors)
-                    alert('login creditianals invalid')
+                    // console.log(res.data.errors)
+                    setFormErrors(res.data.err.errors)
                 } else {
                     console.log('successfully log or reg!', res.userToken);
+                    setFormErrors({})
                     localStorage.setItem('userToken', res.userToken);
                     setLoggedUser(res.data.user)
                     localStorage.setItem('_id', res.data.user._id)
@@ -42,7 +44,18 @@ const RegLogin = () => {
             setWhichForm('signUp')
         }
     }
-
+    const getError = (input) => {
+        if (formErrors.hasOwnProperty(input)) {
+            return <div className='errCont'>
+                <div className='adjustPos'>
+                    <div className='imgErr'></div>
+                    <p className='err'>
+                        {formErrors[input].message}
+                    </p>
+                </div>
+            </div>
+        }
+    }
     return (
         <div id={styles.regFormCon}>
             <section className={styles.formContainer}>
@@ -62,7 +75,7 @@ const RegLogin = () => {
                 <div className={styles.forms}>
                     {
                         whichForm == 'signUp' ?
-                            <Register formSubmission={formSubmission} styles={styles} /> : <Login styles={styles} formSubmission={formSubmission} />
+                            <Register getError={getError}  formSubmission={formSubmission} styles={styles} /> : <Login getError={getError}  styles={styles} formSubmission={formSubmission} />
                     }
                 </div>
             </section>

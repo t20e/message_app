@@ -106,7 +106,7 @@ const HomePage = () => {
                     <div className='colTwo'>
                         {usersInChatId === false
                             ?
-                            <div className={`${chat_panel_css.mainCont} noChatSelected`}>select another user to create a chat</div>
+                            <div className={`${chat_panel_css.mainCont} noChatSelected`}>select or search a user to create a chat</div>
                             :
                             <ChatPanel  useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                         }

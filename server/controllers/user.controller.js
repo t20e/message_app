@@ -20,6 +20,8 @@ const s3 = new S3Client({
 })
 class UserController {
     addPfpToAws = (file) => {
+        console.log(file, 'file')
+        console.log(file.type)
         const rand_string = randomstring.generate(32)
         const params = {
             Bucket: bucket_name,
@@ -95,7 +97,7 @@ class UserController {
         User.findOne({ email: req.body.email })
             .then(user => {
                 if (user === null) {
-                    res.json({ err: "invalid login credentials" })
+                    res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } }})
                 } else {
                     bcrypt.compare(req.body.password, user.password)
                         .then(checkPassword => {
@@ -108,7 +110,7 @@ class UserController {
                                     }, process.env.SECRET_KEY), { httpOnly: true })
                                     .json({ msg: 'successfully logged in', 'user': user })
                             } else {
-                                res.json({ err: "invalid login credentials" })
+                                res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } }})
                             }
                         })
                         .catch(err => {

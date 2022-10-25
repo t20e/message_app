@@ -46,7 +46,7 @@ const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
     return (
         <div className={styles.navCont}>
             <div className={styles.profileActions}>
-                <img src={loggedUser ? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} id={styles.userImg} alt="pfp icon" />
+                <img src={loggedUser ? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} id={styles.userImg} alt="pfp image" />
                 <div className={styles.otherIcons}>
                     <img src={gearIcon} onClick={() => openSettingsPopUp()} className={`${styles.gear} ${"imgColorSwitch"}`} alt="gear icon" />
                     <img src={user_icon} onClick={(e) => openProfilePopUp()} className="imgColorSwitch" alt="user profile icon" />
@@ -71,7 +71,7 @@ const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
                     </div>
                     : null}
             </div>
-            <span className={styles.logoutSpan}>
+            <span className={`${styles.logoutSpan} ${'imgColorSwitch'}`}>
                 <img src={logoutIcon} onClick={() => logout()} className={styles.logoutIcon} alt="" />
             </span>
         </div>

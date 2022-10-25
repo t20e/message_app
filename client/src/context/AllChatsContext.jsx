@@ -3,14 +3,14 @@ export const AllChatsContext = createContext()
 
 export const AllChatsProvider = (props) => {
     const [chatsContext, setChatsContext] = useState({
-        currChat_id : undefined,
-        currUsersInChat: undefined,
+        // get the curr chat id to retreive data from allChats
         allChats:{
             // chatId : '12323':{
                 // messages: [],
                 // memebers : []
             // }
-        }
+        },
+        currUsersInChat: undefined
     })
     return (
         <AllChatsContext.Provider value={{ chatsContext, setChatsContext }}>

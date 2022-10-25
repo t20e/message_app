@@ -26,7 +26,9 @@ export const ThemeProvider = (props) => {
         if (theme.mode === "dark") {
             document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.527),rgba(0, 0, 0, 0.5)) , url(${theme.bgk_url})`
             document.documentElement.style.setProperty('--filterForIcons', '100%');
+            document.documentElement.style.setProperty('--settingsPopUpInvert', 'white');
         } else {
+            document.documentElement.style.setProperty('--settingsPopUpInvert', 'black');
             document.documentElement.style.setProperty('--filterForIcons', '0%');
             document.body.style.backgroundImage = `url(${theme.bgk_url})`
         }
