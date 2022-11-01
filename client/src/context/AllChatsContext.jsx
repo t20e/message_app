@@ -6,11 +6,11 @@ export const AllChatsProvider = (props) => {
         // get the curr chat id to retreive data from allChats
         allChats:{
             // chatId : '12323':{
-                // messages: [],
-                // memebers : []
-            // }
+                                    // messages: [],
+                                    // memebers : []
+                                    // }
         },
-        currUsersInChat: undefined
+        currChatId : undefined
     })
     return (
         <AllChatsContext.Provider value={{ chatsContext, setChatsContext }}>

@@ -14,7 +14,6 @@ const RegLogin = () => {
     const redirect = useNavigate();
     // change form
     const [whichForm, setWhichForm] = useState('signUp')
-    // TODO get form errors and display it on the form
     const formSubmission = (formData, url) => {
         // console.log(formData);
         axios.post(`http://localhost:8000${url}`, formData, { withCredentials: true })

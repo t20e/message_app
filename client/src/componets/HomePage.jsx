@@ -10,14 +10,14 @@ import SearchBar from './SearchBar';
 import { UserContext } from '../context/UserContext'
 import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
-import chat_panel_css from '../styles/chat_panel.module.css'
 import GitLink from './GitLink';
-import { SocketContext } from '../context/SocketContext';
+// import { SocketContext } from '../context/SocketContext';
+import { AllChatsContext } from "../context/AllChatsContext"
 
 
 const HomePage = () => {
-    const socket = useContext(SocketContext);
-
+    // const { socket, setSocket } = useContext(SocketContext);
+    const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChatId, setUsersInChatId] = useState(false)
     const redirect = useNavigate()
@@ -42,13 +42,34 @@ const HomePage = () => {
                 })
         }
     }, []);
-    useEffect(() => {
-        socket.on("connect", () => {
-            console.log("socket_id: ", socket.id);
-            socket.emit("setUserActive", localStorage.getItem("_id"));
-        });
-        return () => socket.disconnect(true);
-    }, [socket]);
+    const convertUnicode = (str) => {
+        // console.log(str, 'str')
+        if (str.includes('%@')) {
+            // console.log('has emoji');
+            for (let i = 0; i < str.length; i++) {
+                if (str[i] === '%' && str[i + 1] === '@') {
+                    // i is the start
+                    let end;
+                    for (let v = i + 1; v < str.length; v++) {
+                        if (str[v] === "$" && str[v - 1] === "#") {
+                            end = v + 1
+                            break;
+                        }
+                    }
+                    // console.log(str[i], str[end], i, end)
+                    let removeSymbols = str.substring(i, end);
+                    removeSymbols = removeSymbols.slice(2, removeSymbols.length - 2)
+                    // console.log(removeSymbols, 'remove symbols');
+                    let emoji = String.fromCodePoint(parseInt(removeSymbols, 16))
+                    // console.log(emoji)
+                    let newStr = str.slice(0, i - 1) + " " + emoji + " " + str.slice(end);
+                    // console.log(newStr)
+                    str = newStr
+                }
+            }
+        }
+        return str
+    }
 
     const openSettingsPopUp = () => {
         setSettingsPopUp(!settingsPopUp)
@@ -81,15 +102,15 @@ const HomePage = () => {
         return domRef
     }
     const getCurrTime = () => {
-        var date = new Date();
-        var yyyy = (date.getFullYear());
-        var mm = (date.getMonth() + 1);
-        var dd = (date.getUTCDate() - 1);
-        let hr = (date.getHours())
-        let min = (date.getMinutes())
+        const date = new Date();
+        const yyyy = (date.getFullYear());
+        const mm = (date.getMonth() + 1);
+        const dd = (date.getUTCDate() - 1);
+        const hr = (date.getHours())
+        const min = (date.getMinutes())
         // date = mm + '-' + dd + '-' + yyyy+ '-' + time;
-        date = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
-        return date
+        const timeStamp = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
+        return timeStamp
     }
 
     return (
@@ -101,15 +122,10 @@ const HomePage = () => {
                 <div className='underNavCont'>
                     <div className='colOne'>
                         <SearchBar useCheckClickOutside={useCheckClickOutside} openChat={openChat} />
-                        <MsgNotification  openChat={openChat} />
+                        <MsgNotification convertUnicode={convertUnicode} openChat={openChat} />
                     </div>
                     <div className='colTwo'>
-                        {usersInChatId === false
-                            ?
-                            <div className={`${chat_panel_css.mainCont} noChatSelected`}>select or search a user to create a chat</div>
-                            :
-                            <ChatPanel  useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
-                        }
+                        <ChatPanel convertUnicode={convertUnicode} useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                     </div>
                 </div>
             </span>

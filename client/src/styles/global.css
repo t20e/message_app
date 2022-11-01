@@ -175,7 +175,7 @@ input[type=number] {
 }
 
 .adjustPosUpArr {
-  left: 10rem;
+  left: 14.5vw;
   -webkit-mask-clip: polygon(0 8%, 45% 8%, 50% 0, 55% 8%, 100% 8%, 100% 100%, 0 100%);
   clip-path: polygon(0 8%, 45% 8%, 50% 0, 55% 8%, 100% 8%, 100% 100%, 0 100%);
 }

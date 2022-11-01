@@ -1,6 +1,4 @@
-::placeholder {
-    color: red;
-}
+
 
 /* message panel css here */
 /* any tag with _c ending refers to the chat_panel */
@@ -67,7 +65,8 @@
 
 .dateOf_message {
     font-size: .5em;
-    color: #E6EFEC;
+    /* color: #E6EFEC; */
+    color: #434560;
     margin: .2em 2.5em 0em 2.5em;
 }
 
@@ -152,5 +151,12 @@
 }
 
 
-
-/* any tag with -R ending refers to the right panel */
+.noChatSelected {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    height: 100%;
+    font-size: 1.1rem;
+    text-decoration: underline;
+}

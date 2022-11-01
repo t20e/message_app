@@ -5,17 +5,14 @@ const UserController = require("./user.controller");
 const ObjectId = mongoose.Types.ObjectId;
 class ChatController {
     getChat = async (req, res) => {
-        let arr = []
-        req.body.members.map(id => {
-            arr.push(ObjectId(id))
-        })
+        req.body.members = req.body.members.map(member => ObjectId(member))
         Chat.aggregate(
             [
                 {
                     $match: {
                         members: {
                             $all:
-                                arr
+                                req.body.members
                         }
                     }
                 },
@@ -38,9 +35,12 @@ class ChatController {
                     res.json({ 'msg': 'found chat', chat: chat[0] })
                 } else {
                     // convert all ids to ObjectIds to pass into the new document
-                    req.body.members = req.body.members.map(member => ObjectId(member))
+                    // { 'members': users }
+                    req.body['typeAction'] = "false"
+                    // data = { 'members': req.body.members[0].members, 'typeAction': 'false' }
                     Chat.create(req.body)
                         .then(chat => {
+                            console.log(chat)
                             // add chat id to user chat
                             UserController.addChatToUser(chat._id, req.body.members)
                             Chat.aggregate(
@@ -61,10 +61,10 @@ class ChatController {
                                     }
                                 ]
                             )
-                            .then(newChat =>{
-                                res.json({ 'msg': 'no existing chat, created one', 'chat': newChat });
-                            })
-                            .catch(err => res.json({msg: 'err find a chat that was created from this request', err:err}))
+                                .then(newChat => {
+                                    res.json({ 'msg': 'no existing chat, created one', 'chat': newChat[0] });
+                                })
+                                .catch(err => res.json({ msg: 'err find a chat that was created from this request', err: err }))
                         })
                         .catch(err => {
                             res.json({ 'msg': 'err creating chat' })
@@ -76,22 +76,41 @@ class ChatController {
             })
 
     }
-    createMsg = (data) => {
-        console.log(data, 'creating new message');
-        Chat.findOneAndUpdate({ _id: data.roomId },
+    createMsg = async (data) => {
+        // console.log(data, 'creating new message');
+        const updatedChat = await Chat.findOneAndUpdate({ _id: data.roomId },
             { $push: { messages: data.msg } },
             { new: true, runValidators: true }
         )
-            .then(updatedChat => {
-                // console.log(updatedChat);
-                // res.json({ 'chat': updatedChat })
-                return 'created msg'
-            })
-            .catch(err => {
-                return 'err'
-                console.log(err)
-                // res.json({ msg: 'error adding message' })
-            })
+        return updatedChat
+    }
+    getChatThatWasntAlreadyloaded = async (chatId) => {
+        // this is for when a user send a msg to another user and that user is online but loaded his page before this chat was created
+        console.log(chatId)
+        const chat = await Chat.aggregate(
+            [
+                {
+                    $match: {
+                        _id: ObjectId(chatId)
+                    }
+                },
+                {
+                    $lookup:
+                    {
+                        from: "users",
+                        localField: "members",
+                        foreignField: "_id",
+                        as: "members",
+                    }
+                }
+            ]
+        )
+        console.log('chat in controller', chat)
+        if (chat.length > 0) {
+            return chat[0]
+        } else {
+            return { 'err': "server couldn't find chat" }
+        }
     }
 
     getAllChatsForUser = (req, res) => {
@@ -116,16 +135,16 @@ class ChatController {
                         from: "users",
                         localField: "members",
                         foreignField: "_id",
-                        as: "usersData",
+                        as: "members",
                     }
                 },
-                {
-                    // only send selected fields from the collections
-                    $project: {
-                        "usersData.firstName": 1, "usersData.lastName": 1, "usersData._id": 1, "_id": 1, "usersData.profilePic": 1, "isActive": 1,
-                        messages: 1
-                    }
-                }
+                // {
+                //     // only send selected fields from the collections
+                //     $project: {
+                //         "usersData.firstName": 1, "usersData.lastName": 1, "usersData._id": 1, "_id": 1, "usersData.profilePic": 1, "isActive": 1,
+                //         messages: 1
+                //     }
+                // }
             ]
         )
             .then(allChats => {

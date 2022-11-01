@@ -42,9 +42,12 @@ const UserSchema = new Mongoose.Schema({
         type: Boolean,
         default: false
     }),
-    allChats:[
+    allChats: [
         // chatIds
     ],
+    is_bot: {
+        default: false,
+    },
     address:
     {
         addressOne: ({
@@ -53,23 +56,23 @@ const UserSchema = new Mongoose.Schema({
         }),
         addressTwo: ({
             type: String,
-            default:""
+            default: ""
         }),
         postalCode: ({
             type: String,
-            defa:"",
+            defa: "",
         }),
         city: ({
             type: String,
-            defa:"",
+            defa: "",
         }),
         state: ({
             type: String,
-            defa:"",
+            defa: "",
         }),
         country: ({
             type: String,
-            defa:""
+            defa: ""
         }),
     },
 }, { timestamps: true })

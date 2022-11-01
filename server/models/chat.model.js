@@ -10,7 +10,11 @@ const ChatSchema = new Mongoose.Schema({
     // { from: user_id[1], body: 'Hello everyone,  what's up?', date: 10-11-12  },
     status: {
         delete: Boolean,
-    }
+    },
+    typeAction: ({
+        type: String,
+        default: "false"
+    })
 }, { timestamps: true })
 
 const Chat = Mongoose.model('chat', ChatSchema)

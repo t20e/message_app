@@ -30,13 +30,6 @@
     padding: .7em;
 }
 
-.noChatSelected {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-decoration: underline;
-}
 .blurBehindPopUp{
     filter: blur(.3rem);
 }

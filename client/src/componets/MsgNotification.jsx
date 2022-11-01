@@ -3,8 +3,9 @@ import styles from '../styles/notifications_panel.module.css'
 import axios from 'axios';
 import { UserContext } from '../context/UserContext'
 import { AllChatsContext } from "../context/AllChatsContext"
+import { SocketContext, socket } from '../context/SocketContext';
 
-const MsgNotification = ({ openChat, rerenderMsgCompFunc }) => {
+const MsgNotification = ({ openChat, convertUnicode }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const chatDivs = useRef({})
@@ -18,9 +19,18 @@ const MsgNotification = ({ openChat, rerenderMsgCompFunc }) => {
                         // setChats(res.data.results)
                         // console.log(res.data.results)
                         let obj = {}
+                        // let joinMultRooms = ['main_room']
+                        let joinMultRooms = []
                         for (let chat in res.data.results) {
-                            obj[res.data.results[chat]._id] = { members: res.data.results[chat].usersData, messages: res.data.results[chat].messages }
+                            obj[res.data.results[chat]._id] = { members: res.data.results[chat].members, messages: res.data.results[chat].messages }
+                            joinMultRooms.push(res.data.results[chat]._id)
                         }
+                        console.log('rooms to join= >>>>', joinMultRooms)
+                        if (joinMultRooms.length > 0) {
+                            socket.emit('joinMultRooms', joinMultRooms)
+                        }
+                        socket.emit('addUserToObj', loggedUser._id)
+                        // console.log(obj)
                         setChatsContext({
                             ...chatsContext,
                             allChats: obj
@@ -32,6 +42,28 @@ const MsgNotification = ({ openChat, rerenderMsgCompFunc }) => {
             }
         }
     }, [loggedUser]);
+    useEffect(() => {
+        socket.on('loadNewChat', chat => {
+            console.log('\n adding chat thats not already loaded', chat)
+            if (chat.err) {
+                alert('please reload page, couldnt find chat, someome is trying to create a new chat with you')
+                return
+            }
+            // add the whole chat to the allChats context
+            console.log('chat not in context')
+            let chatsCopy = chatsContext.allChats
+            chatsCopy[chat._id] = {
+                members: chat.members,
+                messages: chat.messages
+            }
+            setChatsContext({
+                ...chatsContext,
+                allChats: chatsCopy,
+            })
+            socket.emit('join_room', chat._id)
+        })
+    }, [socket, chatsContext])
+
     useEffect(() => {
         // change the current chat selected
         if (prevChatDiv.current !== undefined) {
@@ -53,28 +85,34 @@ const MsgNotification = ({ openChat, rerenderMsgCompFunc }) => {
         <div className={styles.mainCont}>
             <div className={styles.subMain}>
                 {
-                    Object.entries(chatsContext.allChats).map(([key, value]) => {
-                        // console.log(key, value);
-                        // console.log(typeof(chat.messages.slice(-1)[0].body))
-                        let userOtherThanMain
-                        value.members.map((user) => {
-                            if (user._id !== loggedUser._id) {
-                                userOtherThanMain = user
-                            }
+                    Object.keys(chatsContext.allChats).length > 0 ?
+                        Object.entries(chatsContext.allChats).map(([key, value]) => {
+                            // console.log(key, value);
+                            // console.log(typeof(chat.messages.slice(-1)[0].body))
+                            let userOtherThanMain
+                            value.members.map((user) => {
+                                if (user._id !== loggedUser._id) {
+                                    userOtherThanMain = user
+                                }
+                            })
+                            return (
+                                <div ref={(e) => chatDivs.current[key] = e} key={key} onClick={() => openChat([`${userOtherThanMain._id}`])} className={styles.msgNotification} >
+                                    <div className={styles.left}>
+                                        <span className={styles.newNotification}></span>
+                                        <img className={styles.usersPfp} src={userOtherThanMain ?
+                                            userOtherThanMain.is_bot ? userOtherThanMain.profilePic :
+                                                userOtherThanMain.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${userOtherThanMain.profilePic}`
+                                                    : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"
+                                            : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} />
+                                    </div>
+                                    <div className={styles.right}>
+                                        <h4>{`${userOtherThanMain.firstName} ${userOtherThanMain.lastName}`}</h4>
+                                        <p>{value.messages.length > 0 ? `${convertUnicode(value.messages.slice(-1)[0].body)}` : null}</p>
+                                    </div>
+                                </div>
+                            )
                         })
-                        return (
-                            <div ref={(e) => chatDivs.current[key] = e} key={key} onClick={() => openChat([`${userOtherThanMain._id}`])} className={styles.msgNotification} >
-                                <div className={styles.left}>
-                                    <span className={styles.newNotification}></span>
-                                    <img className={styles.usersPfp} src={userOtherThanMain.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${userOtherThanMain.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg"} />
-                                </div>
-                                <div className={styles.right}>
-                                    <h4>{`${userOtherThanMain.firstName} ${userOtherThanMain.lastName}`}</h4>
-                                    <p>{value.messages.length > 0 ? `${value.messages.slice(-1)[0].body}` : null}</p>
-                                </div>
-                            </div>
-                        )
-                    })
+                        : null
                 }
             </div>
         </div>

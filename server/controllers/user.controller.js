@@ -25,7 +25,6 @@ class UserController {
         const rand_string = randomstring.generate(32)
         const params = {
             Bucket: bucket_name,
-            // TODO the files arent foinf in to the right folder its creating a new folder
             Key: `client/message-app/${rand_string}`,
             Body: file.buffer,
             ContentType: file.mimtype,
@@ -178,7 +177,7 @@ class UserController {
 
 
     updateUser = async (req, res) => {
-        // TODO the password and confirm password arent being compared
+        // TODO the password and confirm password arent being compared when updating user
         if (req.file && req.body.pfpId.length !== 32) {
             // this means that the user doesnt already have a pfp and they uploaded a new one
             req.body['profilePic'] = await this.addPfpToAws(req.file)

@@ -4,21 +4,20 @@ import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
-import { SocketContext } from '../context/SocketContext';
+import { SocketContext, socket } from '../context/SocketContext';
 import { AllChatsContext } from "../context/AllChatsContext"
 
-
-const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => {
-    const socket = useContext(SocketContext);
+const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, getCurrTime }) => {
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
-    const [currChatId, setCurrChatId] = useState(undefined)
     const [composeMsg, setComposeMsg] = useState({
         'from': loggedUser ? loggedUser._id : null,
         'body': '',
         'timeStamp': null
     })
-    const [formErrors, setFormErrors] = useState({})
+    // chat will holder chat info only about this componet
+    const [chat, setChat] = useState({});
+    const [formErrors, setFormErrors] = useState(false)
     const [openDiv, setOpenDiv] = useState(null)
     const scrollBarDiv = useRef(null)
     const textarea = useRef(null)
@@ -29,10 +28,22 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
         if (usersInChatIdProp !== false) {
             axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
-                    console.log('respond from server, getting or creating chat', res.data);
-                    setCurrChatId(res.data.chat._id)
+                    console.log('respond from server, getting or creating chat, new Chat: ===> \n', res.data);
                     if (!chatsContext.allChats[res.data.chat._id]) {
                         // add the whole chat to the allChats context
+                        console.log('chat not in context')
+                        let chatsCopy = chatsContext.allChats
+                        chatsCopy[res.data.chat._id] = {
+                            members: res.data.chat.members,
+                            messages: res.data.chat.messages
+                        }
+                        setChatsContext({
+                            ...chatsContext,
+                            allChats: chatsCopy,
+                            currChatId: res.data.chat._id
+                        })
+                        socket.emit('join_room', res.data.chat._id)
+                    } else {
                         setChatsContext({
                             ...chatsContext,
                             allChats: {
@@ -42,11 +53,11 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
                                     messages: res.data.chat.messages
                                 }
                             },
-                            currUsersInChat : res.data.chat.members
+                            currChatId: res.data.chat._id
                         })
                     }
+                    setChat(res.data.chat)
                     setUpdateScrollBar(!updateScrollBar)
-                    socket.emit("join_room", res.data.chat._id);
                 })
                 .catch(err => {
                     console.log(err);
@@ -54,26 +65,40 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
         }
     }, [usersInChatIdProp]);
     // socket io
-
     useEffect(() => {
         socket.on("res_msg", data => {
-            // console.log("new msg", data);
+            console.log("new msg", data);
             const { msg, roomId } = data
             let res_msg = { 'from': msg.from, 'body': msg.body, 'timeStamp': msg.timeStamp }
-            setChatsContext({
-                ...chatsContext,
-                allChats: {
-                    ...chatsContext.allChats,
-                    [roomId]: {
-                        ...chatsContext.allChats[roomId],
-                        messages: [...chatsContext.allChats[roomId].messages, res_msg]
+            if (chat._id) {
+                setChat({
+                    ...chat,
+                    messages: [...chat.messages, res_msg]
+                })
+            }
+            if (chatsContext.allChats[roomId]) {
+                setChatsContext({
+                    ...chatsContext,
+                    allChats: {
+                        ...chatsContext.allChats,
+                        [roomId]: {
+                            ...chatsContext.allChats[roomId],
+                            messages: [...chatsContext.allChats[roomId].messages, res_msg]
+                        }
                     }
-                }
-            })
+                })
+            }
             setUpdateScrollBar(!updateScrollBar)
         })
-    }, [socket, updateScrollBar])
+    }, [chat, updateScrollBar, chatsContext, socket]);
 
+
+    useEffect(() => {
+        // update scrollbar
+        if (scrollBarDiv.current) {
+            scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight
+        }
+    }, [updateScrollBar])
 
     const sendMsg = (e) => {
         e.preventDefault();
@@ -81,11 +106,24 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
             setFormErrors({ msg: 'Please enter a message' })
             return;
         }
-        let date = getCurrTime()
-        composeMsg.timeStamp = date;
-        let data = { "msg": composeMsg, "roomId": currChatId }
+        let index;
+        chatsContext.allChats[chatsContext.currChatId].members.map((user, i) => {
+            if (user._id !== loggedUser._id) {
+                index = i;
+            }
+        })
+        let data = {
+            "msg": {
+                body: composeMsg.body,
+                timeStamp: getCurrTime(),
+                from: loggedUser._id
+            },
+            "roomId": chatsContext.currChatId,
+            // TODO when the backend gets this userid it will chekck if the user is  a bot then redirect to the chat bot api
+            "otherUser": chatsContext.allChats[chatsContext.currChatId].members[index]._id
+        }
         socket.emit("new_msg", data);
-        setFormErrors({})
+        setFormErrors(false)
         setComposeMsg({
             ...composeMsg,
             body: '',
@@ -95,10 +133,6 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
         textarea.current.style.height = `auto`;
         textarea.current.style.minHeight = `2em`;
     }
-    useEffect(() => {
-        // console.log(scrollBarDiv.current.scrollHeight)
-        scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight;
-    }, [updateScrollBar]);
 
     const growTextarea = (e) => {
         e.target.style.height = 'inherit';
@@ -121,34 +155,6 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
             [e.target.name]: [e.target.value]
         })
     }
-    const convertUnicode = (str) => {
-        // console.log(str, 'str')
-        if (str.includes('%@')) {
-            // console.log('has emoji');
-            for (let i = 0; i < str.length; i++) {
-                if (str[i] === '%' && str[i + 1] === '@') {
-                    // i is the start
-                    let end;
-                    for (let v = i + 1; v < str.length; v++) {
-                        if (str[v] === "$" && str[v - 1] === "#") {
-                            end = v + 1
-                            break;
-                        }
-                    }
-                    // console.log(str[i], str[end], i, end)
-                    let removeSymbols = str.substring(i, end);
-                    removeSymbols = removeSymbols.slice(2, removeSymbols.length - 2)
-                    // console.log(removeSymbols, 'remove symbols');
-                    let emoji = String.fromCodePoint(parseInt(removeSymbols, 16))
-                    // console.log(emoji)
-                    let newStr = str.slice(0, i - 1) + " " + emoji + " " + str.slice(end);
-                    // console.log(newStr)
-                    str = newStr
-                }
-            }
-        }
-        return str
-    }
 
     const getMsgTime = (time) => {
         // console.log(time)
@@ -158,7 +164,6 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
             let date = getCurrTime()
             if (min === date.min) {
                 // sent a min ago
-                // FIXME
                 return 'a min ago'
             } else if (hour === date.hour) {
                 // sent before the last hour pasted
@@ -178,69 +183,78 @@ const ChatPanel = ({ usersInChatIdProp, useCheckClickOutside, getCurrTime }) => 
     const twoFunc = (e) => {
         editInputs(e)
         growTextarea(e)
+        setFormErrors(false)
     }
     let domNode = useCheckClickOutside(() => {
         setOpenDiv("")
     })
 
     return (
-        <div className={styles.mainCont}>
-            <div ref={scrollBarDiv} className={styles.messages_div}>
-                {chatsContext.allChats[currChatId] !== undefined ?
-                    chatsContext.allChats[currChatId].messages.length > 0 ?
-                        chatsContext.allChats[currChatId].messages.map((i, index) => {
-                            if (i.from === loggedUser._id) {
-                                return (
-                                    <div key={index} className={styles.single_messageDiv__right}>
-                                        <div className={`${styles.message}`} >
-                                            <p>{convertUnicode(i.body)}</p>
-                                        </div>
-                                        <p className={styles.dateOf_message}>
-                                            {getMsgTime(i.timeStamp)}
-                                        </p>
-                                    </div>
-                                )
-                            } else {
-                                return (
-                                    <div key={index} className={styles.single_messageDiv__left}>
-                                        <div className={styles.message}>
-                                            <p>{convertUnicode(i.body)}</p>
-                                        </div>
-                                        <p className={styles.dateOf_message}>
-                                            {getMsgTime(i.timeStamp)}
-                                        </p>
-                                    </div>
-                                )
-                            }
-                        })
-                        : null
-                    : null}
-            </div>
-            <form id={styles.sendMessage_form} onSubmit={sendMsg}>
-                <div className={styles.composeMsg_cont}>
-                    <div className={styles.composeMsg_actionCont}>
-                        <img src={smileyFace} className="imgColorSwitch" alt="smiley face icon" onClick={() => emojiDivController()} />
-                        <div ref={domNode} className={`${styles.emoji_picker} ${openDiv}`}>
-                            <Picker onEmojiClick={onEmojiClick} />
-                        </div>
+        <span>
+            {usersInChatIdProp !== false ?
+                <div className={styles.mainCont}>
+                    <div ref={scrollBarDiv} className={styles.messages_div}>
+                        {chat._id ?
+                            chat.messages.length > 0 ?
+                                chat.messages.map((i, index) => {
+                                    if (i.from === loggedUser._id) {
+                                        return (
+                                            <div key={index} className={styles.single_messageDiv__right}>
+                                                <div className={`${styles.message}`} >
+                                                    <p>{convertUnicode(i.body)}</p>
+                                                </div>
+                                                <p className={styles.dateOf_message}>
+                                                    {getMsgTime(i.timeStamp)}
+                                                </p>
+                                            </div>
+                                        )
+                                    } else {
+                                        return (
+                                            <div key={index} className={styles.single_messageDiv__left}>
+                                                <div className={styles.message}>
+                                                    <p>{convertUnicode(i.body)}</p>
+                                                </div>
+                                                <p className={styles.dateOf_message}>
+                                                    {getMsgTime(i.timeStamp)}
+                                                </p>
+                                            </div>
+                                        )
+                                    }
+                                })
+                                : null
+                            : null}
                     </div>
-                    <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
-                    {formErrors.msg ?
-                        <div className='errCont upArrErrCont'>
-                            <div className='adjustPos adjustPosUpArr'>
-                                <div className='imgErr'></div>
-                                <p className='err'>
-                                    {formErrors.msg}
-                                </p>
+                    <form id={styles.sendMessage_form} onSubmit={sendMsg}>
+                        <div className={styles.composeMsg_cont}>
+                            <div className={styles.composeMsg_actionCont}>
+                                <img src={smileyFace} className="imgColorSwitch" alt="smiley face icon" onClick={() => emojiDivController()} />
+                                <div ref={domNode} className={`${styles.emoji_picker} ${openDiv}`}>
+                                    <Picker onEmojiClick={onEmojiClick} />
+                                </div>
+                            </div>
+                            <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                            {formErrors.msg ?
+                                <div className='errCont upArrErrCont'>
+                                    <div className='adjustPos adjustPosUpArr'>
+                                        <div className='imgErr'></div>
+                                        <p className='err'>
+                                            {formErrors.msg}
+                                        </p>
+                                    </div>
+                                </div>
+                                : null}
+                            <div className={styles.composeMsg_actionCont}>
+                                <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
                             </div>
                         </div>
-                        : null}
-                    <div className={styles.composeMsg_actionCont}>
-                        <input type="submit" id={styles.btn} value="" className='imgColorSwitch' />
-                    </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+                :
+                <div className={styles.mainCont}>
+                    <div className={styles.noChatSelected}>Select or search another user to create a chat</div>
+                </div>
+            }
+        </span>
     )
 };
 

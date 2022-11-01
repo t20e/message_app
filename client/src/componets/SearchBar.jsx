@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import styles from '../styles/searchBar_comp.module.css'
 import searchIcon from '../imgsOnlyForDev/search_icon.svg'
-import deletethisImg from '../imgsOnlyForDev/black-screen.jpeg'
 import axios from 'axios'
 import { UserContext } from '../context/UserContext'
 

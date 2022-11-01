@@ -217,6 +217,9 @@ input:checked[type="checkbox"]:before {
     input:checked[type="checkbox"]:before {
         left: 6rem;
     }
+    .toggleP {
+        top: -1.7rem;
+    }
 }
 
 .pSpan {
