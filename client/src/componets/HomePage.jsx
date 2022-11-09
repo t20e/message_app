@@ -1,5 +1,5 @@
-import axios from 'axios';
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/home_page.css';
 import '../styles/global.css'
@@ -11,12 +11,10 @@ import { UserContext } from '../context/UserContext'
 import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
 import GitLink from './GitLink';
-// import { SocketContext } from '../context/SocketContext';
 import { AllChatsContext } from "../context/AllChatsContext"
-
+import { socket } from '../context/SocketContext';
 
 const HomePage = () => {
-    // const { socket, setSocket } = useContext(SocketContext);
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [usersInChatId, setUsersInChatId] = useState(false)
@@ -42,6 +40,7 @@ const HomePage = () => {
                 })
         }
     }, []);
+
     const convertUnicode = (str) => {
         // console.log(str, 'str')
         if (str.includes('%@')) {

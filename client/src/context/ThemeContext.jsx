@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import React,{ useState, createContext, useEffect } from "react";
 let UiTheme = {
     "mode": "light",
     "fontFamily": "Satoshi",

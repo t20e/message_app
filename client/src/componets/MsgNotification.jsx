@@ -4,8 +4,10 @@ import axios from 'axios';
 import { UserContext } from '../context/UserContext'
 import { AllChatsContext } from "../context/AllChatsContext"
 import { SocketContext, socket } from '../context/SocketContext';
+import { ActivityContext } from '../context/ActivityContext'
 
 const MsgNotification = ({ openChat, convertUnicode }) => {
+    const { activeUsers, setActiveUsers } = useContext(ActivityContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const chatDivs = useRef({})
@@ -25,7 +27,7 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
                             obj[res.data.results[chat]._id] = { members: res.data.results[chat].members, messages: res.data.results[chat].messages }
                             joinMultRooms.push(res.data.results[chat]._id)
                         }
-                        console.log('rooms to join= >>>>', joinMultRooms)
+                        console.log('\n rooms to join= >>>>', joinMultRooms)
                         if (joinMultRooms.length > 0) {
                             socket.emit('joinMultRooms', joinMultRooms)
                         }
@@ -42,27 +44,8 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
             }
         }
     }, [loggedUser]);
-    useEffect(() => {
-        socket.on('loadNewChat', chat => {
-            console.log('\n adding chat thats not already loaded', chat)
-            if (chat.err) {
-                alert('please reload page, couldnt find chat, someome is trying to create a new chat with you')
-                return
-            }
-            // add the whole chat to the allChats context
-            console.log('chat not in context')
-            let chatsCopy = chatsContext.allChats
-            chatsCopy[chat._id] = {
-                members: chat.members,
-                messages: chat.messages
-            }
-            setChatsContext({
-                ...chatsContext,
-                allChats: chatsCopy,
-            })
-            socket.emit('join_room', chat._id)
-        })
-    }, [socket, chatsContext])
+
+
 
     useEffect(() => {
         // change the current chat selected
@@ -96,9 +79,10 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
                                 }
                             })
                             return (
-                                <div ref={(e) => chatDivs.current[key] = e} key={key} onClick={() => openChat([`${userOtherThanMain._id}`])} className={styles.msgNotification} >
+                                <div className={styles.msgNotification} ref={(e) => chatDivs.current[key] = e} onClick={(e) => openChat([`${userOtherThanMain._id}`])} key={key}>
                                     <div className={styles.left}>
                                         <span className={styles.newNotification}></span>
+                                        <p className={`${'bulletAlert'} ${ userOtherThanMain.is_bot ? 'active' :  activeUsers.indexOf(userOtherThanMain._id) > -1 ? 'active' : 'notActive'}`}>●</p>
                                         <img className={styles.usersPfp} src={userOtherThanMain ?
                                             userOtherThanMain.is_bot ? userOtherThanMain.profilePic :
                                                 userOtherThanMain.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${userOtherThanMain.profilePic}`

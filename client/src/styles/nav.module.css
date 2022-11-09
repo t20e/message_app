@@ -132,10 +132,10 @@
 }
 
 .repeatUser>img {
+    margin: 0 .5em 0 1em;
     height: 1.5em;
     width: 1.5em;
     border-radius: 5em;
-    margin: 0 .5em 0 1em;
 }
 
 .repeatUser>p {
@@ -143,14 +143,5 @@
     text-align: left;
     overflow: hidden;
     white-space: nowrap;
-    width: 50%;
     text-overflow: ellipsis;
-}
-
-.notActive {
-    color: grey;
-}
-
-.active {
-    color: blue;
 }

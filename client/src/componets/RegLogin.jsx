@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/regLogin_page.module.css'
 import axios from 'axios';
-import groupPeopleONlyDev from '../imgsOnlyForDev/groupPeople.jpg'
 import Login from './RegLogin/Login';
 import Register from './RegLogin/Register';
 import { UserContext } from '../context/UserContext'
@@ -80,7 +79,7 @@ const RegLogin = () => {
             </section>
             <aside className={styles.regFormAside}>
                 <div className={styles.slantedDiv}>
-                    <img className={styles.slantedImg} src={groupPeopleONlyDev} alt="" />
+                    <img className={styles.slantedImg} src={"https://portfolio-avis-s3.s3.amazonaws.com/app/icons/groupPeople.jpg"} alt="" />
                 </div>
                 <div className={styles.titles}>
                     <h1>Message App</h1>

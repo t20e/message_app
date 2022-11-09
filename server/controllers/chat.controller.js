@@ -1,6 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const Chat = require("../models/chat.model");
-const UserController = require("./user.controller");
+const User = require("../models/user.model");
 
 const ObjectId = mongoose.Types.ObjectId;
 class ChatController {
@@ -42,7 +42,7 @@ class ChatController {
                         .then(chat => {
                             console.log(chat)
                             // add chat id to user chat
-                            UserController.addChatToUser(chat._id, req.body.members)
+                            this.addChatToUser(chat._id, req.body.members)
                             Chat.aggregate(
                                 [
                                     {
@@ -113,6 +113,53 @@ class ChatController {
         }
     }
 
+    createChatWIthNewUserForBot = async (user_id) => {
+        // bot
+        let collectionOne = {
+            members: [ObjectId("63617f4a865dadbfabedad20"), user_id],
+            messages: [
+                {
+                    body: "hey bot here!",
+                    from: "63617f4a865dadbfabedad20",
+                    timeStamp: this.getCurrTime()
+                }
+            ],
+            typeAction: false
+        }
+        //me
+        let collectionTwo = {
+            members: [ObjectId("636b781b6a989aaefa1cc78b"), user_id],
+            messages: [
+                {
+                    body: "hi, thanks for visting my site",
+                    from: "636b781b6a989aaefa1cc78b",
+                    timeStamp: this.getCurrTime()
+                }
+            ],
+            typeAction: false
+        }
+        const createChats = await Chat.insertMany([collectionOne, collectionTwo])
+        // console.log('\n\ncreated chat with new user', createChats)
+        // console.log(createChats)
+        for (const chat of createChats) {
+            console.log('\nchat id:', chat._id)
+            if (chat.members.includes(ObjectId("636b781b6a989aaefa1cc78b"))) {
+                // console.log("/n/n im am here")
+                await this.addChatToUser(chat._id, [ObjectId("636b781b6a989aaefa1cc78b"), user_id])
+            } else if (chat.members.includes(ObjectId("63617f4a865dadbfabedad20"))) {
+                // console.log("/n/n bot is here")
+                await this.addChatToUser(chat._id, [ObjectId("63617f4a865dadbfabedad20"), user_id])
+            }
+        }
+        return ;
+    }
+    addChatToUser = async (chatId, members) => {
+        let update = await User.updateMany({ _id: members },
+            { $push: { allChats: chatId } })
+        console.log('updated users chat \n', update)
+        return;
+    }
+
     getAllChatsForUser = (req, res) => {
         let arr = []
         req.body.chats_data = req.body.chats_data.map(id => {
@@ -153,6 +200,17 @@ class ChatController {
             .catch(err => {
                 res.json({ 'err': err });
             })
+    }
+    getCurrTime = () => {
+        const date = new Date();
+        const yyyy = (date.getFullYear());
+        const mm = (date.getMonth() + 1);
+        const dd = (date.getUTCDate() - 1);
+        const hr = (date.getHours())
+        const min = (date.getMinutes())
+        // date = mm + '-' + dd + '-' + yyyy+ '-' + time;
+        const timeStamp = { "year": yyyy, "month": mm, "day": dd, "hour": hr, "min": min }
+        return timeStamp
     }
 }
 module.exports = new ChatController();

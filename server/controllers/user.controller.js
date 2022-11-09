@@ -2,8 +2,14 @@ const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 const ObjectId = require('mongodb').ObjectId;
-const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const randomstring = require("randomstring");
+
+const { S3Client, PutObjectCommand, DeleteObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const chatController = require("./chat.controller");
+const { response } = require("express");
+
+
 
 const bucket_name = process.env.BUCKET_NAME
 const bucket_region = process.env.BUCKET_REGION
@@ -19,6 +25,18 @@ const s3 = new S3Client({
 
 })
 class UserController {
+    getSignedUrlS3 = async () => {
+        // NOT applicable to this project i want to get something like an access token that will expire in specified time
+        //the signed url needs to be sign for each image. the css has background img
+        // const getObjectParams = {
+        //     Bucket: bucket_name,
+        //     Key: 'app/icons/bot_janel.svg'
+        // }
+        // const command = new GetObjectCommand(getObjectParams);
+        // const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        // console.log('\n\n signed url:', url)
+        // return {url:url}
+    }
     addPfpToAws = (file) => {
         console.log(file, 'file')
         console.log(file.type)
@@ -33,14 +51,9 @@ class UserController {
         s3.send(command)
         return rand_string;
     }
-    addChatToUser = (chatId, members) => {
-        User.updateMany({ _id: members },
-            { $push: { allChats: chatId } })
-            .then(() => {
-                console.log('updated users chat')
-                return { msg: 'updated user' }
-            })
-            .catch(err => { console.error(err) });
+
+    addNewUserChat = (chatArr, members) => {
+        // this is when a new user joins and automatically joins a chat with me and a bot, the func above only takes one chat id i cant use it for this
     }
 
     deletePfpFromAws = (id) => {
@@ -63,40 +76,102 @@ class UserController {
             delete req.body['profilePic']
         }
 
-        const addUserToDB = await User.find({ email: req.body.email })
-            .then(checkEmailDB => {
-                console.log("response from mongoose", checkEmailDB)
-                if (checkEmailDB.length === 0) {
-                    User.create(req.body)
-                        .then(user => {
-                            console.log(user.firstName);
-                            //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
-                            res
-                                .cookie("userToken", jwt.sign({
-                                    _id: user._id,
-                                    firstName: user.firstName,
-                                    lastName: user.lastName
-                                }, process.env.SECRET_KEY), {
-                                    httpOnly: true
-                                })
-                                .json({ msg: "successfully created user", 'user': user });
+        try {
+            const checkEmailDB = await User.find({ email: req.body.email })
+            console.log('\ncheck email',checkEmailDB)
+            if (checkEmailDB.length === 0) {
+                try {
+                    const newUser = await User.create(req.body)
+                    //                 //create chats with me and bot
+                    const createChats = await chatController.createChatWIthNewUserForBot(newUser._id)
+                    // respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
+                    try {
+                        const updatedUser = await User.find({ _id: newUser._id })
+                        res
+                        .cookie("userToken", jwt.sign({
+                            _id: updatedUser._id,
+                            firstName: updatedUser.firstName,
+                            lastName: updatedUser.lastName
+                        }, process.env.SECRET_KEY), {
+                            httpOnly: true
                         })
-                        .catch(err => res.json({ err: err }));
-                } else {
-                    res.json({ err: { email: { message: "Email is taken!" } } })
+                        .json({ msg: "successfully created user", 'user': updatedUser[0] });
+                    } catch (error) {
+                        res.json({ 'err': 'err getting updated user' })
+                    }
+                } catch (error) {
+                    res.json({ err: error })
                 }
-            })
-            .catch(err => {
-                console.log("err!", err)
-                res.json({ err: err })
-            });
+            } else {
+                res.json({ err: { email: { message: "Email is taken!" } } })
+            }
+        } catch (error) {
+            console.log("err trying checking if email exists!", error)
+            res.json({ err: error })
+        }
+
+
+
+
+
+        //                 //create chats with me and bot
+        //                 const createChats = await chatController.createChatWIthNewUserForBot(newUser._id)
+        //                 // return new updated user with chats in list
+        //                 User.find({ _id: user._id })
+        //                     .then(updatedUser => {
+        //                         //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
+        //                         res
+        //                             .cookie("userToken", jwt.sign({
+        //                                 _id: updatedUser._id,
+        //                                 firstName: updatedUser.firstName,
+        //                                 lastName: updatedUser.lastName
+        //                             }, process.env.SECRET_KEY), {
+        //                                 httpOnly: true
+        //                             })
+        //                             .json({ msg: "successfully created user", 'user': updatedUser });
+        //                     })
+        //                     .catch(error => {
+        //                         res.json({ 'err': 'err getting updated user' })
+        //                     })
+        //             })
+        //             .catch(err => res.json({ err: 'err creating user' }));
+        //
+
+
+        // req.file.buffer      contains the img // everything else in it is just details about the img
+        // if (req.file) {
+        //     req.body['profilePic'] = await this.addPfpToAws(req.file)
+        // } else {
+        //     delete req.body['profilePic']
+        // }
+        // const checkEmailDB = await User.find({ email: req.body.email })
+        // if (checkEmailDB.length !== 0) {
+        //     console.log("response from mongoose", checkEmailDB)
+        //     res.json({ err: { email: { message: "Email is taken!" } } })
+        // }
+        // // create a chat bewteen this user and the bot and me
+        // const newUser = User.create(req.body)
+
+        // await chatController.createChatWIthNewUserForBot(newUser._id)
+        // const updatedUser = await User.find({ _id: newUser._id })
+        // //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
+        // res
+        //     .cookie("userToken", jwt.sign({
+        //         _id: updatedUser._id,
+        //         firstName: updatedUser.firstName,
+        //         lastName: updatedUser.lastName
+        //     }, process.env.SECRET_KEY), {
+        //         httpOnly: true
+        //     })
+        //     .json({ msg: "successfully created user", 'user': updatedUser });
+
     }
     login = (req, res) => {
         console.log("email:", req.body.email);
         User.findOne({ email: req.body.email })
             .then(user => {
                 if (user === null) {
-                    res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } }})
+                    res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } } })
                 } else {
                     bcrypt.compare(req.body.password, user.password)
                         .then(checkPassword => {
@@ -109,7 +184,7 @@ class UserController {
                                     }, process.env.SECRET_KEY), { httpOnly: true })
                                     .json({ msg: 'successfully logged in', 'user': user })
                             } else {
-                                res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } }})
+                                res.json({ err: { errors: { loginFail: { message: "invalid login credentials" } } } })
                             }
                         })
                         .catch(err => {
@@ -214,4 +289,5 @@ class UserController {
         res.sendStatus(200);
     }
 }
+
 module.exports = new UserController();

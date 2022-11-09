@@ -2,14 +2,16 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import styles from '../styles/chat_panel.module.css'
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
-import smileyFace from "../imgsOnlyForDev/smiley_face.svg"
 import { UserContext } from '../context/UserContext'
-import { SocketContext, socket } from '../context/SocketContext';
 import { AllChatsContext } from "../context/AllChatsContext"
+import { ActivityContext } from '../context/ActivityContext'
+import { SocketContext, socket } from '../context/SocketContext';
 
+// import { SocketContext, socket } from '../context/SocketContext';
 const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, getCurrTime }) => {
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
+    const { activeUsers, setActiveUsers } = useContext(ActivityContext)
     const [composeMsg, setComposeMsg] = useState({
         'from': loggedUser ? loggedUser._id : null,
         'body': '',
@@ -67,6 +69,9 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
     // socket io
     useEffect(() => {
         socket.on("res_msg", data => {
+            if (data.err) {
+                alert(data.err);
+            }
             console.log("new msg", data);
             const { msg, roomId } = data
             let res_msg = { 'from': msg.from, 'body': msg.body, 'timeStamp': msg.timeStamp }
@@ -90,8 +95,37 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
             }
             setUpdateScrollBar(!updateScrollBar)
         })
+        socket.on('res_active_users', (data) => {
+            console.log('\n data:', data, '\nactive users:', activeUsers)
+            setActiveUsers(data)
+        })
+        socket.on('loadNewChat', chat => {
+            console.log('\n adding chat thats not already loaded', chat)
+            if (chat.err) {
+                alert('please reload page, couldnt find chat, someome is trying to create a new chat with you')
+                return
+            }
+            // add the whole chat to the allChats context
+            console.log('chat not in context')
+            let chatsCopy = chatsContext.allChats
+            chatsCopy[chat._id] = {
+                members: chat.members,
+                messages: chat.messages
+            }
+            setChatsContext({
+                ...chatsContext,
+                allChats: chatsCopy,
+            })
+            socket.emit('join_room', chat._id)
+        })
+
+        getActiveUsers()
     }, [chat, updateScrollBar, chatsContext, socket]);
 
+    const getActiveUsers = () => {
+        console.log('getting active users')
+        socket.emit('getActiveUsers')
+    }
 
     useEffect(() => {
         // update scrollbar
@@ -119,8 +153,9 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
                 from: loggedUser._id
             },
             "roomId": chatsContext.currChatId,
-            // TODO when the backend gets this userid it will chekck if the user is  a bot then redirect to the chat bot api
-            "otherUser": chatsContext.allChats[chatsContext.currChatId].members[index]._id
+            // when the backend gets this userid it will chekck if the user is  a bot then redirect to the chat bot api
+            "otherUser": chatsContext.allChats[chatsContext.currChatId].members[index]._id,
+            "is_bot": chatsContext.allChats[chatsContext.currChatId].members[index].is_bot ? chatsContext.allChats[chatsContext.currChatId].members[index].is_bot : false
         }
         socket.emit("new_msg", data);
         setFormErrors(false)
@@ -155,7 +190,19 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
             [e.target.name]: [e.target.value]
         })
     }
-
+    const keyDownHandler = event => {
+        if (event.key === 'Enter') {
+            console.log('User pressed: ', event.key);
+            event.preventDefault();
+            sendMsg(event)
+        }
+    };
+    useEffect(() => {
+        document.addEventListener('keydown', keyDownHandler);
+        return () => {
+            document.removeEventListener('keydown', keyDownHandler);
+        };
+    }, [composeMsg.body]);
     const getMsgTime = (time) => {
         // console.log(time)
         if (time !== undefined) {
@@ -227,7 +274,7 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
                     <form id={styles.sendMessage_form} onSubmit={sendMsg}>
                         <div className={styles.composeMsg_cont}>
                             <div className={styles.composeMsg_actionCont}>
-                                <img src={smileyFace} className="imgColorSwitch" alt="smiley face icon" onClick={() => emojiDivController()} />
+                                <img src={"https://portfolio-avis-s3.s3.amazonaws.com/app/icons/smiley_face.svg"} className="imgColorSwitch" alt="smiley face icon" onClick={() => emojiDivController()} />
                                 <div ref={domNode} className={`${styles.emoji_picker} ${openDiv}`}>
                                     <Picker onEmojiClick={onEmojiClick} />
                                 </div>

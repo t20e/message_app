@@ -1,11 +1,12 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import React, { useState, useEffect, createContext, useContext } from "react";
 import { io } from "socket.io-client";
 
 export const SocketContext = createContext();
 
 export const socket = io.connect('http://localhost:8000')
+
 export const SocketProvider = (props) => {
-    const [isConnected, setIsConnected] = useState();
+    const [isConnected, setIsConnected] = useState(socket.connected);
     const [lastPong, setLastPong] = useState(null);
 
     useEffect(() => {
@@ -13,19 +14,19 @@ export const SocketProvider = (props) => {
             console.log("socket_id: ", socket.id);
             setIsConnected(true);
         });
-
         socket.on('disconnect', () => {
             setIsConnected(false);
         });
+
         return () => {
             socket.off('connect');
             socket.off('disconnect');
             socket.off('pong');
-        };
-    }, [socket]);
+        }
+    }, [isConnected]);
 
     return (
-        <SocketContext.Provider>
+        <SocketContext.Provider value={{}}>
             {props.children}
         </SocketContext.Provider>
     )

@@ -1,10 +1,9 @@
 import React, { useContext, useState, useRef, useEffect } from 'react';
 import styles from "../../styles/profilePopUp.module.css"
 import { UserContext } from '../../context/UserContext';
-import deltethisimg from '../../imgsOnlyForDev/arrows.svg';
 import axios from 'axios';
 
-const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
+const UserProfile = ({ openProfilePopUp, useCheckClickOutside }) => {
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const [pfp, setPfp] = useState(loggedUser ? loggedUser.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${loggedUser.profilePic}` : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg" : "https://portfolio-avis-s3.s3.amazonaws.com/app/icons/noPfp.svg")
     const [imgHover, setImgHover] = useState(false)
@@ -50,9 +49,9 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
         // let addObj = []
         let arrObj = {}
         for (let key in addressObj) {
-            if(addressObj[key] !== "") {
+            if (addressObj[key] !== "") {
                 // console.log(addressObj[key])
-                arrObj[key] =  addressObj[key];
+                arrObj[key] = addressObj[key];
             }
         }
         formData.append("address", JSON.stringify(arrObj))
@@ -62,14 +61,21 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
         for (let pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
-        axios.put(`http://localhost:8000/api/users/update/${loggedUser._id}`, formData, {withCredentials: true})
+        axios.put(`http://localhost:8000/api/users/update/${loggedUser._id}`, formData, { withCredentials: true })
             .then(res => {
                 console.log(res.data)
-                if(res.data.error){
-                    alert('err updating user check input')
-                }else{
-                    setLoggedUser(res.data.result)
+                if (res.data.error) {
+                    alert('err updating user please check data entered ')
+                } else {
                     openProfilePopUp()
+                    setLoggedUser({
+                        ...loggedUser,
+                        profilePic: "loadAnimation"
+                    })
+                    console.log(res.data.result)
+                    setTimeout(() => {
+                        setLoggedUser(res.data.result)
+                    }, 6000);
                 }
             })
             .catch(err => console.log(err));
@@ -114,7 +120,7 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
     let domNode = useCheckClickOutside(() => {
         openProfilePopUp()
     })
-    const showAddressDiv = ()=>{
+    const showAddressDiv = () => {
         setOpenAdressDiv(!openAdressDiv)
         setRotateArrow(!rotateArrow)
     }
@@ -157,25 +163,25 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
                     <div className={`${styles.inputDiv} ${styles.addressCont}`}>
                         <div>
                             <h4>Address</h4>
-                            <img className={`${rotateArrow ? 'rotateArr' : null}  ${'imgColorSwitch'}`} src={deltethisimg} onClick={(e) => showAddressDiv()} alt="" />
+                            <img className={`${rotateArrow ? 'rotateArr' : null}  ${'imgColorSwitch'}`} src={"https://portfolio-avis-s3.s3.amazonaws.com/app/icons/arrows.svg"} onClick={(e) => showAddressDiv()} alt="" />
                         </div>
                         <div className={`${styles.addressInfoCont} ${openAdressDiv ? styles.show : ''}`}>
                             <div>
                                 <p>Address one</p>
-                                <input className={styles.input} type="text" name='addressOne' placeholder={loggedUser.address.addressOne ? loggedUser.address.addressOne :'address one'} onChange={(e) => changeAddressObj(e)} />
+                                <input className={styles.input} type="text" name='addressOne' placeholder={loggedUser.address.addressOne ? loggedUser.address.addressOne : 'address one'} onChange={(e) => changeAddressObj(e)} />
                             </div>
                             <div>
                                 <p>Address two</p>
-                                <input className={styles.input} type="text" name='addressTwo' placeholder={loggedUser.address.addressTwo ? loggedUser.address.addressTwo :'address two'} onChange={(e) => changeAddressObj(e)} />
+                                <input className={styles.input} type="text" name='addressTwo' placeholder={loggedUser.address.addressTwo ? loggedUser.address.addressTwo : 'address two'} onChange={(e) => changeAddressObj(e)} />
                             </div>
                             <div className={styles.sameLineInputsDiv}>
                                 <div className={styles.largerDiv}>
                                     <p>City</p>
-                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='city' placeholder={loggedUser.address.city ? loggedUser.address.city :'city'} onChange={(e) => changeAddressObj(e)} />
+                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='city' placeholder={loggedUser.address.city ? loggedUser.address.city : 'city'} onChange={(e) => changeAddressObj(e)} />
                                 </div>
                                 <div className={styles.smallerDiv}>
                                     <p>Postal code</p>
-                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='postalCode' placeholder={loggedUser.address.postalCode ? loggedUser.address.postalCode :'postal code'} onChange={(e) => changeAddressObj(e)} />
+                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='postalCode' placeholder={loggedUser.address.postalCode ? loggedUser.address.postalCode : 'postal code'} onChange={(e) => changeAddressObj(e)} />
                                 </div>
                             </div>
                             <div className={styles.sameLineInputsDiv}>
@@ -185,7 +191,7 @@ const UserProfile = ({openProfilePopUp, useCheckClickOutside}) => {
                                 </div>
                                 <div className={styles.smallerDiv}>
                                     <p>state</p>
-                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='state' placeholder={loggedUser.address.state ? loggedUser.address.state : 'state' } onChange={(e) => changeAddressObj(e)} />
+                                    <input className={`${styles.input} ${styles.sameLineInput}`} type="text" name='state' placeholder={loggedUser.address.state ? loggedUser.address.state : 'state'} onChange={(e) => changeAddressObj(e)} />
                                 </div>
                             </div>
                         </div>

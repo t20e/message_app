@@ -142,7 +142,7 @@
     width: 2em;
     border: none;
     /* border-radius: 20em; */
-    background-image: url('../imgsOnlyForDev/send_arrow.svg');
+    background-image: url('https://portfolio-avis-s3.s3.amazonaws.com/app/icons/send_arrow.svg');
     background-color: transparent   !important;
     background-size: cover;
     background-repeat: no-repeat;

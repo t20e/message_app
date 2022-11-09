@@ -32,6 +32,7 @@
     border-radius: 20em;
     display: inline-block;
     margin-left: .3em;
+    background-color: white;
 }
 
 .newNotification {
