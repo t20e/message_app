@@ -2,14 +2,14 @@ const ChatController = require('../controllers/chat.controller');
 const request = require('request');
 
 let socket_user_ids_obj = new Object();// obj{user_id : socket.id}
-module.exports = (io) => {
-    const getActiveUsersArr = () => {
-        let arr = []
-        for (let user in socket_user_ids_obj) {
-            arr.push(user)
-        }
-        return arr
+const getActiveUsersArr = () => {
+    let arr = []
+    for (let user in socket_user_ids_obj) {
+        arr.push(user)
     }
+    return arr
+}
+module.exports = (io) => {
     io.on("connection", socket => {
         console.log("socket id: " + socket.id);
 

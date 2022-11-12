@@ -24,3 +24,4 @@ yarn-error.log*
 
 .env
 sensitiveData.txt
+client/node_modules
