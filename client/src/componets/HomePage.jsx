@@ -12,7 +12,7 @@ import UserSettings from './popUps/UserSettings';
 import UserProfile from './popUps/UserProfile';
 import GitLink from './GitLink';
 import { AllChatsContext } from "../context/AllChatsContext"
-import { socket } from '../context/SocketContext';
+import { SocketContext, socket } from '../context/SocketContext';
 
 const HomePage = () => {
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
@@ -20,12 +20,15 @@ const HomePage = () => {
     const [usersInChatId, setUsersInChatId] = useState(false)
     const redirect = useNavigate()
     const [blurPage, setblurPage] = useState(false)
+    const [isConnected, setIsConnected] = useState(socket.connected);
+    const [lastPong, setLastPong] = useState(null);
     // 
     const [userProfilePopUp, setUserProfilePopUp] = useState(false)
     const [settingsPopUp, setSettingsPopUp] = useState(false);
     useEffect(() => {
         if (loggedUser === undefined) {
-            axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
+            // console.log('user is signing in from cookie')
+            axios.get('http://localhost:8000/api/chatapp/user/logUser', { withCredentials: true })
                 .then(res => {
                     // console.log('logged in user', res.data);
                     if (res.data.results === null) {
@@ -33,13 +36,39 @@ const HomePage = () => {
                     }
                     setLoggedUser(res.data.results)
                     localStorage.setItem('_id', res.data.results._id)
+                    // console.log('getting active users')
                 })
                 .catch(err => {
                     console.log('err getting logged user');
                     redirect('/regLogin')
                 })
         }
-    }, []);
+    }, [loggedUser !== undefined?loggedUser._id : null]);
+    useEffect(() => {
+        socket.on('connection', () => {
+            console.log("socket_id: ", socket.id);
+            setIsConnected(true);
+        });
+        socket.on('disconnect', () => {
+            setIsConnected(false);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('disconnect');
+            // socket.off('pong');
+        }
+    }, [isConnected]);
+
+    useEffect(() => {
+        if (loggedUser !== undefined) { addUserActivity(loggedUser._id) }
+    }, [loggedUser])
+
+    const addUserActivity = (id) => {
+        console.log('adding user to active obj')
+        socket.emit('addUserToObj', id)
+        socket.emit('getActiveUsers')
+    }
 
     const convertUnicode = (str) => {
         // console.log(str, 'str')
@@ -124,7 +153,7 @@ const HomePage = () => {
                         <MsgNotification convertUnicode={convertUnicode} openChat={openChat} />
                     </div>
                     <div className='colTwo'>
-                        <ChatPanel convertUnicode={convertUnicode} useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
+                        <ChatPanel addUserActivity={addUserActivity} convertUnicode={convertUnicode} useCheckClickOutside={useCheckClickOutside} usersInChatIdProp={usersInChatId} getCurrTime={getCurrTime} />
                     </div>
                 </div>
             </span>

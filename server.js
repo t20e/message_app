@@ -10,10 +10,10 @@ const io = new Server(httpServer, {
     cors: {
         origin: ["http://localhost:3000"],
         credentials: true,
-        methods: ["GET", "POST"]
+        methods: ["POST", "GET"]
     }
 })
-const port = 8000;
+const port = process.env.PORT || 8000;
 require('dotenv').config();
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

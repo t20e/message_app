@@ -1,7 +1,7 @@
 #regFormCon {
-    width: 80%;
-    max-height: 40rem;
-    min-height: 30rem;
+    width: 75vw;
+     max-height: 40rem;
+    min-height: 35rem;
     height: auto;
     margin: 0px auto;
     margin-top: 2em;
@@ -213,14 +213,14 @@ input:checked[type="checkbox"]:before {
     padding: 0px .6em;
     justify-content: space-between;
 }
-@-moz-document url-prefix() {
+/* @-moz-document url-prefix() {
     input:checked[type="checkbox"]:before {
         left: 6rem;
     }
     .toggleP {
         top: -1.7rem;
     }
-}
+} */
 
 .pSpan {
     color: var(--nonImportantText);

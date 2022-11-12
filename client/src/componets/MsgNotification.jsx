@@ -14,24 +14,20 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
     const prevChatDiv = useRef(undefined)
     useEffect(() => {
         if (loggedUser) {
-            if (loggedUser && loggedUser.allChats) {
-                axios.post('http://localhost:8000/api/getAllChatsForUser', { chats_data: loggedUser.allChats })
+            if (loggedUser.allChats.length > 0) {
+                axios.get(`http://localhost:8000/api/chatapp/getAllChatsForUser/${loggedUser._id}`)
                     .then(res => {
                         // console.log('all chats for user', res.data.results);
-                        // setChats(res.data.results)
-                        // console.log(res.data.results)
                         let obj = {}
-                        // let joinMultRooms = ['main_room']
                         let joinMultRooms = []
                         for (let chat in res.data.results) {
                             obj[res.data.results[chat]._id] = { members: res.data.results[chat].members, messages: res.data.results[chat].messages }
                             joinMultRooms.push(res.data.results[chat]._id)
                         }
-                        console.log('\n rooms to join= >>>>', joinMultRooms)
+                        console.log(' rooms to join= >>>>', joinMultRooms)
                         if (joinMultRooms.length > 0) {
                             socket.emit('joinMultRooms', joinMultRooms)
                         }
-                        socket.emit('addUserToObj', loggedUser._id)
                         // console.log(obj)
                         setChatsContext({
                             ...chatsContext,
@@ -46,15 +42,16 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
     }, [loggedUser]);
 
 
-
     useEffect(() => {
-        // change the current chat selected
         if (prevChatDiv.current !== undefined) {
+            // prev chat is so i can remove the style
             prevChatDiv.current.setAttribute('id', null)
         }
-        if (chatsContext.currChat_id) {
+        // console.log(chatDivs.current)
+        if (chatsContext.currChatId !== undefined) {
             for (let id in chatDivs.current) {
-                if (id === chatsContext.currChat_id) {
+                // console.log(id, 'id', 'chatsContext.currChatId:', chatsContext.currChatId)
+                if (id === chatsContext.currChatId) {
                     // console.log(id, chatDivs.current[id])
                     prevChatDiv.current = chatDivs.current[id]
                     chatDivs.current[id].setAttribute('id', 'currChatSelected')
@@ -62,7 +59,7 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
                 }
             }
         }
-    }, [chatsContext])
+    },[chatsContext.currChatId])
 
     return (
         <div className={styles.mainCont}>
@@ -78,11 +75,12 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
                                     userOtherThanMain = user
                                 }
                             })
+                            // console.log(userOtherThanMain)
                             return (
                                 <div className={styles.msgNotification} ref={(e) => chatDivs.current[key] = e} onClick={(e) => openChat([`${userOtherThanMain._id}`])} key={key}>
                                     <div className={styles.left}>
                                         <span className={styles.newNotification}></span>
-                                        <p className={`${'bulletAlert'} ${ userOtherThanMain.is_bot ? 'active' :  activeUsers.indexOf(userOtherThanMain._id) > -1 ? 'active' : 'notActive'}`}>●</p>
+                                        <p className={`${'bulletAlert'} ${userOtherThanMain.is_bot ? 'active' : activeUsers.indexOf(userOtherThanMain._id) > -1 ? 'active' : 'notActive'}`}>●</p>
                                         <img className={styles.usersPfp} src={userOtherThanMain ?
                                             userOtherThanMain.is_bot ? userOtherThanMain.profilePic :
                                                 userOtherThanMain.profilePic.length === 32 ? `https://portfolio-avis-s3.s3.amazonaws.com/client/message-app/${userOtherThanMain.profilePic}`

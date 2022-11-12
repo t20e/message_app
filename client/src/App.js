@@ -8,7 +8,7 @@ import { AllChatsProvider } from "./context/AllChatsContext"
 import { ActivityProvider } from "./context/ActivityContext"
 import {SocketProvider} from "./context/SocketContext"
 function App() {
-    const [loggedUser, setLoggedUser] = useState()
+    const [loggedUser, setLoggedUser] = useState(undefined)
     // this will change the value only when the loggesUser, or SetLoggedUser is changed
     const userValue = useMemo(() => ({ loggedUser, setLoggedUser }), [loggedUser, setLoggedUser])
     return (

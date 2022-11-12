@@ -75,95 +75,40 @@ class UserController {
         } else {
             delete req.body['profilePic']
         }
-
-        try {
-            const checkEmailDB = await User.find({ email: req.body.email })
-            console.log('\ncheck email',checkEmailDB)
-            if (checkEmailDB.length === 0) {
-                try {
-                    const newUser = await User.create(req.body)
-                    //                 //create chats with me and bot
-                    const createChats = await chatController.createChatWIthNewUserForBot(newUser._id)
-                    // respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
-                    try {
-                        const updatedUser = await User.find({ _id: newUser._id })
-                        res
-                        .cookie("userToken", jwt.sign({
-                            _id: updatedUser._id,
-                            firstName: updatedUser.firstName,
-                            lastName: updatedUser.lastName
-                        }, process.env.SECRET_KEY), {
-                            httpOnly: true
-                        })
-                        .json({ msg: "successfully created user", 'user': updatedUser[0] });
-                    } catch (error) {
-                        res.json({ 'err': 'err getting updated user' })
-                    }
-                } catch (error) {
-                    res.json({ err: error })
-                }
-            } else {
-                res.json({ err: { email: { message: "Email is taken!" } } })
+        const checkEmailDB = await User.find({ email: req.body.email })
+        // console.log('\ncheck email', checkEmailDB)
+        if (checkEmailDB.length === 0) {
+            let newUser
+            try {
+                //create a new user
+                newUser = await User.create(req.body)
+                // console.log('\n new user:', newUser)
+            } catch (error) {
+                return res.json({ msg: "err creating user", err: error })
             }
-        } catch (error) {
-            console.log("err trying checking if email exists!", error)
-            res.json({ err: error })
+            //create chats and add it to the user
+            const createChats = await chatController.createChatWIthNewUserForBot(newUser._id)
+            // TODO if createdChats  has errors return 
+            let response = await User.find({ _id: newUser._id })
+            // respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
+            let findUpdatedUser = response[0]
+            res
+                .cookie("userToken", jwt.sign({
+                    _id: findUpdatedUser._id,
+                    firstName: findUpdatedUser.firstName,
+                    lastName: findUpdatedUser.lastName
+                }, process.env.SECRET_KEY), {
+                    httpOnly: true
+                })
+                .json({ msg: "successfully created user", 'user': findUpdatedUser });
+        } else {
+            //res.json({ 'msg': 'err getting updated user', err: error })
+            //res.json({ msg: "err creating user", err: error })
+            //res.json("err trying checking if email exists!", error)
+            res.json({ err: { email: { message: "Email is taken!" } } })
         }
-
-
-
-
-
-        //                 //create chats with me and bot
-        //                 const createChats = await chatController.createChatWIthNewUserForBot(newUser._id)
-        //                 // return new updated user with chats in list
-        //                 User.find({ _id: user._id })
-        //                     .then(updatedUser => {
-        //                         //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
-        //                         res
-        //                             .cookie("userToken", jwt.sign({
-        //                                 _id: updatedUser._id,
-        //                                 firstName: updatedUser.firstName,
-        //                                 lastName: updatedUser.lastName
-        //                             }, process.env.SECRET_KEY), {
-        //                                 httpOnly: true
-        //                             })
-        //                             .json({ msg: "successfully created user", 'user': updatedUser });
-        //                     })
-        //                     .catch(error => {
-        //                         res.json({ 'err': 'err getting updated user' })
-        //                     })
-        //             })
-        //             .catch(err => res.json({ err: 'err creating user' }));
-        //
-
-
-        // req.file.buffer      contains the img // everything else in it is just details about the img
-        // if (req.file) {
-        //     req.body['profilePic'] = await this.addPfpToAws(req.file)
-        // } else {
-        //     delete req.body['profilePic']
-        // }
-        // const checkEmailDB = await User.find({ email: req.body.email })
-        // if (checkEmailDB.length !== 0) {
-        //     console.log("response from mongoose", checkEmailDB)
-        //     res.json({ err: { email: { message: "Email is taken!" } } })
-        // }
-        // // create a chat bewteen this user and the bot and me
-        // const newUser = User.create(req.body)
-
-        // await chatController.createChatWIthNewUserForBot(newUser._id)
-        // const updatedUser = await User.find({ _id: newUser._id })
-        // //respond with a cookie called "usertoken" which contains the JWT from above called userTokenJWT AND also respond with json with info about the user who just got created
-        // res
-        //     .cookie("userToken", jwt.sign({
-        //         _id: updatedUser._id,
-        //         firstName: updatedUser.firstName,
-        //         lastName: updatedUser.lastName
-        //     }, process.env.SECRET_KEY), {
-        //         httpOnly: true
-        //     })
-        //     .json({ msg: "successfully created user", 'user': updatedUser });
+    }
+    deleteManyUsers = (req, res) => {
 
     }
     login = (req, res) => {
@@ -205,13 +150,17 @@ class UserController {
     getLoggedUser = (req, res) => {
         const decodedJWT = jwt.decode(req.cookies.userToken, { complete: true })
         // console.log("cookie user is:", decodedJWT.payload._id);
-        User.findOne({ _id: decodedJWT.payload._id })
-            .then(user => {
-                res.json({ results: user })
-            })
-            .catch(err => {
-                res.json(err)
-            })
+        if (decodedJWT !== null) {
+            User.findOne({ _id: decodedJWT.payload._id })
+                .then(user => {
+                    res.json({ results: user })
+                })
+                .catch(err => {
+                    res.json(err)
+                })
+        } else {
+            res.json({ 'err': 'getting loaded user from payload' })
+        }
     }
     searchAllUsers = (req, res) => {
         User.aggregate([

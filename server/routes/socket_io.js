@@ -1,6 +1,7 @@
 const ChatController = require('../controllers/chat.controller');
 const request = require('request');
 
+let socket_user_ids_obj = new Object();// obj{user_id : socket.id}
 module.exports = (io) => {
     const getActiveUsersArr = () => {
         let arr = []
@@ -9,8 +10,6 @@ module.exports = (io) => {
         }
         return arr
     }
-    let socket_user_ids_obj = new Object();
-    // user_id : socket.id
     io.on("connection", socket => {
         console.log("socket id: " + socket.id);
 
@@ -34,54 +33,39 @@ module.exports = (io) => {
             socket.join(roomsArr)
             // console.log('\n+++++ all rooms \n', io.sockets.adapter.rooms)
         })
-        // TODO maybe it should constantly check to make suer the socket stays in the obj when make a new msg or other check to see if its there
         socket.on("new_msg", async (data) => {
             console.log("creating msg", data)
-            console.log(socket_user_ids_obj)
-            io.to(data.roomId).emit("res_msg", (data));
+            // console.log(socket_user_ids_obj)
+            let updatedChat = await ChatController.createMsg(data)
             if (data.is_bot) {
-                let updatedChat = await ChatController.createMsg(data)
+                io.to(data.roomId).emit("res_msg", (data));
                 if (!updatedChat._id) {
                     io.to(data.roomId).emit("res_msg", ('could not add msg to chat with bot, please reload page'));
                 }
-                // the bot is the receiver
                 let url = `${process.env.CHAT_BOT_URL}/?user_id=${data.otherUser}&chat_id=${data.roomId}&msg=${data.msg.body}`
                 console.log(url);
                 request(url, (error, response, body) => {
-                    // console.log('\n type of ===>', typeof (body))
-                    if (error) {
-                        console.error('error:', error); // Print the error if one occurred
-                        io.to(data.roomId).emit("res_msg", ({ 'err': 'please reload page err chatting with bot' }));
-                        return
-                    }
                     // console.log('statusCode:', response && response.statusCode);
-                    // console.log('body:', body); 
-                    try {
+                    // console.log('body:', body);
+                    if (error) {
+                        console.error('error:', error); 
+                        io.to(data.roomId).emit("res_msg", ({ 'err': 'please reload page err chatting with bot' }));
+                    } else {
                         res = JSON.parse(body)
-                        console.log('\n\nres:',res)
+                        console.log('\n\nres:', res)
                         data.msg.from = data.otherUser
                         data.msg.body = res.msg;
                         if (res['err']) {
-                            console.log('\n\n theres an err from chat bot', res['err'])
                             data.msg.body = res['err']
                         }
                         let updateChatwithTheBotsMsg = ChatController.createMsg(data)
                         io.to(data.roomId).emit("res_msg", (data));
-                        return
-                    }
-                    catch (e) {
-                        io.to(data.roomId).emit("res_msg", ({ 'err': 'please reload page err chatting with bot' }));
-                        return;
                     }
                 })
             } else {
-                let updatedChat = await ChatController.createMsg(data)
                 if (!updatedChat._id) {
                     io.to(data.roomId).emit("res_msg", ('couldnt add msg to chat please reload page'));
                 }
-                // console.log(socket.rooms)
-                // get the length of all sockets in default main room
-                // console.log(io.engine.clientsCount)
                 const num_of_socket = await io.in(data.roomId).fetchSockets()
                 let check = false
                 // check if the user is in the obj then check if hes in room 

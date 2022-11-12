@@ -50,7 +50,7 @@ const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
         setShowUsersDiv("")
     })
     const logout = () => {
-        axios.get('http://localhost:8000/api/users/logout', { withCredentials: true })
+        axios.get('http://localhost:8000/api/chatapp/users/logout', { withCredentials: true })
             .then(res => {
                 redirect('/regLogin')
             })

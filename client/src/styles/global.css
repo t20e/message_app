@@ -49,6 +49,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 ::placeholder {
@@ -62,9 +63,11 @@ html {
     scrollbar-color: silver #f1f1f1; */
   /* scrollbar-width: thin; */
   scrollbar-width: none;
+  font-size: 16px;
 }
 
 body {
+  font-size: 16px;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
@@ -192,7 +195,7 @@ input[type=number] {
 
 .gitLink {
   position: relative;
-  left: 45vw;
+  left: 42vw;
   top: 2vh;
   display: flex;
   align-items: center;
@@ -204,11 +207,11 @@ input[type=number] {
   }
 
   10% {
-    width: 15rem;
+    width: 27rem;
   }
 
   90% {
-    width: 15rem;
+    width: 27rem;
   }
 
   100% {
@@ -221,7 +224,7 @@ input[type=number] {
   display: flex;
   align-items: center;
   justify-content: end;
-  min-width: 15rem;
+  min-width: 27rem;
   background-color: transparent;
   user-select: none;
 }

@@ -8,7 +8,7 @@ import { ActivityContext } from '../context/ActivityContext'
 import { SocketContext, socket } from '../context/SocketContext';
 
 // import { SocketContext, socket } from '../context/SocketContext';
-const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, getCurrTime }) => {
+const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheckClickOutside, getCurrTime }) => {
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const { activeUsers, setActiveUsers } = useContext(ActivityContext)
@@ -28,7 +28,7 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
         // first check db with users in chat for a existing chat, if it doesnt create a new one
         // console.log(usersInChatIdProp)
         if (usersInChatIdProp !== false) {
-            axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
+            axios.post('http://localhost:8000/api/chatapp/chat', usersInChatIdProp)
                 .then(res => {
                     console.log('respond from server, getting or creating chat, new Chat: ===> \n', res.data);
                     if (!chatsContext.allChats[res.data.chat._id]) {
@@ -69,10 +69,10 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
     // socket io
     useEffect(() => {
         socket.on("res_msg", data => {
+            console.log('\nrecieving message:', data)
             if (data.err) {
                 alert(data.err);
             }
-            console.log("new msg", data);
             const { msg, roomId } = data
             let res_msg = { 'from': msg.from, 'body': msg.body, 'timeStamp': msg.timeStamp }
             if (chat._id) {
@@ -95,10 +95,7 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
             }
             setUpdateScrollBar(!updateScrollBar)
         })
-        socket.on('res_active_users', (data) => {
-            console.log('\n data:', data, '\nactive users:', activeUsers)
-            setActiveUsers(data)
-        })
+    
         socket.on('loadNewChat', chat => {
             console.log('\n adding chat thats not already loaded', chat)
             if (chat.err) {
@@ -118,14 +115,17 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
             })
             socket.emit('join_room', chat._id)
         })
-
-        getActiveUsers()
-    }, [chat, updateScrollBar, chatsContext, socket]);
-
-    const getActiveUsers = () => {
-        console.log('getting active users')
-        socket.emit('getActiveUsers')
-    }
+        socket.on('res_active_users', (data) => {
+            setActiveUsers(data)
+            console.log('\nactive users:', activeUsers)
+        })
+        // socket.on was repeating many times inside useEffect and the below code also stops the repeating.
+        return () => {
+            socket.off('loadNewChat');
+            socket.off('res_active_users');
+            socket.off('res_msg');
+        }
+    }, [chatsContext, activeUsers, chat]);
 
     useEffect(() => {
         // update scrollbar
@@ -157,6 +157,7 @@ const ChatPanel = ({ usersInChatIdProp, convertUnicode, useCheckClickOutside, ge
             "otherUser": chatsContext.allChats[chatsContext.currChatId].members[index]._id,
             "is_bot": chatsContext.allChats[chatsContext.currChatId].members[index].is_bot ? chatsContext.allChats[chatsContext.currChatId].members[index].is_bot : false
         }
+        console.log('sending msg')
         socket.emit("new_msg", data);
         setFormErrors(false)
         setComposeMsg({

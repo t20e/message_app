@@ -1,16 +1,18 @@
 const { default: mongoose } = require("mongoose");
 const Chat = require("../models/chat.model");
+const { collection } = require("../models/user.model");
 const User = require("../models/user.model");
-
-const ObjectId = mongoose.Types.ObjectId;
+const ObjectId = require('mongodb').ObjectId;
 class ChatController {
     getChat = async (req, res) => {
         req.body.members = req.body.members.map(member => ObjectId(member))
+        console.log(req.body.members, 'here')
         Chat.aggregate(
             [
                 {
                     $match: {
                         members: {
+                            //$in vs $all
                             $all:
                                 req.body.members
                         }
@@ -114,58 +116,60 @@ class ChatController {
     }
 
     createChatWIthNewUserForBot = async (user_id) => {
-        // bot
         let collectionOne = {
-            members: [ObjectId("63617f4a865dadbfabedad20"), user_id],
+            members: [ObjectId("636d7cd51d82d9e9782d2148"), user_id],
             messages: [
                 {
-                    body: "hey bot here!",
-                    from: "63617f4a865dadbfabedad20",
+                    body: "hey bot here! chat with me. I can tell you the weather in your area, a riddle, a crypto price, or the current time",
+                    from: "636d7cd51d82d9e9782d2148",
                     timeStamp: this.getCurrTime()
                 }
             ],
             typeAction: false
         }
-        //me
         let collectionTwo = {
-            members: [ObjectId("636b781b6a989aaefa1cc78b"), user_id],
+            members: [ObjectId("636d7e82c49bd25d1264a813"), user_id],
             messages: [
                 {
-                    body: "hi, thanks for visting my site",
-                    from: "636b781b6a989aaefa1cc78b",
+                    body: "hi, thanks for visiting my site",
+                    from: "636d7e82c49bd25d1264a813",
                     timeStamp: this.getCurrTime()
                 }
             ],
             typeAction: false
         }
         const createChats = await Chat.insertMany([collectionOne, collectionTwo])
-        // console.log('\n\ncreated chat with new user', createChats)
-        // console.log(createChats)
+        // console.log('\ncreated chat with new user, chats:', createChats)
         for (const chat of createChats) {
-            console.log('\nchat id:', chat._id)
-            if (chat.members.includes(ObjectId("636b781b6a989aaefa1cc78b"))) {
+            // add the chats to the bot and me collections
+            if (chat.members.includes("636d7e82c49bd25d1264a813")) {
                 // console.log("/n/n im am here")
-                await this.addChatToUser(chat._id, [ObjectId("636b781b6a989aaefa1cc78b"), user_id])
-            } else if (chat.members.includes(ObjectId("63617f4a865dadbfabedad20"))) {
+                await this.addChatToUser(chat._id.toString(), [ObjectId("636d7e82c49bd25d1264a813"), user_id])
+            } else if (chat.members.includes("636d7cd51d82d9e9782d2148")) {
                 // console.log("/n/n bot is here")
-                await this.addChatToUser(chat._id, [ObjectId("63617f4a865dadbfabedad20"), user_id])
+                await this.addChatToUser(chat._id.toString(), [ObjectId("636d7cd51d82d9e9782d2148"), user_id])
             }
         }
-        return ;
+        return;
     }
     addChatToUser = async (chatId, members) => {
         let update = await User.updateMany({ _id: members },
             { $push: { allChats: chatId } })
-        console.log('updated users chat \n', update)
+        // console.log('updated users chat \n', update)
         return;
     }
 
-    getAllChatsForUser = (req, res) => {
+
+    getAllChatsForUser = async (req, res) => {
+        var fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        // console.log(fullUrl)
+        const chats = await User.findOne({ _id: req.params._id }, { _id: 0, allChats: 1 })
+        // console.log(allChats)
         let arr = []
-        req.body.chats_data = req.body.chats_data.map(id => {
+        chats.allChats.map(id => {
             arr.push(ObjectId(id))
         })
-        // console.log(req.body.chats_data)
+        // console.log('arr', arr)
         Chat.aggregate(
             [
                 {
@@ -195,6 +199,7 @@ class ChatController {
             ]
         )
             .then(allChats => {
+                // console.log("chats found ===>", allChats);
                 res.json({ 'results': allChats })
             })
             .catch(err => {

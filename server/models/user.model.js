@@ -38,14 +38,15 @@ const UserSchema = new Mongoose.Schema({
         required: [true, "please enter a password"],
         minlength: [6, "password must be more than 5 characters"]
     },
-    isActive: ({
-        type: Boolean,
-        default: false
-    }),
+    // isActive: ({
+    //     type: Boolean,
+    //     default: false
+    // }),
     allChats: [
         // chatIds
     ],
     is_bot: {
+        type: Boolean,
         default: false,
     },
     address:

@@ -18,7 +18,7 @@ const RegLogin = () => {
         axios.post(`http://localhost:8000${url}`, formData, { withCredentials: true })
             .then(res => {
                 console.log("response from server: ", res);
-                if (res.data.err) {
+                if (res.data['err']) {
                     // console.log(res.data.errors)
                     setFormErrors(res.data.err.errors)
                 } else {
@@ -43,8 +43,9 @@ const RegLogin = () => {
         }
     }
     const getError = (input) => {
-        if (formErrors.hasOwnProperty(input)) {
-            return <div className='errCont'>
+        if(formErrors){
+            if (formErrors.hasOwnProperty(input)) {
+                return <div className='errCont'>
                 <div className='adjustPos'>
                     <div className='imgErr'></div>
                     <p className='err'>
@@ -53,6 +54,7 @@ const RegLogin = () => {
                 </div>
             </div>
         }
+    }
     }
     return (
         <div id={styles.regFormCon}>
@@ -87,7 +89,6 @@ const RegLogin = () => {
                 </div>
                 <i>learn more about us here</i>
             </aside>
-            <GitLink />
         </div>
     );
 };
