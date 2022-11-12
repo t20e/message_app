@@ -19,8 +19,8 @@ function App() {
                         <ActivityProvider>
                             <BrowserRouter>
                                 <Routes>
-                                    <Route path="/regLogin" element={<RegLogin />}></Route>
-                                    <Route path="/" element={<HomePage />}></Route>
+                                    <Route path="/chatapp/regLogin" element={<RegLogin />}></Route>
+                                    <Route path="/chatapp/" element={<HomePage />}></Route>
                                 </Routes>
                             </BrowserRouter>
                         </ActivityProvider>

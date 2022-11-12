@@ -8,7 +8,7 @@ import { ActivityContext } from '../context/ActivityContext'
 import { SocketContext, socket } from '../context/SocketContext';
 
 // import { SocketContext, socket } from '../context/SocketContext';
-const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheckClickOutside, getCurrTime }) => {
+const ChatPanel = ({ usersInChatIdProp, addUserActivity, convertUnicode, useCheckClickOutside, getCurrTime }) => {
     const { chatsContext, setChatsContext } = useContext(AllChatsContext)
     const { loggedUser, setLoggedUser } = useContext(UserContext);
     const { activeUsers, setActiveUsers } = useContext(ActivityContext)
@@ -24,6 +24,7 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
     const scrollBarDiv = useRef(null)
     const textarea = useRef(null)
     const [updateScrollBar, setUpdateScrollBar] = useState(false)
+    const [isTyping, setIsTyping] = useState(false)
     useEffect(() => {
         // first check db with users in chat for a existing chat, if it doesnt create a new one
         // console.log(usersInChatIdProp)
@@ -95,7 +96,7 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
             }
             setUpdateScrollBar(!updateScrollBar)
         })
-    
+
         socket.on('loadNewChat', chat => {
             console.log('\n adding chat thats not already loaded', chat)
             if (chat.err) {
@@ -119,6 +120,14 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
             setActiveUsers(data)
             console.log('\nactive users:', activeUsers)
         })
+        socket.on('userTyping', () => {
+            setIsTyping(true)
+            setUpdateScrollBar(!updateScrollBar)
+            console.log('received typing')
+        })
+        socket.on('user_stopped_typing', () => {
+            setIsTyping(false)
+        })
         // socket.on was repeating many times inside useEffect and the below code also stops the repeating.
         return () => {
             socket.off('loadNewChat');
@@ -133,13 +142,13 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
             scrollBarDiv.current.scrollTop = scrollBarDiv.current.scrollHeight
         }
     }, [updateScrollBar])
-
     const sendMsg = (e) => {
         e.preventDefault();
         if (composeMsg.body === '') {
             setFormErrors({ msg: 'Please enter a message' })
             return;
         }
+        socket.emit("stopped_typing", chat._id);
         let index;
         chatsContext.allChats[chatsContext.currChatId].members.map((user, i) => {
             if (user._id !== loggedUser._id) {
@@ -228,7 +237,11 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
             }
         }
     }
-    const twoFunc = (e) => {
+    const callMultiFunc = (e) => {
+        if (composeMsg.body !== "") {
+            console.log('typing')
+            socket.emit('typing', chat._id)
+        }
         editInputs(e)
         growTextarea(e)
         setFormErrors(false)
@@ -236,6 +249,7 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
     let domNode = useCheckClickOutside(() => {
         setOpenDiv("")
     })
+
 
     return (
         <span>
@@ -271,6 +285,17 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
                                 })
                                 : null
                             : null}
+                        {
+                            isTyping ?
+                                <div id='userIsTypingDiv' className={styles.single_messageDiv__left}>
+                                    <div className={`${styles.message}`} >
+                                        <p>typing...</p>
+                                    </div>
+                                    <p className={styles.dateOf_message}>
+                                    </p>
+                                </div>
+                                : null
+                        }
                     </div>
                     <form id={styles.sendMessage_form} onSubmit={sendMsg}>
                         <div className={styles.composeMsg_cont}>
@@ -280,7 +305,7 @@ const ChatPanel = ({ usersInChatIdProp,addUserActivity, convertUnicode, useCheck
                                     <Picker onEmojiClick={onEmojiClick} />
                                 </div>
                             </div>
-                            <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => twoFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
+                            <textarea ref={textarea} id={styles.compose__msg} maxLength={350} name='body' onChange={(e) => callMultiFunc(e)} value={convertUnicode(composeMsg.body)} placeholder='message...' cols="35" rows="1"></textarea>
                             {formErrors.msg ?
                                 <div className='errCont upArrErrCont'>
                                     <div className='adjustPos adjustPosUpArr'>

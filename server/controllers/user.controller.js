@@ -105,7 +105,7 @@ class UserController {
             //res.json({ 'msg': 'err getting updated user', err: error })
             //res.json({ msg: "err creating user", err: error })
             //res.json("err trying checking if email exists!", error)
-            res.json({ err: { email: { message: "Email is taken!" } } })
+            res.json({ err: { errors: { email: { message: "Email is taken!" } } } })
         }
     }
     deleteManyUsers = (req, res) => {

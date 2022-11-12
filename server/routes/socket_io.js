@@ -48,7 +48,7 @@ module.exports = (io) => {
                     // console.log('statusCode:', response && response.statusCode);
                     // console.log('body:', body);
                     if (error) {
-                        console.error('error:', error); 
+                        console.error('error:', error);
                         io.to(data.roomId).emit("res_msg", ({ 'err': 'please reload page err chatting with bot' }));
                     } else {
                         res = JSON.parse(body)
@@ -92,10 +92,12 @@ module.exports = (io) => {
         })
 
         socket.on("typing", (roomId) => {
-            socket.to(roomId).emit("typing");
+            console.log(roomId);
+            socket.to(roomId).emit("userTyping");
         })
-        socket.on("stopped_typing", ({ roomId }) => {
-            socket.to(roomId).emit("stopped_typing");
+        socket.on("stopped_typing", (roomId) => {
+            console.log('\nroomID:', roomId);
+            socket.to(roomId).emit("user_stopped_typing");
         })
 
         socket.on('disconnect', () => {
