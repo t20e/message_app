@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 
 export const SocketContext = createContext();
 
-export const socket = io.connect()
+export const socket = io.connect("http://54.157.45.38/socket.io")
 // my server and front end is on the same domain so i can use below
 // TODO for deployment
 // export const socket = io( {
