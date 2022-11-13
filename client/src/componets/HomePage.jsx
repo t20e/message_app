@@ -40,12 +40,12 @@ const HomePage = () => {
                 })
                 .catch(err => {
                     console.log('err getting logged user');
-                    redirect('/regLogin')
+                    redirect('/chatapp/regLogin')
                 })
         }
     }, [loggedUser !== undefined?loggedUser._id : null]);
     useEffect(() => {
-        socket.on('connection', () => {
+        socket.on('connect', () => {
             console.log("socket_id: ", socket.id);
             setIsConnected(true);
         });
