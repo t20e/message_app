@@ -87,17 +87,18 @@ module.exports = (io) => {
                         io.to(socket_user_ids_obj[data.otherUser]).emit('loadNewChat', chat)
                     }
                 }
+                console.log('\ndata ==>',data)
                 io.to(data.roomId).emit("res_msg", (data));
             }
         })
 
         socket.on("typing", (roomId) => {
-            console.log(roomId);
-            socket.to(roomId).emit("userTyping");
+            // console.log('user is typing',roomId);
+            socket.to(roomId).emit("userTyping", roomId);
         })
         socket.on("stopped_typing", (roomId) => {
             console.log('\nroomID:', roomId);
-            socket.to(roomId).emit("user_stopped_typing");
+            socket.to(roomId).emit("user_stopped_typing", roomId);
         })
 
         socket.on('disconnect', () => {

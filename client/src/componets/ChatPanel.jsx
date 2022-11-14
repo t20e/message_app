@@ -76,7 +76,7 @@ const ChatPanel = ({ usersInChatIdProp, addUserActivity, convertUnicode, useChec
             }
             const { msg, roomId } = data
             let res_msg = { 'from': msg.from, 'body': msg.body, 'timeStamp': msg.timeStamp }
-            if (chat._id) {
+            if (chat._id === roomId) {
                 setChat({
                     ...chat,
                     messages: [...chat.messages, res_msg]
@@ -97,42 +97,49 @@ const ChatPanel = ({ usersInChatIdProp, addUserActivity, convertUnicode, useChec
             setUpdateScrollBar(!updateScrollBar)
         })
 
-        socket.on('loadNewChat', chat => {
-            console.log('\n adding chat thats not already loaded', chat)
-            if (chat.err) {
-                alert('please reload page, couldnt find chat, someome is trying to create a new chat with you')
+        socket.on('loadNewChat', newChat => {
+            console.log('\n adding chat thats not already loaded ==>', newChat)
+            if (newChat.err) {
+                alert('please reload page, couldnt find chat, someone is trying to create a new chat with you')
                 return
             }
             // add the whole chat to the allChats context
             console.log('chat not in context')
             let chatsCopy = chatsContext.allChats
-            chatsCopy[chat._id] = {
-                members: chat.members,
-                messages: chat.messages
+            chatsCopy[newChat._id] = {
+                members: newChat.members,
+                messages: newChat.messages
             }
             setChatsContext({
                 ...chatsContext,
                 allChats: chatsCopy,
             })
-            socket.emit('join_room', chat._id)
+            socket.emit('join_room', newChat._id)
         })
         socket.on('res_active_users', (data) => {
             setActiveUsers(data)
             console.log('\nactive users:', activeUsers)
         })
-        socket.on('userTyping', () => {
-            setIsTyping(true)
-            setUpdateScrollBar(!updateScrollBar)
-            console.log('received typing')
+        socket.on('userTyping', (chatId) => {
+            if (chatId === chat._id) {
+                setIsTyping(true)
+                setUpdateScrollBar(!updateScrollBar)
+                console.log('received typing, chat id:', chatId)
+            }
         })
-        socket.on('user_stopped_typing', () => {
-            setIsTyping(false)
+        socket.on('user_stopped_typing', (chatId) => {
+            if (chatId === chat._id) {
+                setIsTyping(false)
+                console.log('received STOPPED typing, chat id:', chatId)
+            }
         })
         // socket.on was repeating many times inside useEffect and the below code also stops the repeating.
         return () => {
             socket.off('loadNewChat');
             socket.off('res_active_users');
             socket.off('res_msg');
+            socket.off('userTyping');
+            socket.off('user_stopped_typing');
         }
     }, [chatsContext, activeUsers, chat]);
 
@@ -239,7 +246,7 @@ const ChatPanel = ({ usersInChatIdProp, addUserActivity, convertUnicode, useChec
     }
     const callMultiFunc = (e) => {
         if (composeMsg.body !== "") {
-            console.log('typing')
+            console.log('typing', chat._id)
             socket.emit('typing', chat._id)
         }
         editInputs(e)
