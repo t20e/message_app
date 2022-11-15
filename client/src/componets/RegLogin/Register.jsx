@@ -27,7 +27,7 @@ const Register = ({ formSubmission, styles, getError }) => {
         formData.append("password", newUser.password);
         formData.append("confirmPassword", newUser.confirmPassword);
 
-        formSubmission(formData, '/api/chatapp/user/register')
+        formSubmission(formData, '/chatapp/api/user/register')
         console.log('registering');
     }
     const showPfp = (e) => {

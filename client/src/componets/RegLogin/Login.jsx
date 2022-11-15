@@ -8,7 +8,7 @@ const Login = ({formSubmission, styles, getError}) => {
     const login = (e) => {
         e.preventDefault()
         let formInfo = { email, password };
-        formSubmission(formInfo, "/api/chatapp/user/login")
+        formSubmission(formInfo, "/chatapp/api/user/login")
     }
 
     return (

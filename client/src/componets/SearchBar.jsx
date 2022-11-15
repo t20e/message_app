@@ -18,7 +18,7 @@ const SearchBar = ({ useCheckClickOutside, openChat }) => {
     }
     const searchPeople = (e) => {
         e.preventDefault()
-        axios.get(`http://localhost:8000/api/chatapp/searchUsers/${e.target.value}`)
+        axios.get(`http://localhost:8000/chatapp/api/searchUsers/${e.target.value}`)
             .then(res => {
                 // console.log(res.data);
                 setSearchedUsers(res.data);

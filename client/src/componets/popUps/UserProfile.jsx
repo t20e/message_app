@@ -61,7 +61,7 @@ const UserProfile = ({ openProfilePopUp, useCheckClickOutside }) => {
         for (let pair of formData.entries()) {
             console.log(pair[0] + ': ' + pair[1]);
         }
-        axios.put(`http://localhost:8000/api/chatapp/users/update/${loggedUser._id}`, formData, { withCredentials: true })
+        axios.put(`http://localhost:8000/chatapp/api/users/update/${loggedUser._id}`, formData, { withCredentials: true })
             .then(res => {
                 console.log(res.data)
                 if (res.data.error) {
