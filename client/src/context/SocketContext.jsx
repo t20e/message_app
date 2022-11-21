@@ -7,7 +7,7 @@ export const SocketContext = createContext();
 export const socket = io.connect()
 // dev
 // export const socket = io.connect('http://localhost:8000')
-
+// console.log('test')
 export const SocketProvider = (props) => {
     // const [isConnected, setIsConnected] = useState(socket.connected);
     // const [lastPong, setLastPong] = useState(null);
