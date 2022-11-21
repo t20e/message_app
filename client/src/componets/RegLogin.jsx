@@ -27,7 +27,7 @@ const RegLogin = () => {
                     localStorage.setItem('userToken', res.userToken);
                     setLoggedUser(res.data.user)
                     localStorage.setItem('_id', res.data.user._id)
-                    redirect("/chatapp")
+                    redirect("/")
                 }
             })
             .catch(err => {

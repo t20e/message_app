@@ -50,9 +50,9 @@ const Nav = ({ openProfilePopUp, useCheckClickOutside, openSettingsPopUp }) => {
         setShowUsersDiv("")
     })
     const logout = () => {
-        axios.get('http://localhost:8000/chatapp/api/users/logout', { withCredentials: true })
+        axios.get('http://localhost:8000/api/users/logout', { withCredentials: true })
             .then(res => {
-                redirect('/chatapp/regLogin')
+                redirect('/regLogin')
             })
             .catch(err => {
                 console.log(err, 'err logging out')

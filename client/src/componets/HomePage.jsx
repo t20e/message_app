@@ -28,7 +28,7 @@ const HomePage = () => {
     useEffect(() => {
         if (loggedUser === undefined) {
             // console.log('user is signing in from cookie')
-            axios.get('http://localhost:8000/chatapp/api/user/logUser', { withCredentials: true })
+            axios.get('http://localhost:8000/api/user/logUser', { withCredentials: true })
                 .then(res => {
                     // console.log('logged in user', res.data);
                     if (res.data.results === null) {
@@ -40,7 +40,7 @@ const HomePage = () => {
                 })
                 .catch(err => {
                     console.log('err getting logged user');
-                    redirect('/chatapp/regLogin')
+                    redirect('/regLogin')
                 })
         }
     }, [loggedUser !== undefined?loggedUser._id : null]);

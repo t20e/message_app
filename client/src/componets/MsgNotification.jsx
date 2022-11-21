@@ -15,7 +15,7 @@ const MsgNotification = ({ openChat, convertUnicode }) => {
     useEffect(() => {
         if (loggedUser) {
             if (loggedUser.allChats.length > 0) {
-                axios.get(`http://localhost:8000/chatapp/api/getAllChatsForUser/${loggedUser._id}`)
+                axios.get(`http://localhost:8000/api/getAllChatsForUser/${loggedUser._id}`)
                     .then(res => {
                         // console.log('all chats for user', res.data.results);
                         let obj = {}

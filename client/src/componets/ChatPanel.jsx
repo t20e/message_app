@@ -29,7 +29,7 @@ const ChatPanel = ({ usersInChatIdProp, addUserActivity, convertUnicode, useChec
         // first check db with users in chat for a existing chat, if it doesnt create a new one
         // console.log(usersInChatIdProp)
         if (usersInChatIdProp !== false) {
-            axios.post('http://localhost:8000/chatapp/api/chat', usersInChatIdProp)
+            axios.post('http://localhost:8000/api/chat', usersInChatIdProp)
                 .then(res => {
                     console.log('respond from server, getting or creating chat, new Chat: ===> \n', res.data);
                     if (!chatsContext.allChats[res.data.chat._id]) {
