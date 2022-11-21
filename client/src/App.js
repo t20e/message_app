@@ -21,6 +21,8 @@ function App() {
                                 <Routes>
                                     <Route path="/regLogin" element={<RegLogin />}></Route>
                                     <Route path="/" element={<HomePage />}></Route>
+                                    {/* 404 */}
+                                    <Route path="*" element={<HomePage />}></Route>
                                 </Routes>
                             </BrowserRouter>
                         </ActivityProvider>
