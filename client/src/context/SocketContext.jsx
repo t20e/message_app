@@ -5,6 +5,8 @@ export const SocketContext = createContext();
 
 // TODO for deployment
 export const socket = io.connect()
+// test
+
 // dev
 // export const socket = io.connect('http://localhost:8000')
 // console.log('test')
